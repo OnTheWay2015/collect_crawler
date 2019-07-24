@@ -1,0 +1,44 @@
+//{
+//    "compilerOptions": {
+//        "module": "system",
+//        "noImplicitAny": true,
+//        "removeComments": true,
+//        "preserveConstEnums": true,
+//        "outDir": "./bin",
+//        //"outFile": "./bin/main.js",
+//        "sourceMap": true
+//    },
+//    "include": [
+//        "src/**/*"
+//    ],
+//    "exclude": [
+//        "node_modules",
+//        "**/*.spec.ts"
+//    ]
+//}
+
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        //"module": "system",
+        //"module": "system",
+        "target":"es5",
+        "outDir": "./bin",
+        "strict": true, /* Enable all strict type-checking options. */
+        //"outFile": "./bin/index.js",
+        //"declaration":true, //生成 .d.ts
+        "sourceMap": true
+    },
+
+    "types":["node"],
+    "typeRoots":["node_modules/@types"],
+    "lib": [ "es5"],
+
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "bin/**/*.d.ts"
+    ]
+}
