@@ -3,8 +3,11 @@ import { main } from "../main";
 import * as BLUE from '../utils';
 import * as cheerio from 'cheerio';
 
+import * as fs from 'fs';
+
 export enum URL_MARK{
-    PROCESS= 1,
+    PROCESS= 1, //程序重启后丢失
+    MARK_STORE, //标识数据持久化
 }
 
 export enum NODE_TAG {
@@ -26,7 +29,9 @@ export interface NodeIF{
 enum NodeState{
     default=1,
     httpReq,
-    onHttpReq,
+    onHttpReqRes,
+    imgReq,
+    onImgReqRes,
 }
 
 
@@ -57,16 +62,33 @@ export class BlueNode implements NodeIF {
 
     public process(tm: number): void {
         let self = this;
+        if (self.mComplete){
+            return;
+        }
         switch (self.mState) {
             case NodeState.default:
                 self.setState(NodeState.httpReq);
                 break;
-            case NodeState.onHttpReq:
-                self.mComplete = true;
+            case NodeState.onHttpReqRes:
+                if (self._imgInfos.length > 0) {
+                    self.setState(NodeState.imgReq);
+
+                } else {
+                    self.mComplete = true;
+                }
+                break;
+            case NodeState.onImgReqRes:
+                if (self._imgInfos.length > 0) {
+                    self.setState(NodeState.imgReq);
+
+                } else {
+                    self.mComplete = true;
+                }
                 break;
         }
-
     }
+
+
     protected addProcessData(key:string, v:any):void{
         if (key in this.mProcessData)
         {
@@ -84,8 +106,16 @@ export class BlueNode implements NodeIF {
         switch (s) {
             case NodeState.httpReq:
                 self.mRequest = new HttpHandle(self.mUrl, self.pMain);
-                self.mRequest.act(self.onRequestRes.bind(self),
+                self.mRequest.act(self.requestRes.bind(self),
                 self.onRequestErr.bind(self));
+                break;
+            case NodeState.imgReq:
+                self.mRequest.dispose();
+                let v = self._imgInfos.shift();
+                self._imgProcess = v;
+                self.mRequest = new HttpHandle(v.url, self.pMain);
+                self.mRequest.act(self.imgRequestRes.bind(self),
+                    self.onRequestErr.bind(self));
                 break;
         }
         self.mState = s;
@@ -117,7 +147,7 @@ export class BlueNode implements NodeIF {
     }
 
     //@ res HTTP.IncomingMessage
-    protected onRequestRes(htmlstr: string, res: any): void {
+    protected requestRes(htmlstr: string, res: any): void {
         let self = this;
 
         /*
@@ -141,10 +171,38 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
 
         }
 
-
-        self.setState(NodeState.onHttpReq);
+        self.onRequestRes(htmlstr, res);
+        self.setState(NodeState.onHttpReqRes);
     }
-    
+   
+    private _imgProcess:any;
+    private _imgInfos:any[] = [];
+    protected addImgUrl(imgUrl:string, data:any):void{
+        let self = this;
+        self._imgInfos.push({url:imgUrl, data:data});
+    }
+
+    protected imgRequestRes(img:any, res:any):void{
+        let self = this;
+        self.onImgRequestRes(img, res);
+        
+        self.setState(NodeState.onImgReqRes);
+    }
+    protected onImgRequestRes(img: any, res: any): void {
+        //to override
+        fs.writeFile("/home/blue/ttt.png", img, (err) => {
+            if (err) {
+                BLUE.error(err.message);
+                return;
+            }
+
+        });
+
+    }
+
+    protected onRequestRes(htmlstr: string, res: any): void {
+        //to override
+    }
     //@ res HTTP.IncomingMessage
     protected onRequestErr(tag:REQ_ERR,res:any ): void {
         let self = this; 
@@ -194,7 +252,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         return res;
     }
 
-    private addUrlProcessMark(url: string): void {
+    private addUrlProcessMark(url: string, store:boolean=false): void {
         let self = this;
         if (self.mRootData == null) {
             BLUE.error(" addUrlProcessMark but rootData is null!");
@@ -204,7 +262,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         {
             self.mRootData.urlsMark = {};
         }
-        self.mRootData.urlsMark[url] = URL_MARK.PROCESS;
+        self.mRootData.urlsMark[url] = store ? URL_MARK.MARK_STORE:URL_MARK.PROCESS;
     }
 
     public isUrlProcess(url:string):boolean{

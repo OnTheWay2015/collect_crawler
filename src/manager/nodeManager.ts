@@ -21,7 +21,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
     }
 
 
-    public init(cb?: (res: number) => void) {
+    public init(data?:any,cb?: (res: number) => void) {
 
     }
     public update(tm: number) {

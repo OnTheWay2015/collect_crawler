@@ -25,6 +25,9 @@ export class BN_ExTypeContect extends BlueNode{
             for (let i = 0; i < hrefs.length; i++) {
                 let url = $(hrefs[i]).attr("href");
                 url = self.getFullUrl(url);
+                if(self.isUrlProcess(url) ){
+                    continue;
+                }
                 //self.addProcessData("rootName", name);
                 self.pMain.p_nodeMgr.processNode(
                     NODE_TAG.STEP_4,
@@ -38,10 +41,48 @@ export class BN_ExTypeContect extends BlueNode{
         }
 
 
-        let pages= self.selectDom($,$, [
+        let pageUrls= self.selectDom($,$, [
             'div[class="btn-pages"]',
             'a'
         ]);
+        if (pageUrls.length <= 0) {
+            BLUE.error("BN_ExTypeContent no pages");
+        }
+        else {
+            let urlf = "";
+            let l = pageUrls.length;
+            for (let i = 0; i < l; i++) {
+                let url = $(pageUrls[i]).attr("href");
+                if (url.indexOf('_') >0 )
+                {
+                    urlf = url.slice(0,-7);
+                    break;
+                }
+            }
+
+            if (l > 0 && urlf !="")
+            {
+                for (let i = 0; i < l; i++) {
+                    let url = urlf + i + ".shtml";
+                    url = self.getFullUrl(url);
+
+                    if (self.isUrlProcess(url)) {
+                        continue;
+                    }
+                    self.pMain.p_nodeMgr.processNode(
+                        NODE_TAG.STEP_2,
+                        url,
+                        {},
+                        self.mRootData);
+                    //test
+                    //break;
+
+                }
+                
+            }
+
+        }
+
 
     }
 }

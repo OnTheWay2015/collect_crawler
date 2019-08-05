@@ -8,6 +8,7 @@ import { BN_ExTypeContect } from "./work/BN_ExTypeContect";
 import { BN_ExTypeContectPageNext } from "./work/BN_ExTypeContectPageNext";
 import { BN_ExContect } from "./work/BN_ExContect";
 import { BN_ExContectPageNext } from "./work/BN_ExContectPageNext";
+import { DbManager } from "./db/dbManager";
 export class main {
     constructor() {
 
@@ -15,13 +16,17 @@ export class main {
     public tagName = "main";
     public p_procMgr!: ProcessManager;
     public p_nodeMgr!: NodeManager;
+    public p_dbMgr!: DbManager;
 
     public init() {
         let self = this;
         self.p_procMgr = new ProcessManager(self);
         self.p_nodeMgr= new NodeManager(self);
+        self.p_dbMgr= new DbManager(self);
         self.p_procMgr.init();
         self.p_nodeMgr.init();
+        self.p_dbMgr.init({});
+        self.p_procMgr.regeditProcess(self.p_dbMgr);
         self.p_procMgr.regeditProcess(self.p_nodeMgr);
 
         self.regNodes();

@@ -19,11 +19,13 @@
 
 
 //import { createServer, Server, IncomingMessage, ServerResponse } from 'http';
-//import * as HTTP from 'http';
-import * as HTTP from 'https';
+import * as HTTP from 'http';
+//import * as HTTP from 'https';
 import * as cheerio from 'cheerio';
 import * as M from "./main"; 
 import * as BLUE from "./utils"; 
+import * as fs from "fs"; 
+
 module TTT {
     //class ttt {
     //    constructor(){
@@ -37,18 +39,22 @@ module TTT {
     //    path: '/index.html'  
     // };
 
+
     let m:M.main;
     let htmlContent="";
     //let url = "";
+   
     
-    let url = "www.baidu.com";
+    let host="img.eduuu.com"
+    let path="/website/zhongkao/images/mainsite/zyk2013/wxpic.jpg"
+    //let url = "www.baidu.com";
     //let url = "https://www.bxwx9.org";  //error
     //let url = "www.bxwx9.org";
     var options = {
-        host: url,
-        //port: '80',
-        port: '443',
-        path: '/',
+        host: host,
+        port: '80',
+        //port: '443',
+        path: path,
         method: 'GET',
         headers: {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36",
@@ -84,19 +90,38 @@ module TTT {
 var callback = function(response:any){
    // 不断更新数据
    var body = '';
+   //var bbb = new Buffer('','utf-8')
+   //var bbb = Buffer.alloc(10);
+   let bbb:any=null ;
+   let wlen:number = 0;
    response.setEncoding('utf-8'); //防止中文乱码
    response.on('error', function(data:string) {
       console.log("request error:");
       console.log(data);
    });
    response.on('data', function(data:string) {
-      body += data;
+      if (bbb == null){
+         let l = parseInt(response.headers["content-length"]);
+         bbb = Buffer.alloc(l);
+      }
+      //body += data;
+      bbb.write(data,wlen,data.length);
+      wlen+= data.length;
    });
    
    response.on('end', function() {
       // 数据接收完成
       //console.log(body);
-      parse(body);
+         let l =  body.length;//45787
+         let len =  bbb.length;//45787
+        fs.writeFile("/home/blue/ttt.jpg", bbb,  (err) => {
+            if (err) {
+                BLUE.error(err.message);
+                return;
+            }
+
+        });
+      //parse(body);
    });
 
    let parse = (html:string)=>{
@@ -111,6 +136,9 @@ var callback = function(response:any){
 // 向服务端发送请求
 //var req = HTTP.request(options, callback);
 //req.end();
+
+
+
 
 
 
@@ -139,8 +167,8 @@ var callback = function(response:any){
     //let u = "http://www.aoshu.com/tk/aslxt";
     let u = "http://www.aoshu.com/tk/aslxt/";
     m= new M.main();
-    m.init();
-    m.start(u);
+    //m.init();
+    //m.start(u);
 }
 //console.log("hello!");
 
@@ -148,3 +176,110 @@ var callback = function(response:any){
 //todo 
 //数据保存
 //去重,更新跳过
+
+//-------------------保存文件 
+let src ="http://img.eduuu.com//website/aoshu/images/mainsite/index/aoshu_wxpic.jpg" ;
+let file:any;
+   //HTTP.get(src, (res) => {
+   //   //.faq 为什么保存的文件是错的?
+   //   res.on('data', (chunk) => {
+   //      file += chunk;
+   //   })
+
+   //   res.on('end', () => {
+   //      let filep = Math.random() + "";
+   //      //if(!fs.existsSync(filep)){ //每个文件创建一个文件夹
+   //      //    var creats = fs.mkdirSync(filep);
+   //      //    }
+   //      fs.writeFile("ttt.jpg", file, (err) => {
+   //         if (err) throw err;
+   //      });
+   //   })
+   //})
+
+import * as request from "request";
+
+function downloadFile(uri:string,filename:string,callback:()=>void){
+   var stream = fs.createWriteStream(filename);
+   request(uri).pipe(stream).on('close', callback); 
+}
+
+//downloadFile(src,"ttt/ttt.jpg",()=>{
+//});
+
+
+//------------------- puppeteer 
+// 基于puppeteer模拟登录抓取页面  https://www.cnblogs.com/Johnzhang/p/9010585.html
+//
+import * as  puppeteer from "puppeteer";
+let ptest = async () => {
+  const browser = await (puppeteer.launch({
+    // 若是手动下载的chromium需要指定chromium地址, 默认引用地址为 /项目目录/node_modules/puppeteer/.local-chromium/
+    //executablePath: '/Users/huqiyang/Documents/project/z/chromium/Chromium.app/Contents/MacOS/Chromium',
+    //设置超时时间
+    timeout: 15000,
+    //如果是访问https页面 此属性会忽略https错误
+    ignoreHTTPSErrors: true,
+    // 打开开发者工具, 当此值为true时, headless总为false
+    devtools: false,
+    // 关闭headless模式, 不会打开浏览器
+    headless: false
+    //headless:true   //没有用
+  }));
+  const page = await browser.newPage();
+  //await page.goto('https://www.jianshu.com/u/40909ea33e50');
+  await page.goto('https://www.baidu.com');
+   let content = await page.content();  
+   let $ = cheerio.load(content); //采用cheerio模块解析html
+  //await page.screenshot({
+  //  path: 'jianshu.png',
+  //  type: 'png',
+  //  // quality: 100, 只对jpg有效
+  //  fullPage: true,
+  //  // 指定区域截图，clip和fullPage两者只能设置一个
+  //  // clip: {
+  //  //   x: 0,
+  //  //   y: 0,
+  //  //   width: 1000,
+  //  //   height: 40
+  //  // }
+  //});
+  browser.close();
+};
+
+ptest();
+
+/**
+用 cnpm 安装
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+cnpm i puppeteer
+
+
+https://www.jianshu.com/p/a9a55c03f768
+
+API
+https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pageclickselector-options 
+* 
+ */
+
+
+
+
+
+//-------------------- db
+import { DbManager } from './db/dbManager';
+let mm: M.main = new M.main();
+let p_dbMgr = new DbManager(mm);
+p_dbMgr.init({
+
+   host: "localhost",
+   user: "root",
+   password: ""
+
+});
+
+//p_dbMgr.createDb("testdb", (err:any,p1:any,p2:any)=>{
+//
+//   console.log("create database testdb!!");
+//});
+//-------------------- 

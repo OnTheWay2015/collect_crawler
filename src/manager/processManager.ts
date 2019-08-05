@@ -26,7 +26,7 @@ import { main } from "../main";
            self._vec.push(ps);
         }
 
-        public init(cb?:(res:number)=>void){
+        public init(data?:any,cb?:(res:number)=>void){
 
         }
 

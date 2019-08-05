@@ -25,7 +25,13 @@ export class HttpHandle{
 
     private _headers:any = {};
     private _main!:main;
-    constructor(url:string,main:main) {
+    constructor(url:string,main:main,headers?:any) {
+        let self = this;
+        self._main= main;
+        self._onSet(url,headers);
+    }
+
+    private _onSet(url:string,headers?:any){
         let self = this;
         let ust:BLUE.urlST|null = BLUE.transURLSt(url);
         if (ust == null)
@@ -39,7 +45,6 @@ export class HttpHandle{
             self._path = ust.path;
         }
         
-        self._main= main;
         self._headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36",
             "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -51,8 +56,14 @@ export class HttpHandle{
            //"Cookie":"",
            //"Pragma": "no-cache",
         }
-        self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders() );
+        self.mergeHeaders(self._headers, 
+            self._main.p_nodeMgr.getReqHeaders() );
+        if(headers!=null){
+            self.mergeHeaders(self._headers,headers); 
+        }
     }
+
+
     public getHost():string{
         return this._host;
     }
@@ -142,5 +153,7 @@ export class HttpHandle{
             req = HTTPS.request(op, callback);
         }
         req.end();
+    }
+    public dispose():void{
     }
 }
