@@ -3,6 +3,7 @@ import * as HTTPS from 'https';
 import * as BLUE from "../utils"
 import { NodeManager } from '../manager/nodeManager';
 import { main } from '../main';
+import * as zlib from 'zlib';
 
 export enum REQ_ERR {
     E_STATUS=1,
@@ -43,8 +44,8 @@ export class HttpHandle{
         self._headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36",
             "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-           //"Accept-Encoding": "gzip, deflate, br",
-           "Accept-Encoding": "identity",
+           "Accept-Encoding": "gzip, deflate",
+           //"Accept-Encoding": "identity",
            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
            //"Connection": "keep-alive",
            "Cache-Control": "max-age=0",
@@ -76,16 +77,31 @@ export class HttpHandle{
     //    this._host = host;
     //}
 
+    private isGzip(res:HTTP.IncomingMessage):boolean{
+        let headers = res.headers;
+        return ((headers["content-encoding"] !=null) && headers["content-encoding"]=="gzip");
+    }
     // @res HTTP.IncomingMessage
     public act(cb:(h:string, res:any)=>void, 
         onErr:(err:REQ_ERR,res:any)=>void) {
         let self = this;
+        
+        let buf:any = null
+        
         let body = '';
         // 处理响应的回调函数
         let callback = function (response:HTTP.IncomingMessage) {
+            
+            //response.setEncoding('utf-8'); //防止中文乱码. 不可乱用.保持原生stream
+
             // 不断更新数据
-            response.on('data', function (data:string) {
+            response.on('data', function (data: string) {
                 body += data;
+                if (buf == null) {
+                    buf = Buffer.from(data);
+                } else {
+                    buf = Buffer.concat([buf, Buffer.from(data)]);
+                }
             });
 
             response.on('end', function () {
@@ -108,8 +124,44 @@ export class HttpHandle{
                     //BLUE.log(" print html ------------------------");
                     //BLUE.log(body);
                     //parse(body);
-                    cb(body,response);
 
+                    //let zlib = require('zlib');
+                    //zlib.gunzip(buf, function (err:any, decoded:any) {
+                    //   console.log(decoded.toString());
+                    //    fs.writeSync(fd, decoded,0, "utf-8");
+                    //})
+                    if (self.isGzip(response)) {
+                        zlib.gunzip(buf, function (err: any, decoded:any /*Buffer*/ ) {
+                            cb(decoded,response);
+                            
+                            //console.log(decoded.toString());
+
+                            //var fs = require('fs');
+                            //fs.open('123.txt', 'w+', function (err: any, fd: any) {
+                            //   if (err) {
+                            //      console.error(err);
+                            //      return;
+                            //   }
+
+
+                               //var iconv = require("iconv-lite");
+                               //let x = iconv.decode(decoded,'gb2312');
+                               //fs.writeSync(fd, x,0, "utf-8");
+
+                            //   //fs.writeSync(fd, buf, 0, "utf-8");
+                            //   
+                            //   //fs.writeSync(fd, body,0, "utf-8");
+                            //   //fs.writeSync(fd, body,0, "gb2312");
+                            //   
+                            //    fs.writeSync(fd, decoded,0, "utf-8");
+                            //}); 
+
+
+                        })
+
+                    } else {
+                        cb(buf.toString(),response);
+                    }
                 }
             });
             response.on('error', function (e:any) {

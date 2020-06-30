@@ -50,3 +50,24 @@ export function transURLSt(url: string): urlST | null {
     }
     return ret;
 } 
+
+export function getGradeid(k: string): number {
+    if ( k.indexOf("一") >= 0 ) return 1;
+    if ( k.indexOf("二") >= 0 ) return 2;
+    if ( k.indexOf("三") >= 0 ) return 3;
+    if ( k.indexOf("四") >= 0 ) return 4;
+    if ( k.indexOf("五") >= 0 ) return 5;
+    if ( k.indexOf("六") >= 0 ) return 6;
+    return 0;
+}
+
+export function getKindid(k:string):number{
+
+    return 0;
+}
+
+export function getExeid(k:string):number{
+
+    return 0;
+}
+

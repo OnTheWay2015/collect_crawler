@@ -78,7 +78,13 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             return;
 
         }
-        let n = new ncls(tag,url,self.pHolder, data, rootData);
+        let n = new ncls( 
+            tag
+            ,url
+            ,self.pHolder
+            //,self.pHolder.p_dbBase//todo  can change, to fit different db ip
+            , data
+            , rootData);
         
         self._nodesProcess.push(n);
     }

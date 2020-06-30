@@ -1,3 +1,4 @@
+import * as configs from "../configs";
 import { BlueNode, NODE_TAG } from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
@@ -7,8 +8,22 @@ export class BN_Root extends BlueNode{
     //@ res HTTP.IncomingMessage
     protected onRequestRes(data: any,res:any): void {
         let self = this;
+
+        data = self.testEncoding(data);
+        //if (cset == HtmlEncoding.gb2312) {
+        //    var iconv = require("iconv-lite");
+        //    data = iconv.decode(data, 'gb2312');//gb2312 转成 utf8
+        //}
+        
         super.onRequestRes(data, res); 
 
+        //this.initItem(
+        //    configs.DB_IP
+        //    ,configs.DB_BASE
+        //    ,configs.DB_COL_GRADES );
+
+        //let itm = {name:"ttt", a:"a",b:123};
+        let itms:any = []; 
         let $ = cheerio.load(data); //采用cheerio模块解析html
         let grades = self.selectDom($,$, [
             "div[class='borderD']",
@@ -24,40 +39,41 @@ export class BN_Root extends BlueNode{
         {
             let gd = grades[i];
             let gdName = $(gd).find(selectGradeName);
-            let name = "";
             if (gdName.length <= 0) {
                 BLUE.error("grade idx[" + i + "] name select none!");
+                continue;
             }
-            else {
-                name = $(gdName[0]).text();
-                BLUE.log("     >>> grade:" + name);
-            }
-            
-            let hrefs = self.selectDom($,$(gd), [
-                'p[class="a-point"]',
+            let hrefs = self.selectDom($,$(gdName[0]), [
                 'a'
             ]);
             if (hrefs.length <= 0) {
                 BLUE.error("grade idx[" + i + "] gdExTypes select hrefs none!");
                 continue;
             }
-            else {
-                for (let i = 0; i < hrefs.length; i++) {
-                    let url = $(hrefs[i]).attr("href");
-                    url = self.getFullUrl(url);
-                    self.addProcessData("grade", i + 1);
-                    self.addProcessData("rootName", name);
-                    self.pMain.p_nodeMgr.processNode(
-                        NODE_TAG.STEP_1,
-                        url,
-                        {},
-                        self.mRootData);
-                    //test
-                    break;
-                }
 
-            }
-
+            let href = hrefs[0];
+            let name = $(href).text();
+            let gid = BLUE.getGradeid(name);
+            let itm = { gid: gid, desc: name };
+            itms.push(itm);
+            BLUE.log("     >>> grade:" + name);
+            
+            let url = $(href).attr("href");
+            url = self.getFullUrl(url);
+            BLUE.notice("GRADE[" + gid + "] url:[" + url + "]");
+            //self.addProcessData("grade", i + 1);
+            //self.addProcessData("rootName", name);
+            self.addSubNode(
+                NODE_TAG.STEP_10,
+                url,
+                itm,
+                self.mRootData);
+            
+           self.addInsertItm( 
+                self.pMain.p_dbgrades
+                , configs.DB_BASE 
+                , configs.DB_COL_GRADES
+                , itms);
             //test
             break;
         } 

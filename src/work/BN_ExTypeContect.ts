@@ -26,7 +26,7 @@ export class BN_ExTypeContect extends BlueNode{
                 let url = $(hrefs[i]).attr("href");
                 url = self.getFullUrl(url);
                 //self.addProcessData("rootName", name);
-                self.pMain.p_nodeMgr.processNode(
+                self.addSubNode(
                     NODE_TAG.STEP_4,
                     url,
                     {},
