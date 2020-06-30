@@ -1,17 +1,18 @@
 import { HttpHandle, REQ_ERR } from "../handles/request";
-import { DB_item, DB_handle, DB_CONN, DB_OP } from "../handles/dbHandler";
 import { main } from "../main";
 import * as BLUE from '../utils';
 import * as cheerio from 'cheerio';
 
+import * as fs from 'fs';
+
 export enum URL_MARK{
-    PROCESS= 1,
+    PROCESS= 1, //程序重启后丢失
+    MARK_STORE, //标识数据持久化
 }
 
 export enum NODE_TAG {
     ROOT = 1,
     STEP_1,
-    STEP_10,
     STEP_2,
     STEP_3,
     STEP_4,
@@ -25,20 +26,12 @@ export interface NodeIF{
     complete():Boolean;
     //onRequestRes(htmlStr:string):void;
 }
-enum HtmlEncoding{
-    default="utf8", //utf8
-    utf8="utf8", //utf8
-    gb2312="gb2312",
-    gbk="gbk",
-}
 enum NodeState{
     default=1,
     httpReq,
-    onHttpReqOK,
-    dbOP,
-    dbOPok,
-    subNodesOP,
-    done,
+    onHttpReqRes,
+    imgReq,
+    onImgReqRes,
 }
 
 
@@ -50,11 +43,7 @@ export class BlueNode implements NodeIF {
     protected mState!: NodeState;
     protected mComplete!: Boolean;
     protected mRequest!: HttpHandle;
-    protected mSubNodes!:Array<any>;
-    //protected mItemDB!:DB_item;
-    //protected mDBHandle!:DB_handle;
     public pMain!: main;
-    protected mitms!:any; //[]   {dbname:, colname:, itms:[]}
     constructor(tag: NODE_TAG,
         url: string,
         main: main,
@@ -68,57 +57,9 @@ export class BlueNode implements NodeIF {
         self.mUrl = url;
         self.mState = NodeState.default;
 
-        //self.mDBHandle = new DB_handle(dbconn);
-        
-        self.mitms = [];
-        self.mSubNodes = [];
         self.addUrlProcessMark(url);
     }
 
-    /**
-     <head>
-<meta http-equiv="Cache-Control" content="no-transform"/>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
-     */
-    protected testEncoding(htmlbuf:Buffer):Buffer{
-        let $ = cheerio.load(htmlbuf); //采用cheerio模块解析html
-        let metas = this.selectDom($,$, [
-            "meta[http-equiv='Content-Type']"
-        ]);
-        let s = HtmlEncoding.default;
-        for (let i=0, len = metas.length;i<len;i++)
-        {
-            let m = metas[i];
-            //let charset = $(m).find("content");
-            let cstring= $(m).attr("content");
-            if (cstring.length <= 0) {
-                continue;
-            }
-            //let cstring= $(charset[0]).text();
-            let startTag = "charset="
-            let idx = cstring.indexOf(startTag);
-            cstring = cstring.substr(idx + startTag.length );
-            let endidx = cstring.indexOf(";"); 
-            if (endidx < 0){
-                endidx = cstring.indexOf('"'); 
-            }
-            if (endidx >= 0 ){
-                cstring = cstring.substr(0,endidx+1);
-            }
-            s = <HtmlEncoding>cstring;
-            break;
-        }
-
-        if (s== HtmlEncoding.gb2312) {
-            var iconv = require("iconv-lite");
-            htmlbuf = Buffer.from(iconv.decode(htmlbuf, 'gb2312'));//gb2312 转成 utf8
-        }
-        else if (s== HtmlEncoding.gbk) {
-            var iconv = require("iconv-lite");
-            htmlbuf = Buffer.from(iconv.decode(htmlbuf, 'gbk'));//gb2312 转成 utf8
-        }
-        return htmlbuf;
-    }
     public process(tm: number): void {
         let self = this;
         if (self.mComplete){
@@ -128,93 +69,58 @@ export class BlueNode implements NodeIF {
             case NodeState.default:
                 self.setState(NodeState.httpReq);
                 break;
-            case NodeState.onHttpReqOK:
-                    self.setState(NodeState.dbOP);
+            case NodeState.onHttpReqRes:
+                if (self._imgInfos.length > 0) {
+                    self.setState(NodeState.imgReq);
+
+                } else {
+                    self.mComplete = true;
+                }
                 break;
-            case NodeState.dbOPok:
-                    self.setState(NodeState.subNodesOP);
-                break;
-            case NodeState.done:
-                self.mComplete = true;
+            case NodeState.onImgReqRes:
+                if (self._imgInfos.length > 0) {
+                    self.setState(NodeState.imgReq);
+
+                } else {
+                    self.mComplete = true;
+                }
                 break;
         }
-
     }
-    //protected addProcessData(key:string, v:any):void{
-    //    if (key in this.mProcessData)
-    //    {
-    //        BLUE.error("addProcessData key["+key+"] reset!");
-    //    }
-    //    this.mProcessData[key] = v;
-    //}
+
+
+    protected addProcessData(key:string, v:any):void{
+        if (key in this.mProcessData)
+        {
+            BLUE.error("addProcessData key["+key+"] reset!");
+        }
+        this.mProcessData[key] = v;
+    }
     public complete(): Boolean {
         let self = this;
         return self.mComplete;
     }
 
-    protected addSubNode(
-        tag: NODE_TAG,
-        url:string,
-        data?:any,
-        rootData?:any ): void {
-        this.mSubNodes.push({tag:tag,url:url,data:data,rootData:rootData});
-    }
     protected setState(s: NodeState): void {
         let self = this;
         switch (s) {
             case NodeState.httpReq:
                 self.mRequest = new HttpHandle(self.mUrl, self.pMain);
-                self.mRequest.act(self._onRequestRes.bind(self),
+                self.mRequest.act(self.requestRes.bind(self),
+                self.onRequestErr.bind(self));
+                break;
+            case NodeState.imgReq:
+                self.mRequest.dispose();
+                let v = self._imgInfos.shift();
+                self._imgProcess = v;
+                self.mRequest = new HttpHandle(v.url, self.pMain);
+                self.mRequest.act(self.imgRequestRes.bind(self),
                     self.onRequestErr.bind(self));
-                break;
-            case NodeState.dbOP:
-                    if (self.mitms && self.mitms.length>0) {
-                        self.nextUpdateDB(null,null);
-                    }else{
-                        s=NodeState.dbOPok;
-                    }
-                break;
-            case NodeState.subNodesOP:
-                    if ( self.mSubNodes.length > 0){
-                        for(let i=0,j=self.mSubNodes.length;i<j;i++){
-                            let v = self.mSubNodes[i];
-                            if (this.isUrlProcess(v.url)){
-                                continue;
-                            }
-                            self.pMain.p_nodeMgr.processNode(
-                                v.tag,
-                                v.url,
-                                v.data,
-                                v.rootData
-                            );
-                        }
-                    }
-                    s = NodeState.done;
                 break;
         }
         self.mState = s;
     }
 
-    private nextUpdateDB(err:any, itmsOP:any){
-        let self = this;
-        let itms:any = self.mitms;
-        if (itms.length <=0 ){
-            self.onUpdateDBFin();
-        }else{
-            let v:any = itms[0];
-            itms.shift();
-            v.DBHandle.insert( 
-                v.dbname
-                ,v.colname
-                ,v.itms
-                ,self.nextUpdateDB.bind(self) );
-        }
-    }
-
-    private onUpdateDBFin(){
-        let self =this;
-        self.setState( NodeState.dbOPok);
-    }
     //todo test more
     protected getFullUrl(url: string): string {
         let self = this;
@@ -241,9 +147,7 @@ export class BlueNode implements NodeIF {
     }
 
     //@ res HTTP.IncomingMessage
-    protected onRequestRes(htmlstr: string, res: any): void {
-    }
-    private _onRequestRes(htmlstr: string, res: any): void {
+    protected requestRes(htmlstr: string, res: any): void {
         let self = this;
 
         /*
@@ -267,28 +171,38 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
 
         }
 
-        self.onRequestRes( htmlstr, res);//如有需要,会创建 self.mItemDB
-        self.setState(NodeState.onHttpReqOK);
+        self.onRequestRes(htmlstr, res);
+        self.setState(NodeState.onHttpReqRes);
     }
    
-    protected initItem(url:string,db:string,collect:string){
-        //this.mItemDB = new DB_item(url,{},{dbname:db,colname:collect});
+    private _imgProcess:any;
+    private _imgInfos:any[] = [];
+    protected addImgUrl(imgUrl:string, data:any):void{
+        let self = this;
+        self._imgInfos.push({url:imgUrl, data:data});
     }
 
-    //
-    protected addInsertItm(db:DB_handle, dbname:string, colname:string, itms:any){
-        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,itms:itms, op:DB_OP.insert});
+    protected imgRequestRes(img:any, res:any):void{
+        let self = this;
+        self.onImgRequestRes(img, res);
+        
+        self.setState(NodeState.onImgReqRes);
     }
-    
-    protected addupdateItm(db:DB_handle,dbname:string, colname:string, filter:any, itm:any){
-        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,filter:filter, itm:itm, op:DB_OP.update});
+    protected onImgRequestRes(img: any, res: any): void {
+        //to override
+        fs.writeFile("/home/blue/ttt.png", img, (err) => {
+            if (err) {
+                BLUE.error(err.message);
+                return;
+            }
+
+        });
+
     }
 
-
-    //protected findAndModify(handle:any,filter:any,itm:any){
-    //    if (this.mItemDB==null) return;
-    //    this.mItemDB.findAndModify(handle,filter,itm);
-    //}
+    protected onRequestRes(htmlstr: string, res: any): void {
+        //to override
+    }
     //@ res HTTP.IncomingMessage
     protected onRequestErr(tag:REQ_ERR,res:any ): void {
         let self = this; 
@@ -308,7 +222,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         }
     }
 
-    //@  $,采用cheerio模块解析html 
+    //@  $,采用cheerio模块解析html
     protected selectDom($:any, op:any, sels: string[]): any[] {
         let len = sels.length;
         if (len <= 0) {
@@ -338,7 +252,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         return res;
     }
 
-    private addUrlProcessMark(url: string): void {
+    private addUrlProcessMark(url: string, store:boolean=false): void {
         let self = this;
         if (self.mRootData == null) {
             BLUE.error(" addUrlProcessMark but rootData is null!");
@@ -348,7 +262,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         {
             self.mRootData.urlsMark = {};
         }
-        self.mRootData.urlsMark[url] = URL_MARK.PROCESS;
+        self.mRootData.urlsMark[url] = store ? URL_MARK.MARK_STORE:URL_MARK.PROCESS;
     }
 
     public isUrlProcess(url:string):boolean{
@@ -356,8 +270,6 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         let marks =  self.mRootData.urlsMark ;
         return marks!= null && marks[url] != null;
     }
-
-
 
 }
 

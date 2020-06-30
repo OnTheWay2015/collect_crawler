@@ -16,32 +16,17 @@ import { main } from "../main";
             self.pHolder = holder;
         }
         //let map:{[key:number] : Student} = {};
-        public addProcess(ps: ProcessIF): void {
+        public regeditProcess(ps:ProcessIF):void {
             let self = this;
-            if (self._tableStore[ps.tagName] != null) {
-                BLUE.notice("addProcess  name[" + name + "] exsit! reset");
-            }
-            self._tableStore[ps.tagName] = ps;
-            self._vec.push(ps);
+            if (self._tableStore[ps.tagName] != null )
+           {
+                BLUE.notice("regeditProcess  name["+name+"] exsit! reset");            
+           } 
+           self._tableStore[ps.tagName] = ps;
+           self._vec.push(ps);
         }
 
-        public rmvProcess(ps:ProcessIF):void {
-            let self = this;
-            if (self._tableStore[ps.tagName] == null) {
-                BLUE.notice("rmvProcess  name[" + name + "]not exsit! reset");
-                return;
-            }
-            delete self._tableStore[ps.tagName];
-            for (let i=0; i<self._vec.length;i++)
-            {
-                let proc:ProcessIF = self._vec[i];
-                if (proc.tagName == ps.tagName){
-                    self._vec.splice(i,1);
-                    break;
-                }
-            }            
-        }
-        public init(cb?:(res:number)=>void){
+        public init(data?:any,cb?:(res:number)=>void){
 
         }
 

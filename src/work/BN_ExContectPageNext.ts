@@ -12,11 +12,11 @@ export class BN_ExContectPageNext extends BlueNode{
         let $ = cheerio.load(data); //采用cheerio模块解析html
         //let select = "td[class='headfont12']";
         //let select = "head";
-        let select = "div[class='borderD']";
+        //let select = "div[class='borderD']";
         
-        let s = $(select);
-        BLUE.log(s.text());
-        BLUE.log(<string>s.html());
+        //let s = $(select);
+        //BLUE.log(s.text());
+        //BLUE.log(<string>s.html());
 
     }
 }

@@ -17,12 +17,43 @@ export class BN_ExContect extends BlueNode{
             'a'
         ]);
 
-        if (pageHref.length<= 0){
+        if (pageHref.length != 3){
             BLUE.error("BN_ExTypeContect no answer page!" );
             return;
         }
         //todo save Ex content
-        BLUE.error("todo save Ex content");
+        let question = self.selectDom($,$,[
+            'div[class="content"]'
+        ])
+
+        if (question.length > 0) {
+            BLUE.error("todo save Ex question content");
+            //todo 图片,文字             
+            let imgs = self.selectDom($, $(question[0]), [
+                'img'
+            ])
+            if (imgs.length > 0 ){
+                for (let i=0, len=imgs.length;i<len;i++){
+                    let imgurl= $(imgs[0]).attr("src");
+                    self.addImgUrl(imgurl, {nodeProcessData:self.mProcessData}); 
+                }
+            }
+
+
+            let answerUrl = $(pageHref[2]).attr("href");
+            self.pMain.p_nodeMgr.processNode(
+                NODE_TAG.STEP_5,
+                answerUrl,
+                {},
+                self.mRootData);
+
+        } else {
+            BLUE.error("no select Ex question content");
+        }
+
+
+
+         
 
     }
 }
