@@ -1,15 +1,20 @@
 
+   import * as configs from "../configs"; 
+    import { NODE_TAG } from "../configs";
    import * as BLUE from "./../utils"; 
-   import {BlueNode, NODE_TAG} from "../collects/node"; 
+   import {BlueNode } from "../collects/node"; 
    import {ManagerBaseIF}  from "./managerBase"; 
 import { ProcessIF } from "./processManager";
 import { main } from "../main";
 export class NodeManager implements ManagerBaseIF, ProcessIF {
     public tagName: string = "NodeManager";
     //private _nodesMap!:{[key:NODE_TAG]:BlueNode};
+    private _limitTags!:any;
     private _nodesMap!:any;
     private _nodesProcess!:Array<BlueNode>;
     private _nodesProcessIng!:Array<BlueNode>;
+    private _nodesProcessLimit!:Array<BlueNode>;
+    private _nodesProcessIngLimit!:Array<BlueNode>;
     private _reqHeaders:any = {};
     public pHolder!:main;
     constructor(holder: main) {
@@ -17,35 +22,43 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         self._nodesMap = {};
         self._nodesProcess = [];
         self._nodesProcessIng = [];
+        self._nodesProcessLimit = [];
+        self._nodesProcessIngLimit = [];
         self.pHolder = holder;
     }
 
 
-    public init(data?:any,cb?: (res: number) => void) {
+    public init(cb?: (res: number) => void) {
 
     }
     public update(tm: number) {
-        BLUE.log("nodemgr update-----------");
+        this._update(tm, this._nodesProcess,this._nodesProcessIng, configs.CFG_NODE_PROCESS_CNT);
+        this._update(tm, this._nodesProcessLimit,this._nodesProcessIngLimit,configs.CFG_NODE_PROCESS_LIMIT_CNT );
+    }
+    public _update(tm: number, arrProcess:any,arrProcessIng:any, limit:number) {
         let self =this;
-        if (self._nodesProcess.length<=0 && 
-            self._nodesProcessIng.length<=0 ) return;
+        if (arrProcess.length<=0 && 
+            arrProcessIng.length<=0 ) return;
             
-        while (self._nodesProcess.length>0 && 
-            self._nodesProcessIng.length<5)
+        while (arrProcess.length>0 && 
+            arrProcessIng.length<limit)
         {
-            let n:any = self._nodesProcess.shift();
-            self._nodesProcessIng.push(n);
+            let n:any = arrProcess.shift();
+            BLUE.log("processNode act ProcessIng! tag[" + n.tag + "] oriUrl["+n.getUrlori()+"] ");
+            arrProcessIng.push(n);
         }
 
-        for (let i=0;i<self._nodesProcessIng.length; i++)
+        for (let i=0;i<arrProcessIng.length; i++)
         {
-            self._nodesProcessIng[i].process(tm);
+            arrProcessIng[i].process(tm);
         } 
-        for (let i=self._nodesProcessIng.length-1;i>=0; i--) {
-            let n:BlueNode= self._nodesProcessIng[i];
-            if (n.complete())
+        for (let i=arrProcessIng.length-1;i>=0; i--) {
+            let n:BlueNode= arrProcessIng[i];
+            if (n.isComplete())
             {
-                self._nodesProcessIng.splice(i,1);
+
+                BLUE.log("processNode complete! tag[" + n.tag + "] url["+n.getUrl()+"]");
+                arrProcessIng.splice(i,1);
             }
         } 
     }
@@ -66,6 +79,11 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         this._reqHeaders[key] = v;
     }
 
+    public setLimitNodeTags(obj:any)
+    {
+        this._limitTags= obj;
+    }
+
     public processNode(
         tag: NODE_TAG,
         url:string,
@@ -74,7 +92,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         let self = this;
         let ncls = self._nodesMap[tag];
         if (ncls == null) {
-            BLUE.error("processNode  tag[" + tag + "] error!");
+            BLUE.error("processNode error! tag[" + tag + "]");
             return;
 
         }
@@ -86,7 +104,17 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             , data
             , rootData);
         
-        self._nodesProcess.push(n);
+        BLUE.log("processNode add ok! tag[" + tag + "] url["+url+"] ");
+        if (self._limitTags && self._limitTags[tag])
+        {
+            //self._nodesProcessLimit.push(n);
+            self._nodesProcessLimit.unshift(n);
+        }
+        else
+        {
+            //self._nodesProcess.push(n);
+            self._nodesProcess.unshift(n);
+        }
     }
 
 }

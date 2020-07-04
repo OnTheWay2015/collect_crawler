@@ -1,6 +1,6 @@
 
 
-import { BlueNode, NODE_TAG } from "../collects/node";
+import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 

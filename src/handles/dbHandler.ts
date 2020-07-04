@@ -242,7 +242,7 @@ export class DB_CONN{
         }else{
             clt = new MONGO.MongoClient(self._url,self._opts);
         }
-        clt.connect(function (e, db) {
+        clt.connect(function (e:any, db:any) {
             if (e){
                 handle(e,db);
                 return;

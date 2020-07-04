@@ -1,6 +1,6 @@
 //class="itemarea clearfix"
 import * as configs from "../configs";
-import { BlueNode, NODE_TAG } from "../collects/node";
+import { BlueNode } from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 
@@ -33,7 +33,7 @@ export class BN_GradeExTypeList extends BlueNode{
             let url = $(kindHref[0]).attr("href");
             BLUE.notice( "kind["+kindname+"] url:["+url+"]" );
 
-            url = self.getFullUrl(url);
+            url = self.getFullUrl(url,self.getUrl());
 
             let kid = BLUE.getKindid(kindname);
             let itm = {
@@ -47,7 +47,7 @@ export class BN_GradeExTypeList extends BlueNode{
                 , [itm]);
 
             self.addSubNode(
-                NODE_TAG.STEP_1,
+                configs.NODE_TAG.STEP_1,
                 url,
                 { gid:self.mProcessData.gid,kid:kid},
                 self.mRootData);

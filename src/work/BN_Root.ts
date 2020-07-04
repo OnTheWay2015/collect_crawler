@@ -1,81 +1,53 @@
 import * as configs from "../configs";
-import { BlueNode, NODE_TAG } from "../collects/node";
+import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 
-//root : "http://www.aoshu.com/tk/aslxt/"
 export class BN_Root extends BlueNode{
     //@ res HTTP.IncomingMessage
     protected onRequestRes(data: any,res:any): void {
         let self = this;
-
-        data = self.testEncoding(data);
-        //if (cset == HtmlEncoding.gb2312) {
-        //    var iconv = require("iconv-lite");
-        //    data = iconv.decode(data, 'gb2312');//gb2312 转成 utf8
-        //}
-        
         super.onRequestRes(data, res); 
-
-        //this.initItem(
-        //    configs.DB_IP
-        //    ,configs.DB_BASE
-        //    ,configs.DB_COL_GRADES );
-
-        //let itm = {name:"ttt", a:"a",b:123};
-        let itms:any = []; 
         let $ = cheerio.load(data); //采用cheerio模块解析html
+        let itm = {};
         let grades = self.selectDom($,$, [
-            "div[class='borderD']",
-            'div[class="tp10"]',
+            "div[class='header']",
+            'ul[class="nav q"]',
+            "a"
         ]);
         if (grades== null){
             BLUE.error("no grades select")
             return;
         }
         
-        let selectGradeName="em"
-        for (let i=0, len = grades.length;i<len;i++)
+        let cnt = 0; 
+        for (let i=0, len = grades.length;i<len&& cnt <6;i++)
         {
             let gd = grades[i];
-            let gdName = $(gd).find(selectGradeName);
-            if (gdName.length <= 0) {
-                BLUE.error("grade idx[" + i + "] name select none!");
+            let url = $(gd).attr("href");
+            if (url == null || url.length<=1)
+            {
                 continue;
             }
-            let hrefs = self.selectDom($,$(gdName[0]), [
-                'a'
-            ]);
-            if (hrefs.length <= 0) {
-                BLUE.error("grade idx[" + i + "] gdExTypes select hrefs none!");
+            if (url.indexOf('/') != 0)
+            {
                 continue;
             }
-
-            let href = hrefs[0];
-            let name = $(href).text();
-            let gid = BLUE.getGradeid(name);
-            let itm = { gid: gid, desc: name };
-            itms.push(itm);
-            BLUE.log("     >>> grade:" + name);
-            
-            let url = $(href).attr("href");
-            url = self.getFullUrl(url);
-            BLUE.notice("GRADE[" + gid + "] url:[" + url + "]");
-            //self.addProcessData("grade", i + 1);
-            //self.addProcessData("rootName", name);
+            cnt ++;
+            url = self.getFullUrl(url,this.getUrl());
             self.addSubNode(
-                NODE_TAG.STEP_10,
+                configs.NODE_TAG.STEP_1,
                 url,
                 itm,
                 self.mRootData);
             
-           self.addInsertItm( 
-                self.pMain.p_dbgrades
-                , configs.DB_BASE 
-                , configs.DB_COL_GRADES
-                , itms);
+           //self.addInsertItm( 
+           //     self.pMain.p_dbgrades
+           //     , configs.DB_BASE 
+           //     , configs.DB_COL_GRADES
+           //     , itms);
             //test
-            break;
+            //break;
         } 
         
     }

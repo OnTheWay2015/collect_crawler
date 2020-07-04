@@ -26,13 +26,8 @@ export class HttpHandle{
 
     private _headers:any = {};
     private _main!:main;
-    constructor(url:string,main:main,headers?:any) {
-        let self = this;
-        self._main= main;
-        self._onSet(url,headers);
-    }
-
-    private _onSet(url:string,headers?:any){
+    private mReq!:any; 
+    constructor(url:string,main:main,headers:any) {
         let self = this;
         let ust:BLUE.urlST|null = BLUE.transURLSt(url);
         if (ust == null)
@@ -46,6 +41,7 @@ export class HttpHandle{
             self._path = ust.path;
         }
         
+        self._main= main;
         self._headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36",
             "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -57,27 +53,27 @@ export class HttpHandle{
            //"Cookie":"",
            //"Pragma": "no-cache",
         }
-        self.mergeHeaders(self._headers, 
-            self._main.p_nodeMgr.getReqHeaders() );
-        if(headers!=null){
-            self.mergeHeaders(self._headers,headers); 
-        }
+        self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
     }
-
-
     public getHost():string{
         return this._host;
     }
     public getPath():string{
         return this._path;
     }
+    public getHttpProtoStr():string{
+        return this.isHttps()? "https://" : "http://";
+    }
     public isHttps():boolean{
         return this._isHttps;
     }
     //注意大小写
-    private mergeHeaders(def:any, add:any):void{
-        for (let k in add ){
-            def[k] = add[k];
+    private mergeHeaders(def:any, globaladd:any, add:any):void{
+        if (globaladd) {
+            BLUE.mergeObject(def, globaladd);
+        }
+        if (add) {
+            BLUE.mergeObject(def, add);
         }
     }
 
@@ -104,6 +100,13 @@ export class HttpHandle{
         let callback = function (response:HTTP.IncomingMessage) {
             
             //response.setEncoding('utf-8'); //防止中文乱码. 不可乱用.保持原生stream
+            let headers = response.headers;
+            //BLUE.log( JSON.stringify(headers));
+            let contentLength = 0;
+            if(headers["content-length"])
+            {
+                contentLength = parseInt(headers["content-length"]);
+            }
 
             // 不断更新数据
             response.on('data', function (data: string) {
@@ -141,8 +144,18 @@ export class HttpHandle{
                     //   console.log(decoded.toString());
                     //    fs.writeSync(fd, decoded,0, "utf-8");
                     //})
+
+                    if (contentLength > 0 && buf.length != contentLength )
+                    {
+                        onErr(-3, "contentLength["+contentLength+"] recv len["+buf.length+"]  ");
+                        return;
+                    }
                     if (self.isGzip(response)) {
                         zlib.gunzip(buf, function (err: any, decoded:any /*Buffer*/ ) {
+                            if (err != null)
+                            {
+                                BLUE.error( "request zlib err: " + err.message);
+                            }
                             cb(decoded,response);
                             
                             //console.log(decoded.toString());
@@ -171,7 +184,7 @@ export class HttpHandle{
                         })
 
                     } else {
-                        cb(buf.toString(),response);
+                        cb(buf,response);
                     }
                 }
             });
@@ -198,14 +211,37 @@ export class HttpHandle{
             headers: self._headers
         };
 
+        /**
+         报错: Error: getaddrinfo ENOTFOUND http:
+            at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:64:26)
+
+            说明是 host错了,查不出对应的ip
+         */
+
         if (!self._isHttps){
             req = HTTP.request(op, callback);
         }
         else{
-            req = HTTPS.request(op, callback);
+            req = HTTPS.request(op, callback);//https.js  new ClientRequest(...args)
         }
+        
+        req.on('connect', (res, socket, head) => {
+            socket.on('error', (e:any) => {
+                BLUE.error('HTTP.request  connect ====>' + e.message);
+                onErr(-1, e.message);
+            })
+        }).on('error', function (e: any) {
+            BLUE.error('HTTP.request error ====>' + e.message)
+            onErr(-2, e.message);
+        });
+
+        self.mReq = req; 
         req.end();
+
     }
-    public dispose():void{
+    public stop()
+    {
+        this.mReq.cb = null;
+        this.mReq.destroy();
     }
 }

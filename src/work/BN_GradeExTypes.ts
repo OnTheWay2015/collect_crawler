@@ -1,5 +1,5 @@
 import * as configs from "../configs";
-import { BlueNode, NODE_TAG } from "../collects/node";
+import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 
@@ -22,7 +22,7 @@ export class BN_GradeExTypes extends BlueNode{
         for (let i = 0; i < hrefs.length; i++) {
             let url = $(hrefs[i]).attr("href");
             let name  =  $(hrefs[i]).text();
-            url = self.getFullUrl(url);
+            url = self.getFullUrl(url,self.getUrl());
             if (self.isUrlProcess(url)) {
                 continue;
             }
@@ -40,11 +40,20 @@ export class BN_GradeExTypes extends BlueNode{
                 , configs.DB_BASE
                 , configs.DB_COL_EXERCISES
                 , [itm]);
-
+            
+            //.shtml
             self.addSubNode(
-                NODE_TAG.STEP_4,
+                configs.NODE_TAG.STEP_4,//题目内容hhh
                 url,
-                { gid:self.mProcessData.gid,kid:self.mProcessData.kid},
+                { gid:self.mProcessData.gid,kid:self.mProcessData.kid,eid:eid},
+                self.mRootData);
+
+            let s = url.replace(".shtml", "_2.shtml");
+            BLUE.log("step_5 url["+s+"]");
+            self.addSubNode(
+                configs.NODE_TAG.STEP_5,//题目答案
+                s,
+                { gid:self.mProcessData.gid,kid:self.mProcessData.kid,eid:eid},
                 self.mRootData);
             //test
             break;
@@ -63,7 +72,7 @@ export class BN_GradeExTypes extends BlueNode{
             }
             url = self.getFullUrl(url);
             self.addSubNode(
-                NODE_TAG.STEP_2,
+                configs.NODE_TAG.STEP_2,
                 url,
                 { gid:self.mProcessData.gid,kid:self.mProcessData.kid},
                 self.mRootData);

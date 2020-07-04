@@ -9,6 +9,7 @@ import { main } from "../main";
         public pHolder!:main;
         private _tableStore!:{[key:string]:ProcessIF}; 
         private _vec!:ProcessIF[];
+        private _tmInterval:number = 333;
         constructor(holder:main) { 
             let self = this;
             self._tableStore = {};
@@ -16,22 +17,37 @@ import { main } from "../main";
             self.pHolder = holder;
         }
         //let map:{[key:number] : Student} = {};
-        public regeditProcess(ps:ProcessIF):void {
+        public addProcess(ps: ProcessIF): void {
             let self = this;
-            if (self._tableStore[ps.tagName] != null )
-           {
-                BLUE.notice("regeditProcess  name["+name+"] exsit! reset");            
-           } 
-           self._tableStore[ps.tagName] = ps;
-           self._vec.push(ps);
+            if (self._tableStore[ps.tagName] != null) {
+                BLUE.notice("addProcess  name[" + name + "] exsit! reset");
+            }
+            self._tableStore[ps.tagName] = ps;
+            self._vec.push(ps);
         }
 
-        public init(data?:any,cb?:(res:number)=>void){
+        public rmvProcess(ps:ProcessIF):void {
+            let self = this;
+            if (self._tableStore[ps.tagName] == null) {
+                BLUE.notice("rmvProcess  name[" + name + "]not exsit! reset");
+                return;
+            }
+            delete self._tableStore[ps.tagName];
+            for (let i=0; i<self._vec.length;i++)
+            {
+                let proc:ProcessIF = self._vec[i];
+                if (proc.tagName == ps.tagName){
+                    self._vec.splice(i,1);
+                    break;
+                }
+            }            
+        }
+        public init(cb?:(res:number)=>void){
 
         }
 
         public start(){
-            setInterval(this.process.bind(this), 333);
+            setInterval(this.process.bind(this), this._tmInterval);
         }
 
         private process(tm:number){
@@ -39,7 +55,7 @@ import { main } from "../main";
             for (let i=0; i<self._vec.length;i++)
             {
                 let proc:ProcessIF = self._vec[i];
-                proc.update.call(proc,tm); 
+                proc.update.call(proc,self._tmInterval); 
             }            
         }
 

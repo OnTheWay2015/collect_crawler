@@ -1,3 +1,5 @@
+import { BlueNode } from "./collects/node";
+
 export const GET:string="get";
 export const POST:string="post";
 
@@ -21,31 +23,34 @@ export class urlST{
     public path:string= "/";
 }
 
-export function transURLSt(url: string): urlST | null {
-    url = url.toLocaleLowerCase();
+export function transURLSt(u: string): urlST | null {
+    let url = u.toLocaleLowerCase();
     let regHttps = /^[hH]{1}[tT]{2}[pP]{1}[sS]{1}:\/\//;
     let regHttp = /^[hH]{1}[tT]{2}[pP]{1}:\/\//;
     let ret = new urlST();
     if (regHttps.test(url)) {
         ret.isHttps = true;
         url = url.slice(8);
-        log("https act!");
+        //log("https act!");
     }
     else if (regHttp.test(url)) {
         url = url.slice(7);
-        log("http act!");
+        //log("http act!");
     }
     else {
+        error("transURLSt url no http err!");
         return null;
     }
+
     let seg = url.indexOf("/");
     if (seg === -1) {
         ret.host = url;
         ret.path = "/";
     }
     else {
-        ret.host = url.slice(0, seg);
-        ret.path = url.slice(seg);
+        let stidx = ret.isHttps ?  8 :7;
+        ret.host = u.slice(stidx, stidx+seg);
+        ret.path = u.slice(stidx+seg);
 
     }
     return ret;
@@ -71,3 +76,10 @@ export function getExeid(k:string):number{
     return 0;
 }
 
+
+export function mergeObject(to: any, from: any): void {
+    for (let k in from) {
+        to[k] = from[k];
+    }
+    return to;
+}

@@ -1,5 +1,5 @@
-
-import { BlueNode, NODE_TAG } from "../collects/node";
+import * as configs from "../configs";
+import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 
@@ -24,13 +24,10 @@ export class BN_ExTypeContect extends BlueNode{
         else {
             for (let i = 0; i < hrefs.length; i++) {
                 let url = $(hrefs[i]).attr("href");
-                url = self.getFullUrl(url);
-                if(self.isUrlProcess(url) ){
-                    continue;
-                }
+                url = self.getFullUrl(url,self.getUrl());
                 //self.addProcessData("rootName", name);
                 self.addSubNode(
-                    NODE_TAG.STEP_4,
+                    configs.NODE_TAG.STEP_4,
                     url,
                     {},
                     self.mRootData);
@@ -41,48 +38,10 @@ export class BN_ExTypeContect extends BlueNode{
         }
 
 
-        let pageUrls= self.selectDom($,$, [
+        let pages= self.selectDom($,$, [
             'div[class="btn-pages"]',
             'a'
         ]);
-        if (pageUrls.length <= 0) {
-            BLUE.error("BN_ExTypeContent no pages");
-        }
-        else {
-            let urlf = "";
-            let l = pageUrls.length;
-            for (let i = 0; i < l; i++) {
-                let url = $(pageUrls[i]).attr("href");
-                if (url.indexOf('_') >0 )
-                {
-                    urlf = url.slice(0,-7);
-                    break;
-                }
-            }
-
-            if (l > 0 && urlf !="")
-            {
-                for (let i = 0; i < l; i++) {
-                    let url = urlf + i + ".shtml";
-                    url = self.getFullUrl(url);
-
-                    if (self.isUrlProcess(url)) {
-                        continue;
-                    }
-                    self.pMain.p_nodeMgr.processNode(
-                        NODE_TAG.STEP_2,
-                        url,
-                        {},
-                        self.mRootData);
-                    //test
-                    //break;
-
-                }
-                
-            }
-
-        }
-
 
     }
 }
