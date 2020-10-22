@@ -116,7 +116,7 @@ export class BlueNode implements NodeIF {
         {
             let m = metas[i];
             //let charset = $(m).find("content");
-            let cstring= $(m).attr("content");
+            let cstring:any= $(m).attr("content");
             if (cstring.length <= 0) {
                 continue;
             }
@@ -282,7 +282,7 @@ export class BlueNode implements NodeIF {
         let self =this;
         self.setState( NodeState.dbOPok);
     }
-    //todo test more
+    //todo test more.  eg:  "//" "/"
     protected getFullUrl(u: string,refurl:string=""): string {
         let self = this;
         let url = u;
@@ -359,7 +359,13 @@ export class BlueNode implements NodeIF {
             return "";
         }
         let filename = url.substr(idx+1);
-
+        let idx1 =filename.indexOf("?"); 
+        if (idx1 >=0)
+        {
+            filename = filename.substr(0,idx1);
+        }
+        filename = decodeURI(filename); 
+        
         filename= filename.toLocaleLowerCase();
         return filename;
     }
@@ -568,5 +574,12 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
 
 export class BlueNodeFile extends BlueNode 
 {
+    protected onRequestRes(data: any,res:any): void {
+        let self = this;
+        super.onRequestRes(data, res); 
+        BLUE.log("BlueNodeFile act");
+        let filename =this.getFileNameFromUrl();
+        self.writefile(filename,data);
+    }
 }
 

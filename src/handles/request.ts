@@ -36,14 +36,15 @@ export class HttpHandle{
         }
         else{
             self._isHttps = ust.isHttps;
-            self._port = self._isHttps ? 443 : 80;
+            self._port = ust.port>0 ? ust.port : (self._isHttps ? 443 : 80);
             self._host = ust.host;
             self._path = ust.path;
         }
         
         self._main= main;
         self._headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36",
+            "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
+            //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
             "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
            "Accept-Encoding": "gzip, deflate",
            //"Accept-Encoding": "identity",

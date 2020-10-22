@@ -30,13 +30,20 @@ export class main {
     public p_dbexes!: DB_handle;
 
     private _cb:any;
-    public init(cb:()=>void) {
+    public init(
+        cb:()=>void
+        ,dbflag:boolean //是否初始化db
+        ,nds:{tag:string,n:any}[] //注册处理节点
+    ) {
         let self = this;
         self._cb = cb;
-        self.p_dbbase = new DB_CONN(configs.DB_IP, {useUnifiedTopology:true}, {})
-        self.p_dbgrades = new DB_handle(self.p_dbbase);
-        self.p_dbkinds=  new DB_handle(self.p_dbbase);
-        self.p_dbexes= new DB_handle(self.p_dbbase);
+        if (dbflag)
+        {
+            self.p_dbbase = new DB_CONN(configs.DB_IP, { useUnifiedTopology: true }, {})
+            self.p_dbgrades = new DB_handle(self.p_dbbase);
+            self.p_dbkinds = new DB_handle(self.p_dbbase);
+            self.p_dbexes = new DB_handle(self.p_dbbase);
+        }
 
         self.p_procMgr = new ProcessManager(self);
         self.p_nodeMgr= new NodeManager(self);
@@ -44,11 +51,13 @@ export class main {
         self.p_nodeMgr.init();
         self.p_procMgr.addProcess(self.p_nodeMgr);
 
-        self.regNodes();
+        //self.regNodes();
+        self.p_nodeMgr.regNodes(nds);
 
-        //self.initDB(cb);
-        
-        //nodb 
+        if (dbflag)
+        {
+            self.initDB(cb);
+        }
         cb();
     }
 

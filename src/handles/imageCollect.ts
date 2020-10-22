@@ -1,6 +1,5 @@
 
 import * as fs from 'fs';
-import * as request from 'request';
 import { main } from '../main';
 export class imageCollect{
     private _main!:main;

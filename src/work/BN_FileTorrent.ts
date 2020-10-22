@@ -9,7 +9,8 @@ export class BN_FileTorrent extends BlueNodeFile{
     //@ res HTTP.IncomingMessage
     protected onRequestRes(data: any,res:any): void {
         let self = this;
-        super.onRequestRes(data, res); 
+
+        //super.onRequestRes(data, res); 
         
         BLUE.log("BN_FileTorrent act");
 

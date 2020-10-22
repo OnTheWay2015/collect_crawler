@@ -30,7 +30,7 @@ export class BN_GradeExTypeList extends BlueNode{
                 continue;
             }
             let kindname = $(kindHref[0]).text();
-            let url = $(kindHref[0]).attr("href");
+            let url:any = $(kindHref[0]).attr("href");
             BLUE.notice( "kind["+kindname+"] url:["+url+"]" );
 
             url = self.getFullUrl(url,self.getUrl());

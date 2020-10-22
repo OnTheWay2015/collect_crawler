@@ -26,7 +26,7 @@ export class BN_Page extends BlueNode{
             if (pages != null && pages.length > 0) {
                 let pcnt =parseInt($(pages[pages.length-1]).text());
                 let urlDir = PATH.dirname(self.getUrl());
-                let filename = $(pages[1]).attr('href');
+                let filename:any= $(pages[1]).attr('href');
                 //let filename = self.getFileNameFromUrl();
                 let idx = filename.lastIndexOf("_");
                 let idx1 = filename.lastIndexOf(".");
@@ -65,7 +65,7 @@ export class BN_Page extends BlueNode{
             //let aa = $(ele).filter('a');
             let aa = $(ele).find('a');
             aa.each((aidx:number,a:any)=>{
-                let href = $(a).attr('href');
+                let href:any = $(a).attr('href');
                 if (href.indexOf("player")>=0)
                 {
                     links[href] = 1;

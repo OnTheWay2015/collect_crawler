@@ -20,7 +20,7 @@ export class BN_GradeExTypes extends BlueNode{
 
         //题目 list
         for (let i = 0; i < hrefs.length; i++) {
-            let url = $(hrefs[i]).attr("href");
+            let url:any = $(hrefs[i]).attr("href");
             let name  =  $(hrefs[i]).text();
             url = self.getFullUrl(url,self.getUrl());
             if (self.isUrlProcess(url)) {

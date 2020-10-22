@@ -23,7 +23,7 @@ export class BN_ExTypeContect extends BlueNode{
         }
         else {
             for (let i = 0; i < hrefs.length; i++) {
-                let url = $(hrefs[i]).attr("href");
+                let url:any = $(hrefs[i]).attr("href");
                 url = self.getFullUrl(url,self.getUrl());
                 //self.addProcessData("rootName", name);
                 self.addSubNode(

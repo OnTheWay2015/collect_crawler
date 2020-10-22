@@ -1,8 +1,6 @@
 import * as configs from "../configs";
 import { BlueNode, BlueNodeFile } from "../collects/node";
-import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
-import * as FS from 'fs';
 
 export class BN_FileM4A extends BlueNodeFile{
     //@ res HTTP.IncomingMessage
@@ -12,8 +10,6 @@ export class BN_FileM4A extends BlueNodeFile{
         
         BLUE.log("BN_FileM4A act");
 
-        let filename =this.getFileNameFromUrl();
-        self.writefile(filename,data);
     }
 }
 

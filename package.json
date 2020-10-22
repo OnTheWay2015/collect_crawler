@@ -15,11 +15,13 @@
     "@types/cheerio": "^0.22.11",
     "@types/iconv-lite": "^0.0.1",
     "@types/mongodb": "^3.5.23",
+    "@types/mysql": "^2.15.15",
     "@types/puppeteer": "^3.0.0",
     "bufferhelper": "^0.2.1",
     "cheerio": "^1.0.0-rc.3",
     "iconv-lite": "^0.5.1",
     "mongodb": "^3.5.5",
+    "mysql": "^2.18.1",
     "puppeteer": "^4.0.0",
     "systemjs": "^3.1.6",
     "zlib": "^1.0.5"

@@ -25,7 +25,7 @@ export class BN_PageList extends BlueNode{
                 continue;
             }
             let pagename = $(pageHref[0]).text();
-            let url = $(pageHref[0]).attr("href");
+            let url:any = $(pageHref[0]).attr("href");
             BLUE.notice( "page["+pagename+"] url:["+url+"]" );
 
             url = self.getFullUrl(url,self.getUrl());

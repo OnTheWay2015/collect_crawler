@@ -21,6 +21,13 @@ export function setFileDirRoot(path: string) {
 
 export enum NODE_TAG {
     ROOT = "ROOT" ,
+    STEP_CATALOG = "STEP_CATALOG",//对应每个目录项处理
+    STEP_CATALOG_PAGE = "STEP_CATALOG_PAGE",//对应目录页处理
+    STEP_PAGE = "STEP_PAGE",//对应选中页处理
+    STEP_FILE_BASE= "STEP_FILE",//FileBase
+    
+    STEP_FILE_M4A = "STEP_FILE_M4A",//FileM4A
+
     STEP_1 = "STEP_1",
     STEP_10 = "STEP_10",
     STEP_2 = "STEP_2",

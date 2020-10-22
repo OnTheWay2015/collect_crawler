@@ -68,6 +68,18 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         let self =this;
         self._nodesMap[tag] =n; 
     }
+    public regNodes(arr:{tag:string,n:any}[]):void{
+        let self =this;
+        for (let i=0;i<arr.length;i++)
+        {
+            let v:any = arr[i];
+            self._nodesMap[v.tag] =v.n; 
+            if (v.limit)
+            {
+                self.setLimitNodeTag(v.tag,v.limit);
+            }
+        }
+    }
    
     public getReqHeaders():any{
         return this._reqHeaders;
@@ -83,6 +95,14 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
     {
         this._limitTags= obj;
     }
+    public setLimitNodeTag(tag:NODE_TAG, v:boolean)
+    {
+        let self = this;
+        if (!self._limitTags) {
+            self._limitTags = {};
+        }
+        self._limitTags[tag] = v;
+    }
 
     public processNode(
         tag: NODE_TAG,
@@ -92,7 +112,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         let self = this;
         let ncls = self._nodesMap[tag];
         if (ncls == null) {
-            BLUE.error("processNode error! tag[" + tag + "]");
+            BLUE.error("processNode error! tag[" + tag + "] not registered");
             return;
 
         }

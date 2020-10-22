@@ -11,9 +11,6 @@ export class BN_FileImage extends BlueNodeFile{
         super.onRequestRes(data, res); 
         
         BLUE.log("BN_IMAGE act");
-        let filename =this.getFileNameFromUrl();
-        //self.setWritePath("./ttt");
-        self.writefile(filename,data);
     }
 }
 

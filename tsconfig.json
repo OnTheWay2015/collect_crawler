@@ -23,7 +23,7 @@
         //"module": "system",
         //"module": "system",
         "target":"es5",
-        "outDir": "./bin",
+        "outDir": "./s_out",
         "strict": true, /* Enable all strict type-checking options. */
         //"outFile": "./bin/index.js",
         //"declaration":true, //生成 .d.ts
