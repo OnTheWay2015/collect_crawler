@@ -1,3 +1,6 @@
+export const DEBUG_PRINT_PAGE_CONTENT:boolean = false;
+
+
 
 export const DB_IP:string="127.0.0.1";
 export const DB_BASE:string="DB_BASE";
@@ -7,8 +10,8 @@ export const DB_COL_EXERCISES:string="EXERCISES";
 
 
 export const CFG_NODE_PROCESS_CNT:number= 40;
-export const CFG_NODE_PROCESS_LIMIT_CNT:number= 1;
-export const CFG_HTTP_RETRY_CNT:number= 4;
+export const CFG_NODE_PROCESS_LIMIT_CNT:number= 3;
+export const CFG_HTTP_RETRY_CNT:number= 40;
 
 export const HTTP_EXPIRE_TM:number=30000;
 
@@ -19,6 +22,10 @@ export function setFileDirRoot(path: string) {
 }
 
 
+export enum HEADER_TAG {
+    PAGE= "PAGE" 
+    ,AJAX= "AJAX" 
+}
 export enum NODE_TAG {
     ROOT = "ROOT" ,
     STEP_CATALOG = "STEP_CATALOG",//对应每个目录项处理

@@ -1,35 +1,13 @@
-//{
-//    "compilerOptions": {
-//        "module": "system",
-//        "noImplicitAny": true,
-//        "removeComments": true,
-//        "preserveConstEnums": true,
-//        "outDir": "./bin",
-//        //"outFile": "./bin/main.js",
-//        "sourceMap": true
-//    },
-//    "include": [
-//        "src/**/*"
-//    ],
-//    "exclude": [
-//        "node_modules",
-//        "**/*.spec.ts"
-//    ]
-//}
-
 {
     "compilerOptions": {
-        "module": "commonjs",
-        //"module": "system",
-        //"module": "system",
+        "module": "commonjs",/* 用来指定要使用的模块标准: 'none', 'commonjs'(标准输出 JS), 'amd'(ES6 模块写法), 'system', 'umd', 'es2015', or 'ESNext'. */
         "target":"es5",
         "outDir": "./s_out",
-        "strict": true, /* Enable all strict type-checking options. */
+        "strict": true, 
         //"outFile": "./bin/index.js",
         //"declaration":true, //生成 .d.ts
         "sourceMap": true
     },
-
     "types":["node"],
     "typeRoots":["node_modules/@types"],
     "lib": [ "es5"],

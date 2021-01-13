@@ -1,13 +1,14 @@
 import * as configs from "../configs";
 import { HttpHandle, REQ_ERR } from "../handles/request";
-import { DB_item, DB_handle, DB_CONN, DB_OP } from "../handles/dbHandler";
-import { main } from "../main";
+//import { DB_item, DB_handle, DB_CONN, DB_OP } from "../handles/dbHandler";
 import * as BLUE from '../utils';
 import * as cheerio from 'cheerio';
 
 import * as FS from 'fs';
 import * as PATH from 'path';
 import { config } from "process";
+
+//import ax from "axios"
 
 export enum URL_MARK{
     PROCESS= 1,
@@ -41,7 +42,7 @@ export enum URL_MARK{
 
 
 export interface NodeIF{
-    pMain:main;
+    pMain:any;//appmain
     tag:configs.NODE_TAG;
     process(tm:number):void;
     isComplete():Boolean;
@@ -76,14 +77,16 @@ export class BlueNode implements NodeIF {
     protected mSubNodes!:Array<any>;
     //protected mItemDB!:DB_item;
     //protected mDBHandle!:DB_handle;
-    public pMain!: main;
+    public pMain!: any;
     protected mitms!:any; //[]   {dbname:, colname:, itms:[]}
     protected dTM!:number;
     protected expireTM!:number;
     protected mRetryCnt!: number;
+
+    private _method:string= BLUE.GET;
     constructor(tag: configs.NODE_TAG,
         url: string,
-        main: main,
+        main: any,
         data?: any, //{headers,}
         rootData?: any) {
         let self = this;
@@ -224,13 +227,41 @@ export class BlueNode implements NodeIF {
         BLUE.log("AddSubNode tag["+tag+"] url["+url+"]  **FROM**  tag["+this.tag+"] url["+this.getUrl()+"]");
         this.mSubNodes.push({tag:tag,url:url,data:data,rootData:rootData});
     }
+
+    private _useDefHeader:any;
+    public setHttpHeader(h:any): void {
+        this._useDefHeader= h;
+    }
+    public setHttpMethod(m:string ): void {
+        this._method = m;
+    }
+    public debugPrintHeaders()
+    {
+        if (this.mRequest)
+        {
+            this.mRequest.debugPrintHeaders();
+            if (this.mProcessData.postData) {
+                BLUE.log(JSON.stringify(this.mProcessData.postData));   
+            }
+        }
+        else
+        {
+            BLUE.error("error: node request not created! ");
+        }
+    }
     protected setState(s: NodeState): void {
         let self = this;
         self.dTM = 0;
         switch (s) {
             case NodeState.httpReq:
-                let headers = 
-                self.mRequest = new HttpHandle(self.mUrl, self.pMain,self.mProcessData.headers);
+                let h = self._useDefHeader;
+                if (self.mProcessData.headers) {
+                    h = BLUE.mergeObject(h, self.mProcessData.headers);
+                }
+                self.mRequest = new HttpHandle(self.mUrl, self.pMain, h, self._method);
+                if (self.mProcessData.postData) {
+                    self.mRequest.setPostData(self.mProcessData.postData);
+                }
                 self.mRequest.act(self._onRequestRes.bind(self),
                     self.onRequestErr.bind(self));
                 break;
@@ -245,7 +276,7 @@ export class BlueNode implements NodeIF {
                     if ( self.mSubNodes.length > 0){
                         for(let i=0,j=self.mSubNodes.length;i<j;i++){
                             let v = self.mSubNodes[i];
-                            if (this.isUrlProcess(v.url)){
+                            if (this.isUrlProcess(v.url,v.tag)){
                                 continue;
                             }
                             self.pMain.p_nodeMgr.processNode(
@@ -338,6 +369,23 @@ export class BlueNode implements NodeIF {
         return this.mRequest?this.mRequest.getPath() : "";
 
     }
+    protected getPathSingle(url:string)
+    {
+        let str = PATH.dirname(url); 
+        let h = this.getHost();
+        h = h.substr(h.indexOf(".")+1);
+        let i = str.indexOf(h);
+        str = str.substr(i+h.length);
+        return str;
+    }
+    protected getWebSit()
+    {
+        if (this.mRequest.isHttps())
+        {
+            return  "https://" +this.getHost() ;
+        }
+        return  "http://" +this.getHost() ;
+    }
     protected getHost()
     {
         return this.mRequest?this.mRequest.getHost() : "";
@@ -410,12 +458,12 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
     }
 
     //
-    protected addInsertItm(db:DB_handle, dbname:string, colname:string, itms:any){
-        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,itms:itms, op:DB_OP.insert});
+    protected addInsertItm(db:any /*DB_handle*/, dbname:string, colname:string, itms:any){
+        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,itms:itms, op:"DB_OP.insert"});
     }
     
-    protected addupdateItm(db:DB_handle,dbname:string, colname:string, filter:any, itm:any){
-        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,filter:filter, itm:itm, op:DB_OP.update});
+    protected addupdateItm(db:any /*DB_handle */,dbname:string, colname:string, filter:any, itm:any){
+        this.mitms.push({DBHandle:db, dbname:dbname,colname:colname,filter:filter, itm:itm, op:"DB_OP.update"});
     }
 
 
@@ -448,7 +496,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
                 case 302:
                     let lc = res.headers.location;
                     BLUE.error("redirection location["+lc+"]");
-                    if (!self.isUrlProcess(lc))
+                    if (!self.isUrlProcess(lc,self.tag))
                     {
                         self.pMain.redirection(lc, self.tag);
                     }
@@ -483,14 +531,29 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
             res = [op];
         }
 
+        let res_ary = [res];
         for (let i = idx; i < len; i++) {
-            if (res.length <= 0) {
+            if (res_ary.length <= 0) {
                 BLUE.error("selectDom error on sel[" + sels[i - 1] + "]");
                 return [];
             }
-            res = $(res[0]).find(sels[i]);
+            res_ary = this.findhandle($,res_ary,sels,i);
         }
-        return res;
+        return res_ary.length ==1 ? res_ary[0] : res_ary;
+    }
+    private findhandle($:any,res_ary:any,sels:any,idx:number)
+    {
+        let new_res_ary = [];
+        for (let j = 0; j < res_ary.length; j++) {
+            let res = res_ary[j];
+            for (let k = 0; k < res.length; k++) {
+                let r = $(res[k]).find(sels[idx]);
+                if (r.length > 0) {
+                    new_res_ary.push(r);
+                }
+            }
+        }
+        return new_res_ary;
     }
 
     private addUrlProcessMark(url: string): void {
@@ -506,10 +569,21 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         self.mRootData.urlsMark[url] = URL_MARK.PROCESS;
     }
 
-    public isUrlProcess(url:string):boolean{
+    public isUrlProcess(url:string,tag:string=""):boolean{
         let self = this;
+        let clsinfo = self.pMain.p_nodeMgr.getNodeInfo(tag);
+        if (clsinfo && clsinfo.ispost)
+        {
+            return false;
+        }
+
         let marks =  self.mRootData.urlsMark ;
-        return marks!= null && marks[url] != null;
+        let res = marks!= null && marks[url] != null;
+        if (res)
+        {
+            BLUE.error(" Url is Process ["+url+"]");
+        }
+        return res;
     }
 
     protected setWritePath(path:string)
@@ -554,7 +628,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
             } else {
                 BLUE.log(wfile + '写入成功了')
             }
-        })
+        });
     }
 
 
@@ -570,6 +644,11 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
             }
         }
     }
+
+    //protected AX()
+    //{
+    //    return ax;
+    //}
 }
 
 export class BlueNodeFile extends BlueNode 
@@ -582,4 +661,6 @@ export class BlueNodeFile extends BlueNode
         self.writefile(filename,data);
     }
 }
+
+
 

@@ -32,7 +32,7 @@ export class KY_Page extends BlueNode{
             //let downloadpath= $(href).attr("src");
             //let downloadpath= $(href).data();
             //let downloadpath= $(href).val();
-            let node = $(href)[0];
+            let node:any = $(href)[0]; //todo err?
             if (!node.childNodes || node.childNodes.length<=0)
             {
                 continue;    

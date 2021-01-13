@@ -2,8 +2,14 @@ import * as HTTP from 'http';
 import * as HTTPS from 'https';
 import * as BLUE from "../utils"
 import { NodeManager } from '../manager/nodeManager';
-import { main } from '../main';
 import * as zlib from 'zlib';
+import { DEBUG_PRINT_PAGE_CONTENT } from '../configs';
+
+import * as FS from 'fs';
+import { BlueNode } from '../collects/node';
+
+var querystring = require('querystring');
+ 
 
 export enum REQ_ERR {
     E_STATUS=1,
@@ -25,9 +31,9 @@ export class HttpHandle{
     private _method:string= BLUE.GET;
 
     private _headers:any = {};
-    private _main!:main;
+    private _main!:any;
     private mReq!:any; 
-    constructor(url:string,main:main,headers:any) {
+    constructor(url:string,main:any,headers:any,method:string=BLUE.GET) {
         let self = this;
         let ust:BLUE.urlST|null = BLUE.transURLSt(url);
         if (ust == null)
@@ -40,21 +46,26 @@ export class HttpHandle{
             self._host = ust.host;
             self._path = ust.path;
         }
-        
+       
+        self._method = method;
         self._main= main;
-        self._headers = {
-            "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
-            //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
-            "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-           "Accept-Encoding": "gzip, deflate",
-           //"Accept-Encoding": "identity",
-           "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-           //"Connection": "keep-alive",
-           "Cache-Control": "max-age=0",
-           //"Cookie":"",
-           //"Pragma": "no-cache",
-        }
+        //self._headers = {
+        //    "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
+        //    //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
+        //    "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        //   "Accept-Encoding": "gzip, deflate",
+        //   //"Accept-Encoding": "identity",
+        //   "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+        //   //"Connection": "keep-alive",
+        //   "Cache-Control": "max-age=0",
+        //   //"Cookie":"",
+        //   //"Pragma": "no-cache",
+        //}
         self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
+    }
+    public debugPrintHeaders()
+    {
+        BLUE.log(JSON.stringify(this._headers));   
     }
     public getHost():string{
         return this._host;
@@ -84,17 +95,30 @@ export class HttpHandle{
     //public setHost(host:string){
     //    this._host = host;
     //}
-
-    private isGzip(res:HTTP.IncomingMessage):boolean{
+    private isJson(res:HTTP.IncomingMessage)
+    {
         let headers = res.headers;
-        return ((headers["content-encoding"] !=null) && headers["content-encoding"]=="gzip");
+        let key ="content-type";
+        let value="application/json";
+        return ((headers[key] !=null) && headers[key]==value);
+
+    }
+    private isGzip(res:HTTP.IncomingMessage):boolean{
+        //let headers = res.headers;
+        //return ((headers["content-encoding"] !=null) && headers["content-encoding"]=="gzip");
+        
+        let headers = res.headers;
+        let key ="content-encoding";
+        let value="gzip";
+        return ((headers[key] !=null) && headers[key]==value);
     }
     // @res HTTP.IncomingMessage
+    private _buf:any;
+    private _contentLength:number = 0;
     public act(cb:(h:string, res:any)=>void, 
         onErr:(err:REQ_ERR,res:any)=>void) {
         let self = this;
         
-        let buf:any = null
         
         let body = '';
         // 处理响应的回调函数
@@ -103,19 +127,18 @@ export class HttpHandle{
             //response.setEncoding('utf-8'); //防止中文乱码. 不可乱用.保持原生stream
             let headers = response.headers;
             //BLUE.log( JSON.stringify(headers));
-            let contentLength = 0;
-            if(headers["content-length"])
+            if(headers["content-length"] && self._contentLength <= 0 )
             {
-                contentLength = parseInt(headers["content-length"]);
+                self._contentLength = parseInt(headers["content-length"]);
             }
 
             // 不断更新数据
             response.on('data', function (data: string) {
                 body += data;
-                if (buf == null) {
-                    buf = Buffer.from(data);
+                if (!self._buf) {
+                    self._buf = Buffer.from(data);
                 } else {
-                    buf = Buffer.concat([buf, Buffer.from(data)]);
+                    self._buf = Buffer.concat([self._buf, Buffer.from(data)]);
                 }
             });
 
@@ -146,20 +169,40 @@ export class HttpHandle{
                     //    fs.writeSync(fd, decoded,0, "utf-8");
                     //})
 
-                    if (contentLength > 0 && buf.length != contentLength )
+                    if (self._contentLength > 0 && self._buf.length != self._contentLength )
                     {
-                        onErr(-3, "contentLength["+contentLength+"] recv len["+buf.length+"]  ");
+                        onErr(-3, "contentLength["+self._contentLength+"] recv len["+self._buf.length+"]  ");
                         return;
                     }
+                    let htmlstr = self._buf;
                     if (self.isGzip(response)) {
-                        zlib.gunzip(buf, function (err: any, decoded:any /*Buffer*/ ) {
+                        if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log("gzip page download!");
+                        zlib.gunzip(self._buf, function (err: any, decoded:any /*Buffer*/ ) {
                             if (err != null)
                             {
                                 BLUE.error( "request zlib err: " + err.message);
                             }
-                            cb(decoded,response);
+                            htmlstr = decoded.toString()
+                            if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log(htmlstr);
+                            if (DEBUG_PRINT_PAGE_CONTENT) 
+                            {
+                                let wfile = "ttttest.html"
+                                FS.writeFile(wfile, htmlstr, function (error) {
+                                    if (error) {
+                                        BLUE.log(wfile + '写入失败')
+                                    } else {
+                                        BLUE.log(wfile + '写入成功了')
+                                    }
+                                });
+
+                            }
                             
-                            //console.log(decoded.toString());
+                            if (self.isJson(response))
+                            {
+                                htmlstr = JSON.parse(htmlstr);
+                            }
+                            cb(htmlstr,response);
+                            
 
                             //var fs = require('fs');
                             //fs.open('123.txt', 'w+', function (err: any, fd: any) {
@@ -184,9 +227,15 @@ export class HttpHandle{
 
                         })
 
-                    } else {
-                        cb(buf,response);
+                    } 
+                    else
+                    {
+                        if (self.isJson(response)) {
+                            htmlstr = JSON.parse(htmlstr);
+                        }
+                        cb(htmlstr, response);
                     }
+                    
                 }
             });
             response.on('error', function (e:any) {
@@ -202,14 +251,35 @@ export class HttpHandle{
             //}
 
         }
-        // 向服务端发送请求 todo https
+        
+        //断点下载
+        let h = self._headers;  
+        if (self._buf)
+        {
+
+//-----------------
+//Accept-Ranges: bytes
+//Content-Range: bytes 0-2000/4932    //从0开始
+//Content-Length: 2001          //起始和终止都是闭区间
+//-----------------
+            //res.setHeader("Accept-Ranges", "bytes");
+            //res.setHeader("Content-Range", `bytes ${start}-${end}/${total}`);
+            let start = self._buf.length;
+            let end= self._contentLength - 1;
+            let r = {
+                    "Accept-Ranges": "bytes"
+                    ,"Content-Range": "bytes "+start+"-"+end+"/" + self._contentLength
+                };
+            h = BLUE.mergeObject(h,r);
+        }         
+
         let req = null;
         let op = {
             host: self._host,
             port: self._port,
             path: self._path,
             method: self._method,
-            headers: self._headers
+            headers: h
         };
 
         /**
@@ -235,10 +305,25 @@ export class HttpHandle{
             BLUE.error('HTTP.request error ====>' + e.message)
             onErr(-2, e.message);
         });
+        if (self._postData)
+        {
+            let contents = querystring.stringify(self._postData);
+            req.write(contents);
+        }
 
         self.mReq = req; 
         req.end();
 
+    }
+    private _postData:any; 
+    public setPostData(v:any)
+    {
+        this._postData = v;
+//var contents = querystring.stringify({
+//    name:'byvoid',
+//    email:'byvoid@byvoid.com',
+//    address:'Zijing'
+//});
     }
     public stop()
     {

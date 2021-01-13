@@ -5,21 +5,22 @@
    import {BlueNode } from "../collects/node"; 
    import {ManagerBaseIF}  from "./managerBase"; 
 import { ProcessIF } from "./processManager";
-import { main } from "../main";
 export class NodeManager implements ManagerBaseIF, ProcessIF {
     public tagName: string = "NodeManager";
     //private _nodesMap!:{[key:NODE_TAG]:BlueNode};
     private _limitTags!:any;
     private _nodesMap!:any;
+    private _nodeInfos!:any;
     private _nodesProcess!:Array<BlueNode>;
     private _nodesProcessIng!:Array<BlueNode>;
     private _nodesProcessLimit!:Array<BlueNode>;
     private _nodesProcessIngLimit!:Array<BlueNode>;
     private _reqHeaders:any = {};
-    public pHolder!:main;
-    constructor(holder: main) {
+    public pHolder!:any;//appmain
+    constructor(holder: any) {
         let self = this;
         self._nodesMap = {};
+        self._nodeInfos= {};
         self._nodesProcess = [];
         self._nodesProcessIng = [];
         self._nodesProcessLimit = [];
@@ -74,19 +75,23 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         {
             let v:any = arr[i];
             self._nodesMap[v.tag] =v.n; 
+            self._nodeInfos[v.tag] =v; 
             if (v.limit)
             {
                 self.setLimitNodeTag(v.tag,v.limit);
             }
         }
     }
-   
+    public getNodeInfo(tag:string)
+    {
+        return this._nodeInfos[tag]; 
+    }
     public getReqHeaders():any{
         return this._reqHeaders;
     }
 
 
-    //必须注意大小写 和 默认的写法
+    //必须注意大小写 和 默认的写法, 当前是同步cookie
     public updateHeaders(key:string,v:string):void{
         this._reqHeaders[key] = v;
     }
@@ -116,7 +121,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             return;
 
         }
-        let n = new ncls( 
+        let n:BlueNode= new ncls( 
             tag
             ,url
             ,self.pHolder
@@ -124,6 +129,17 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             , data
             , rootData);
         
+            let clsinfo =self._nodeInfos[tag]; 
+        if (clsinfo.ispost)
+        {
+            n.setHttpMethod(BLUE.POST);
+            n.setHttpHeader(self.pHolder.getDefHeaders(configs.HEADER_TAG.AJAX));
+        }
+        else
+        {
+            n.setHttpHeader(self.pHolder.getDefHeaders(configs.HEADER_TAG.PAGE));
+        }
+
         BLUE.log("processNode add ok! tag[" + tag + "] url["+url+"] ");
         if (self._limitTags && self._limitTags[tag])
         {

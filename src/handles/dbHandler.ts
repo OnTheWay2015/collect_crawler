@@ -212,223 +212,223 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
 
  */
 
-import * as MONGO from "mongodb";
+//import * as MONGO from "mongodb";
 import * as BLUE from '../utils';
 export enum DB_OP {
     insert=1,
     update,
 }
 
-export class DB_CONN{
-    private _dbClients:any = [];
-    private _url!:string;
-    private _opts!:MONGO.MongoClientOptions;
-    private _data!:any;
-    constructor( url:string
-        ,opts:MONGO.MongoClientOptions
-        ,data:any){
-        this._url ="mongodb://" +  url;
-        this._opts = opts;
-        this._data = data;
-    }
-    public free(db:MONGO.MongoClient) {
-        this._dbClients.push(db);
-    }
-    public conndo(handle:(err:MONGO.MongoError,db:MONGO.MongoClient)=>void) {
-        let self = this;
-        let clt:MONGO.MongoClient;
-        if (self._dbClients.length > 0 ){
-            clt = self._dbClients.pop();
-        }else{
-            clt = new MONGO.MongoClient(self._url,self._opts);
-        }
-        clt.connect(function (e:any, db:any) {
-            if (e){
-                handle(e,db);
-                return;
-            }
-            handle(e, db);
-         } );
-    }
-}
-
-export class DB_handle{
-    private _conn!:DB_CONN;
-    constructor( conn:DB_CONN){
-        this._conn = conn;
-    }
-    public createDB(dbname:string, handle:any) {
-        let self = this;
-        self._conn.conndo( (err:any, db:any)=> { 
-            if (err) 
-            {
-                BLUE.notice("db["+dbname+"] createDB err["+err.message+"]!"); 
-                handle(err,null);
-                return;
-            }
-            let dbase = db.db(dbname);
-            let colname = "dbcreate";
-            dbase.createCollection(colname, function (e:any, res:any) {
-                if (e) {
-                    self._conn.free(db);
-                    BLUE.notice("db["+dbname+"] collect["+colname+"] createIndex err["+e.message+"]!"); 
-                    handle(e,null); 
-                    return;
-                }
-                self._conn.free(db);
-                BLUE.notice("db["+dbname+"] collect["+colname+"] created!"); 
-                handle(err,null); 
-            });
-        });
-    }
-    public createIndex( handle:(err:any,res:any)=>void, 
-        dbname: string, colname: string, indexobj: any, unique: boolean = false) {
-        let self = this;
-        self._conn.conndo(function (err, db) {
-            if (err) {
-                self._conn.free(db);
-                BLUE.notice("db["+dbname+"] collect["+colname+"] createIndex err["+err.message+"]!"); 
-                handle(err, null);
-                return;
-            }
-            let dbop: any = db.db(dbname);
-            let col:any = dbop.collection(colname);
-            col.createIndex( 
-                indexobj
-                ,{unique:unique}
-                ,handle );
-        });
-    }
-
-    public insert(dbname:string, colname:string,
-        itms:any,handle:(err:any,res:any)=>void ){
-        let self = this;
-        self._conn.conndo(function (err, db) {
-            if (err){
-                self._conn.free(db);
-                BLUE.notice("db["+dbname+"] collect["+colname+"] insert err["+err.message+"]!"); 
-                handle(err,itms);
-                return;
-            }
-            let dbop:any= db.db(dbname);
-            let col = dbop.collection(colname);
-            //col.insertOne(itms, function (err: any, res: any) {
-            col.insertMany(itms, function (e: any, res: any) {
-                if (e) {
-                    self._conn.free(db);
-                    BLUE.notice("db["+dbname+"] collect["+colname+"] insert err["+e.message+"]!"); 
-                    handle(e, itms);
-                    return;
-                }
-                self._conn.free(db);
-                handle(e, itms);
-            });
-        });
-    }
-    public select( dbname:string, colname:string,
-         filter:any,handle:(err:any,res:any)=>void ){
-        let self = this;
-        self._conn.conndo(function (err, db) {
-            if (err){
-                self._conn.free(db);
-                    BLUE.notice("db["+dbname+"] collect["+colname+"] select err["+err.message+"]!"); 
-                handle(err,null);
-                return;
-            }
-            let dbop:any= db.db(dbname);
-            let col = dbop.collection(colname);
-            col.find(filter).toArray(function (e: any, res: any) {
-                if (e) {
-                    self._conn.free(db);
-                    BLUE.notice("db["+dbname+"] collect["+colname+"] select err["+e.message+"]!"); 
-                    handle(e, null);
-                    return;
-                }
-                self._conn.free(db);
-                handle(e, res);
-            });
-        });
-    }
-
-    public delete( dbname:string, colname:string,
-        filter:any,handle:(err:any,res:any)=>void ){
-        let self = this;
-        self._conn.conndo(function (err, db) {
-            if (err){
-                self._conn.free(db);
-                handle(err,null);
-                return;
-            }
-            let dbop:any= db.db(dbname);
-            let col = dbop.collection(colname);
-            col.deleteOne(filter, function (err: any, res: any) {
-                if (err) {
-                    self._conn.free(db);
-                    handle(err, null);
-                    return;
-                }
-                self._conn.free(db);
-                handle(err, null);
-            });
-        });
-    }
-
-    public update( dbname:string, colname:string,
-        filter:any, itm:any,handle:(err:any,res:any)=>void ){
-        let self = this;
-        self._conn.conndo(function (err, db) {
-            if (err){
-                self._conn.free(db);
-                handle(err,null);
-                return;
-            }
-            let dbop:any= db.db(dbname);
-            let col = dbop.collection(colname);
-            col.updateOne(filter,itm, function (err: any, res: any) {
-                if (err) {
-                    self._conn.free(db);
-                    handle(err, null);
-                    return;
-                }
-                self._conn.free(db);
-                handle(err, null);
-            });
-        });
-    }
-
-}
-
-export class DB_item {
-    private _fields!:any;
-    private _dbname!:string;
-    private _colname!:string;
-    private _dbop!:DB_handle;
-    constructor(conn:DB_CONN,dbname:string,colname:string) {
-        //this._url ="mongodb://" +  url;
-        this._dbname = dbname;
-        this._colname = colname;
-        this._dbop = new DB_handle(conn);
-    }
-    public setdata(fields:any){
-        this._fields= fields;
-    }
-    public setdatas(fields:any){
-        this._fields= fields;
-    }
-    public insert(handle:(err:any,res:any)=>void){
-        //let cb = (err:any,d:any)=>{}; 
-       
-       
-       
-     
-        let self =  this; 
-        self._dbop.insert(
-            self._dbname
-            ,self._colname
-            ,self._fields
-            ,handle)
-    }
-}
+//export class DB_CONN{
+//    private _dbClients:any = [];
+//    private _url!:string;
+//    private _opts!:MONGO.MongoClientOptions;
+//    private _data!:any;
+//    constructor( url:string
+//        ,opts:MONGO.MongoClientOptions
+//        ,data:any){
+//        this._url ="mongodb://" +  url;
+//        this._opts = opts;
+//        this._data = data;
+//    }
+//    public free(db:MONGO.MongoClient) {
+//        this._dbClients.push(db);
+//    }
+//    public conndo(handle:(err:MONGO.MongoError,db:MONGO.MongoClient)=>void) {
+//        let self = this;
+//        let clt:MONGO.MongoClient;
+//        if (self._dbClients.length > 0 ){
+//            clt = self._dbClients.pop();
+//        }else{
+//            clt = new MONGO.MongoClient(self._url,self._opts);
+//        }
+//        clt.connect(function (e:any, db:any) {
+//            if (e){
+//                handle(e,db);
+//                return;
+//            }
+//            handle(e, db);
+//         } );
+//    }
+//}
+//
+//export class DB_handle{
+//    private _conn!:DB_CONN;
+//    constructor( conn:DB_CONN){
+//        this._conn = conn;
+//    }
+//    public createDB(dbname:string, handle:any) {
+//        let self = this;
+//        self._conn.conndo( (err:any, db:any)=> { 
+//            if (err) 
+//            {
+//                BLUE.notice("db["+dbname+"] createDB err["+err.message+"]!"); 
+//                handle(err,null);
+//                return;
+//            }
+//            let dbase = db.db(dbname);
+//            let colname = "dbcreate";
+//            dbase.createCollection(colname, function (e:any, res:any) {
+//                if (e) {
+//                    self._conn.free(db);
+//                    BLUE.notice("db["+dbname+"] collect["+colname+"] createIndex err["+e.message+"]!"); 
+//                    handle(e,null); 
+//                    return;
+//                }
+//                self._conn.free(db);
+//                BLUE.notice("db["+dbname+"] collect["+colname+"] created!"); 
+//                handle(err,null); 
+//            });
+//        });
+//    }
+//    public createIndex( handle:(err:any,res:any)=>void, 
+//        dbname: string, colname: string, indexobj: any, unique: boolean = false) {
+//        let self = this;
+//        self._conn.conndo(function (err, db) {
+//            if (err) {
+//                self._conn.free(db);
+//                BLUE.notice("db["+dbname+"] collect["+colname+"] createIndex err["+err.message+"]!"); 
+//                handle(err, null);
+//                return;
+//            }
+//            let dbop: any = db.db(dbname);
+//            let col:any = dbop.collection(colname);
+//            col.createIndex( 
+//                indexobj
+//                ,{unique:unique}
+//                ,handle );
+//        });
+//    }
+//
+//    public insert(dbname:string, colname:string,
+//        itms:any,handle:(err:any,res:any)=>void ){
+//        let self = this;
+//        self._conn.conndo(function (err, db) {
+//            if (err){
+//                self._conn.free(db);
+//                BLUE.notice("db["+dbname+"] collect["+colname+"] insert err["+err.message+"]!"); 
+//                handle(err,itms);
+//                return;
+//            }
+//            let dbop:any= db.db(dbname);
+//            let col = dbop.collection(colname);
+//            //col.insertOne(itms, function (err: any, res: any) {
+//            col.insertMany(itms, function (e: any, res: any) {
+//                if (e) {
+//                    self._conn.free(db);
+//                    BLUE.notice("db["+dbname+"] collect["+colname+"] insert err["+e.message+"]!"); 
+//                    handle(e, itms);
+//                    return;
+//                }
+//                self._conn.free(db);
+//                handle(e, itms);
+//            });
+//        });
+//    }
+//    public select( dbname:string, colname:string,
+//         filter:any,handle:(err:any,res:any)=>void ){
+//        let self = this;
+//        self._conn.conndo(function (err, db) {
+//            if (err){
+//                self._conn.free(db);
+//                    BLUE.notice("db["+dbname+"] collect["+colname+"] select err["+err.message+"]!"); 
+//                handle(err,null);
+//                return;
+//            }
+//            let dbop:any= db.db(dbname);
+//            let col = dbop.collection(colname);
+//            col.find(filter).toArray(function (e: any, res: any) {
+//                if (e) {
+//                    self._conn.free(db);
+//                    BLUE.notice("db["+dbname+"] collect["+colname+"] select err["+e.message+"]!"); 
+//                    handle(e, null);
+//                    return;
+//                }
+//                self._conn.free(db);
+//                handle(e, res);
+//            });
+//        });
+//    }
+//
+//    public delete( dbname:string, colname:string,
+//        filter:any,handle:(err:any,res:any)=>void ){
+//        let self = this;
+//        self._conn.conndo(function (err, db) {
+//            if (err){
+//                self._conn.free(db);
+//                handle(err,null);
+//                return;
+//            }
+//            let dbop:any= db.db(dbname);
+//            let col = dbop.collection(colname);
+//            col.deleteOne(filter, function (err: any, res: any) {
+//                if (err) {
+//                    self._conn.free(db);
+//                    handle(err, null);
+//                    return;
+//                }
+//                self._conn.free(db);
+//                handle(err, null);
+//            });
+//        });
+//    }
+//
+//    public update( dbname:string, colname:string,
+//        filter:any, itm:any,handle:(err:any,res:any)=>void ){
+//        let self = this;
+//        self._conn.conndo(function (err, db) {
+//            if (err){
+//                self._conn.free(db);
+//                handle(err,null);
+//                return;
+//            }
+//            let dbop:any= db.db(dbname);
+//            let col = dbop.collection(colname);
+//            col.updateOne(filter,itm, function (err: any, res: any) {
+//                if (err) {
+//                    self._conn.free(db);
+//                    handle(err, null);
+//                    return;
+//                }
+//                self._conn.free(db);
+//                handle(err, null);
+//            });
+//        });
+//    }
+//
+//}
+//
+//export class DB_item {
+//    private _fields!:any;
+//    private _dbname!:string;
+//    private _colname!:string;
+//    private _dbop!:DB_handle;
+//    constructor(conn:DB_CONN,dbname:string,colname:string) {
+//        //this._url ="mongodb://" +  url;
+//        this._dbname = dbname;
+//        this._colname = colname;
+//        this._dbop = new DB_handle(conn);
+//    }
+//    public setdata(fields:any){
+//        this._fields= fields;
+//    }
+//    public setdatas(fields:any){
+//        this._fields= fields;
+//    }
+//    public insert(handle:(err:any,res:any)=>void){
+//        //let cb = (err:any,d:any)=>{}; 
+//       
+//       
+//       
+//     
+//        let self =  this; 
+//        self._dbop.insert(
+//            self._dbname
+//            ,self._colname
+//            ,self._fields
+//            ,handle)
+//    }
+//}
 
 
 //查找结果

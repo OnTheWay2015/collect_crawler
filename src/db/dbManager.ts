@@ -1,14 +1,13 @@
 import { ProcessIF } from "../manager/processManager";
 import * as BLUE from "./../utils"; 
-import { main } from "../main";
 import { ManagerBaseIF } from "../manager/managerBase";
-import * as mysql from "mysql"
+//import * as mysql from "mysql"
 
 export class DbManager implements ManagerBaseIF, ProcessIF {
     //----------------------
-    public pHolder!: main;
+    public pHolder!: any;//appmain
     private _confs: any;
-    constructor(holder: main) {
+    constructor(holder: any) {
         let self = this;
         self.pHolder = holder;
         self._pools = {};
@@ -30,15 +29,16 @@ export class DbManager implements ManagerBaseIF, ProcessIF {
             return this._pools[database];
         }
         let conf = this._confs;
-        var pool = mysql.createPool({
-            host: conf.host,
-            user: conf.user,
-            password: conf.password,
-            database: database,
-            //database : 'testbase'
-        });
-        this._pools[conf.database] = pool;
-        return pool;
+        //var pool = mysql.createPool({
+        //    host: conf.host,
+        //    user: conf.user,
+        //    password: conf.password,
+        //    database: database,
+        //    //database : 'testbase'
+        //});
+        //this._pools[conf.database] = pool;
+        //return pool;
+        return null;
     };
 
     private _tableKeys: any;

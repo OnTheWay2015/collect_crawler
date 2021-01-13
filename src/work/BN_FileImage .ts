@@ -3,7 +3,6 @@ import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
 import * as FS from 'fs';
 
-//step1 : 各年级习题分类
 export class BN_FileImage extends BlueNodeFile{
     //@ res HTTP.IncomingMessage
     protected onRequestRes(data: any,res:any): void {

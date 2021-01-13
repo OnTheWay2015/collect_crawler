@@ -1,10 +1,8 @@
 
-import * as fs from 'fs';
-import { main } from '../main';
 export class imageCollect{
-    private _main!:main;
+    private _main!:any;
     private _url!:string;
-    constructor(url:string,main:main,headers?:any) {
+    constructor(url:string,main:any,headers?:any) {
         let self = this;
         self._main= main;
         self._url  = url;

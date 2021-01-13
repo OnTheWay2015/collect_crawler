@@ -1,16 +1,15 @@
    import * as BLUE from "./../utils"; 
    import {ManagerBaseIF}  from "./managerBase"; 
-import { main } from "../main";
    export interface ProcessIF {
             update(tm:number):void;
             readonly tagName:string;
     }
     export class ProcessManager implements  ManagerBaseIF{
-        public pHolder!:main;
+        public pHolder!:any; //appmain
         private _tableStore!:{[key:string]:ProcessIF}; 
         private _vec!:ProcessIF[];
         private _tmInterval:number = 333;
-        constructor(holder:main) { 
+        constructor(holder:any) { 
             let self = this;
             self._tableStore = {};
             self._vec = [];

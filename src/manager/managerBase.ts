@@ -1,6 +1,5 @@
-import { main } from "../main";
 export interface ManagerBaseIF {
-    pHolder:main
+    pHolder:any; //appmain
     init(cb?:(res:number)=>void): void;
 }
 
