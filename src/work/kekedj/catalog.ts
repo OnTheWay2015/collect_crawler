@@ -27,8 +27,8 @@ export class Catalog extends BlueNode{
             BLUE.error("catalog["+self.getUrl()+"] no pages!")
             return;
         }
-        //for (let i=1, len = pgst.pagecount;i<=len;i++)
-        for (let i=1, len = pgst.pagecount;i<=2;i++)
+        for (let i=1, len = pgst.pagecount;i<=len;i++)
+        //for (let i=1, len = pgst.pagecount;i<=2;i++)
         {
             let url = pgst.getUrl(i);
             url = self.getFullUrl(url,self.getUrl());
