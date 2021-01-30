@@ -1,18 +1,19 @@
 import { BlueNode } from "./collects/node";
+import { LOG_ERROR, LOG_NOTICE, LOG_WARING } from "./configs";
 
 export const GET:string="get";
 export const POST:string="post";
 
 export function log(str:string){
-    console.log(str);
+    if (LOG_NOTICE) console.log(str);
 }
 export function notice(str:string){
-    console.log(str);
+    if (LOG_WARING) console.log(str);
 }
 export function error(str:string){
     //let e = Error();
     //console.log(e.stack);
-    console.error(str);
+    if (LOG_ERROR) console.error(str);
 }
 
 

@@ -46,7 +46,8 @@ export interface NodeIF{
     tag:configs.NODE_TAG;
     process(tm:number):void;
     isComplete():Boolean;
-    setComplete(b:Boolean):void;
+    setComplete(b: Boolean): void;
+    debugString(): string;
     //onRequestRes(htmlStr:string):void;
 }
 enum HtmlEncoding{
@@ -73,7 +74,7 @@ export class BlueNode implements NodeIF {
     protected mUrl!: string;
     protected mState!: NodeState;
     protected mComplete!: Boolean;
-    protected mRequest!: HttpHandle;
+    protected mRequest!: HttpHandle|null;
     protected mSubNodes!:Array<any>;
     //protected mItemDB!:DB_item;
     //protected mDBHandle!:DB_handle;
@@ -98,10 +99,26 @@ export class BlueNode implements NodeIF {
         self.mState = NodeState.default;
         self.mRetryCnt = 0;
         //self.mDBHandle = new DB_handle(dbconn);
-        
+       
         self.mitms = [];
         self.mSubNodes = [];
         self.addUrlProcessMark(url);
+        self.init();
+        self.expireTM = this.getExpireTm();
+    }
+    private init(): void {
+        this.onInit();
+    }
+    //to be override
+    protected onInit(): void {
+    }
+    protected setExpireTm(v:number)
+    {
+        this.expireTM = v;
+    }
+    protected getExpireTm()
+    {
+        return this.expireTM > 0 ? this.expireTM : configs.HTTP_EXPIRE_TM;
     }
 
     /**
@@ -148,13 +165,20 @@ export class BlueNode implements NodeIF {
         }
         return htmlbuf;
     }
-    private retry()
+    private _resetflag:boolean = false;
+    private retry(reset:boolean=true)
     {
         let self =this;
-        self.mRequest.stop();
         self.mState = NodeState.default;
         self.dTM= 0;
         self.mRetryCnt++;
+        if (reset)
+        {
+            self._resetflag = reset;
+            if (self.mRequest) self.mRequest.stop();
+            self.mRequest = null ;
+        }
+        BLUE.error("retry tag["+self.tag+"] buf_length["+ (self.mRequest? self.mRequest.getBufLength() : 0 )+"] url["+decodeURI(self.getUrl())+"] reset["+reset+"]");
     }
 
     public process(tm: number): void {
@@ -164,7 +188,7 @@ export class BlueNode implements NodeIF {
         }
         self.dTM += tm;
         if ( NodeState.httpReq == self.mState && 
-            self.dTM > configs.HTTP_EXPIRE_TM)
+            self.dTM > self.expireTM )
         {
             if (self.mRetryCnt >= configs.CFG_HTTP_RETRY_CNT)
             {
@@ -173,7 +197,8 @@ export class BlueNode implements NodeIF {
             }
             else
             {
-                self.retry();
+                //BLUE.error("retry on tmexpire   tag["+self.tag+"] url["+ decodeURI(self.getUrl())+"]");
+                self.retry(true);
             }
             return;
         }
@@ -182,7 +207,7 @@ export class BlueNode implements NodeIF {
                 self.setState(NodeState.httpReq);
                 break;
             case NodeState.onHttpReqOK:
-                    self.mRequest.stop();
+                    if (self.mRequest) self.mRequest.stop();
                     self.setState(NodeState.dbOP);
                 break;
             case NodeState.dbOPok:
@@ -218,7 +243,14 @@ export class BlueNode implements NodeIF {
         let self = this;
         self.mComplete = b ;
     }
-
+    public debugString(): string
+    {
+        let self = this;
+        let bufstr = self.mRequest ? self.mRequest.getBufLength() : 0;
+        let datastr = self.mProcessData? JSON.stringify(self.mProcessData) : "";
+        return "tag["+self.tag+"] state["+self.mState+"] url["+ decodeURI(self.getUrl())+"] buf_length["+bufstr+"] processData["+datastr+"]" ;
+    }
+    
     protected addSubNode(
         tag: configs.NODE_TAG,
         url:string,
@@ -258,12 +290,19 @@ export class BlueNode implements NodeIF {
                 if (self.mProcessData.headers) {
                     h = BLUE.mergeObject(h, self.mProcessData.headers);
                 }
-                self.mRequest = new HttpHandle(self.mUrl, self.pMain, h, self._method);
+                if (self.mRequest)
+                {
+
+                }
+                else
+                {
+                    self.mRequest = new HttpHandle(self.mUrl, self.pMain, h, self._method);
+                }
                 if (self.mProcessData.postData) {
                     self.mRequest.setPostData(self.mProcessData.postData);
                 }
                 self.mRequest.act(self._onRequestRes.bind(self),
-                    self.onRequestErr.bind(self));
+                    self.onRequestErr.bind(self),self._resetflag, self.rangflag());
                 break;
             case NodeState.dbOP:
                     if (self.mitms && self.mitms.length>0) {
@@ -292,7 +331,11 @@ export class BlueNode implements NodeIF {
         }
         self.mState = s;
     }
-
+    private rangflag()
+    {
+        return false;
+        //return this.tag == configs.NODE_TAG.STEP_FILE_BASE || this.tag == configs.NODE_TAG.STEP_FILE_M4A;
+    }
     private nextUpdateDB(err:any, itmsOP:any){
         let self = this;
         let itms:any = self.mitms;
@@ -324,13 +367,13 @@ export class BlueNode implements NodeIF {
             return u;
         }
 
-
+        let mreq:any = self.mRequest ? self.mRequest : null;
         let regDivD = /^\/\//;
         if (regDivD.test(url) ){
-            return self.mRequest.isHttps() ? "https:" + u:"http:" + u;
+            return mreq.isHttps() ? "https:" + u:"http:" + u;
         }
         let relative = url.indexOf("/") != 0 ;//相对路径
-        let rpath = refurl==""? self.mRequest.getHost():PATH.dirname(refurl); 
+        let rpath = refurl==""? mreq.getHost():PATH.dirname(refurl); 
         if (relative) 
         {
             url = rpath + "/" + u;
@@ -338,7 +381,7 @@ export class BlueNode implements NodeIF {
         else
         {
             url = self.getHost() + url;
-            url = self.mRequest.isHttps() ?
+            url = mreq.isHttps() ?
                 "https://" + url : "http://" + url;
         }    
         return url; 
@@ -380,7 +423,7 @@ export class BlueNode implements NodeIF {
     }
     protected getWebSit()
     {
-        if (this.mRequest.isHttps())
+        if (this.mRequest&& this.mRequest.isHttps())
         {
             return  "https://" +this.getHost() ;
         }
@@ -476,26 +519,50 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         let self = this; 
         if (e==-1)
         {//connect error
-            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+self.getUrl()+"]");
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+ decodeURI(self.getUrl())+"]");
+            //BLUE.error("retry tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
             self.retry();
             return ;
         }
-        if (e==-2 )
+        if (e==-2)
         {//other unknow error
-            self.setComplete(true);
-            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+self.getUrl()+"]");
+            //read ECONNRESET
+            //socket hang up
+            //self.setComplete(true); //会触发这个错误时，也可能触发了 e=-3 
+            
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            let r = self.mRequest ? self.mRequest.getBufLength() > 0 :  false;
+            self.retry( !r );
             return;
         }
         if (e==-3 )
         {//请求获得的内容长度不对
             //self.setComplete(true);
-            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+self.getUrl()+"]");
-            BLUE.log("retry tag["+self.tag+"] url["+self.getUrl()+"]");
-            self.retry();
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            //BLUE.error("retry tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            //self.retry(false);
+            return;
+        }
+        if (e==-4)
+        {//request json error
+            self.setComplete(true);
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            return;
+        }
+        if (e==-6)
+        {//request 206 //断点续传下载 
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            self.retry( false );
+            return;
+        }
+        if (e==-7)
+        {//request 请求结束,内容总长度不对 
+            BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+decodeURI(self.getUrl())+"]");
+            self.retry( true );
             return;
         }
         let state = res.statusCode;
-        BLUE.error("onRequestErr tag["+self.tag+"] http state["+state+"] url["+self.getUrl()+"]");
+        BLUE.error("onRequestErr tag["+self.tag+"] http state["+state+"] url["+decodeURI(self.getUrl())+"]");
         if (e == REQ_ERR.E_STATUS){
             switch (state){
                 case 301:
@@ -665,6 +732,11 @@ export class BlueNodeFile extends BlueNode
         BLUE.log("BlueNodeFile act");
         let filename =this.getFileNameFromUrl();
         self.writefile(filename,data);
+    }
+
+    protected onInit(): void {
+        super.onInit();
+        this.setExpireTm( configs.FILE_EXPIRE_TM );
     }
 }
 

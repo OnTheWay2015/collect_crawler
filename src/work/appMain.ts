@@ -84,18 +84,18 @@ export class appMain {
 
     //todo processData option function 
     //todo save and clear
-    protected workStart(url:string) {
+    protected workStart(url:string, t:NODE_TAG) {
         let self = this;
         self.p_procMgr.start();
-        self._start(url);
+        self._start(url,t);
     }
     public test(url:string, t:NODE_TAG ) {
         let self = this;
         self.p_nodeMgr.processNode(t,url,{},{});
     }
-    private _start(url: string): void {
+    private _start(url: string, t:NODE_TAG=NODE_TAG.ROOT): void {
         let self = this;
-        self.p_nodeMgr.processNode(NODE_TAG.ROOT, url, {}, self._processData);
+        self.p_nodeMgr.processNode(t, url, {}, self._processData);
     }
 
     public redirection(location: string, curr:NODE_TAG): void {

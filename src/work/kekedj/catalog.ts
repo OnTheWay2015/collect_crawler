@@ -27,9 +27,11 @@ export class Catalog extends BlueNode{
             BLUE.error("catalog["+self.getUrl()+"] no pages!")
             return;
         }
-        for (let i=1, len = pgst.pagecount;i<=len;i++)
-        //for (let i=1, len = pgst.pagecount;i<=2;i++)
+        //for (let i=1, len = pgst.pagecount;i<=len;i++)
+        //for (let i=7, len = pgst.pagecount;i<=len;i++)
+        for (let i=0, len = pgst.pagecount;i<300;i++)
         {
+            //let url = "https://www.kekedj.com/music/list-0-0-7-0-131-0-0.html";
             let url = pgst.getUrl(i);
             url = self.getFullUrl(url,self.getUrl());
             self.addSubNode(

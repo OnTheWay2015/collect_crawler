@@ -1,4 +1,7 @@
 export const DEBUG_PRINT_PAGE_CONTENT:boolean = false;
+export const LOG_NOTICE:boolean = true;
+export const LOG_WARING:boolean = true;
+export const LOG_ERROR:boolean  = true;
 
 
 
@@ -10,10 +13,11 @@ export const DB_COL_EXERCISES:string="EXERCISES";
 
 
 export const CFG_NODE_PROCESS_CNT:number= 40;
-export const CFG_NODE_PROCESS_LIMIT_CNT:number= 3;
-export const CFG_HTTP_RETRY_CNT:number= 40;
+export const CFG_NODE_PROCESS_LIMIT_CNT:number= 15;
+export const CFG_HTTP_RETRY_CNT:number= 5;
 
-export const HTTP_EXPIRE_TM:number=30000;
+export const HTTP_EXPIRE_TM:number=30 * 1000;
+export const FILE_EXPIRE_TM:number= 240 *60 * 1000;
 
 export let FILE_DIR_ROOT: string = "./ttt";
 

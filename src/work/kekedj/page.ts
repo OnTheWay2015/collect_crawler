@@ -3,6 +3,7 @@ import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
 import * as PATH from 'path';
+import * as FS from 'fs';
 
 export class Page extends BlueNode{
     //@ res HTTP.IncomingMessage
@@ -25,13 +26,46 @@ export class Page extends BlueNode{
         let dir = self.getPathSingle(uri);
         let filename = PATH.basename(uri);
         filename = filename.substr(0,filename.indexOf("."));
-        self.setWritePath(dir);
-        self.writefile(filename + ".json", JSON.stringify(data));
-        self.addSubNode(
+        let fpdir = dir;
+        if (fpdir.indexOf('/') == 0) {
+            fpdir = configs.FILE_DIR_ROOT + fpdir;
+        }
+        else {
+            fpdir = configs.FILE_DIR_ROOT + "/" + fpdir;
+        }
+        let fullpath = fpdir  + "/"+ filename + ".json";
+        let cfr = FS.existsSync(fullpath);//检查目录文件是否存在
+        if (!cfr)
+        {
+            self.setWritePath(dir);
+            self.writefile(filename + ".json", JSON.stringify(data));
+        }
+
+        let fdir=  dir;
+
+        if (fdir.indexOf('/') == 0) {
+            fdir = configs.FILE_DIR_ROOT + fdir;
+        }
+        else {
+            fdir = configs.FILE_DIR_ROOT + "/" + fdir;
+        }
+        let fname= PATH.basename(uri);
+
+        let pathFile = fdir + "/"+fname;
+        let r = FS.existsSync(pathFile);//检查目录文件是否存在
+        if (!r) 
+        {
+            self.addSubNode(
                 configs.NODE_TAG.STEP_FILE_BASE,
                 uri,
-                {writePath:dir},
+                { writePath: dir },
                 self.mRootData);
+        }
+        else
+        {
+           if (configs.LOG_NOTICE) BLUE.log("try get file["+pathFile+"] exsit!");
+        }
+
 
 
     }

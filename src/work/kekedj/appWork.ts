@@ -13,11 +13,17 @@ export class appWork extends M.appMain implements APP {
     constructor() {
         super();
     }
-    private url = "https://www.kekedj.com/music/";
-    //private url ="https://www.kekedj.com/music-0-0-0-0-0-0-3172.html";
+    private url = "https://www.kekedj.com/music/"; //root
+    //private url ="https://play.kekedj.com/20208888/202012/2020120901/%E5%A4%9C%E5%BA%97%E8%BD%A6%E8%BD%BD%E4%B9%8B%E5%A3%B0-%E8%A6%81%E5%90%AC%E5%B0%B1%E5%90%AC%E5%8A%A0%E9%95%BF%E7%89%88%E7%AC%AC%E4%BA%8C%E5%AD%A3-%E8%BF%B7%E5%A4%B1%E5%B9%BB%E5%A2%83-%E7%83%AD%E9%97%A8%E4%B8%AD%E6%96%87%E8%B6%85%E9%95%BF%E4%B8%B2%E7%83%A7%E5%A4%A7%E7%A2%9F.mp3";
+ 
+    //private url = "https://www.kekedj.com/music/130787.html";
+    //private url ="https://www.kekedj.com/music-0-0-0-0-0-0-3172.html";// catalog_page
+    private sttag:NODE_TAG = NODE_TAG.ROOT;
+    //private sttag:NODE_TAG = NODE_TAG.STEP_FILE_BASE;
     public start(): void {
         let nds = [
             //{ tag: NODE_TAG.ROOT, n: CatalogPage }//test
+            
             { tag: NODE_TAG.ROOT, n: Catalog }
             , { tag: NODE_TAG.STEP_CATALOG_PAGE, n: CatalogPage }
             , { tag: NODE_TAG.STEP_PAGE, n: Page, ispost:true,limit:true }
@@ -45,7 +51,7 @@ export class appWork extends M.appMain implements APP {
 
         self.init(
             () => {
-                self.workStart(this.url);
+                self.workStart(this.url,this.sttag);
             }
             , false
             , nds

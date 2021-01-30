@@ -35,12 +35,49 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
     public update(tm: number) {
         this._update(tm, this._nodesProcess,this._nodesProcessIng, configs.CFG_NODE_PROCESS_CNT);
         this._update(tm, this._nodesProcessLimit,this._nodesProcessIngLimit,configs.CFG_NODE_PROCESS_LIMIT_CNT );
+        this.dumpProcessNodes(tm);
     }
+
+    private _checkdumptm = 0;
+    private dumpProcessNodes(tm:number)
+    {
+        let self = this;
+        self._checkdumptm += tm;
+        if (self._checkdumptm < 3*60 * 1000)
+        {
+            return;
+        }
+        self._checkdumptm = 0;
+        let f = (ary: any) => {
+            for (let i = 0; i <ary.length;i++) {
+                let n = ary[i];
+                BLUE.error(" node ["+n.debugString()+"] ");
+            }
+        }
+        BLUE.error(" ##################### process  normal ##############################");
+        f(self._nodesProcessIng);
+        BLUE.error(" ##################### process  limit ##############################");
+        f(self._nodesProcessIngLimit);
+    }
+
+
+    private _checkendtm:number = 0;
     public _update(tm: number, arrProcess:any,arrProcessIng:any, limit:number) {
         let self =this;
         if (arrProcess.length<=0 && 
-            arrProcessIng.length<=0 ) return;
-            
+            arrProcessIng.length<=0 ) 
+           {
+               self._checkendtm+=tm;
+               let sec = 30
+                if(self._checkendtm > 1000*sec)
+                {
+                    self._checkendtm = 0;
+                    BLUE.log("node process empty ["+sec+"] seconds !");
+                }
+                return;
+           } 
+        self._checkendtm = 0;
+
         while (arrProcess.length>0 && 
             arrProcessIng.length<limit)
         {
@@ -58,7 +95,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             if (n.isComplete())
             {
 
-                BLUE.log("processNode complete! tag[" + n.tag + "] url["+n.getUrl()+"]");
+                BLUE.log("processNode complete! tag[" + n.tag + "] url["+decodeURI( n.getUrl())+"]");
                 arrProcessIng.splice(i,1);
             }
         } 

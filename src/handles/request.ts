@@ -115,11 +115,19 @@ export class HttpHandle{
     // @res HTTP.IncomingMessage
     private _buf:any;
     private _contentLength:number = 0;
+    private _range_etag:string = "";
+    private _range_last_md:string = "";
     public act(cb:(h:string, res:any)=>void, 
-        onErr:(err:REQ_ERR,res:any)=>void) {
+        onErr:(err:REQ_ERR,res:any)=>void,reset:boolean=false,setRange:boolean=false) {
         let self = this;
-        
-        
+        if (reset || !setRange)
+        {
+            self._buf = null;
+            self._contentLength = 0;
+            self._range_last_md= "";
+            self._range_etag= "";
+        }
+
         let body = '';
         // 处理响应的回调函数
         let callback = function (response:HTTP.IncomingMessage) {
@@ -131,18 +139,42 @@ export class HttpHandle{
             {
                 self._contentLength = parseInt(headers["content-length"]);
             }
+            //if (headers["last-modified"])
+            //{
+            //    self._range_last_md = headers["last-modified"];
+            //}
+            //if (headers["etag"])
+            //{
+            //    let etag = headers["etag"] ;//Array.isArray(a)
+            //    self._range_etag = Array.isArray(etag) ? etag[0] : etag;
+            //}
 
             // 不断更新数据
             response.on('data', function (data: string) {
                 body += data;
-                if (!self._buf) {
-                    self._buf = Buffer.from(data);
-                } else {
+                //if (!self._buf) {
+                //    self._buf = Buffer.from(data);
+                //} else {
                     self._buf = Buffer.concat([self._buf, Buffer.from(data)]);
-                }
+                //}
             });
 
+            //https://blog.csdn.net/thewindkee/article/details/80189434
             response.on('end', function () {
+                if (setRange) 
+                {
+                    if (response.statusCode == 206 )
+                    {//断点续传, 没这个是不支持断点下载
+                        onErr(-6, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
+                        return ;
+                    }
+                    else if (self._buf.length != self._contentLength)
+                    {//长度不对
+                        onErr(-7, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
+                        return ;
+                    }
+
+                }
                 if (response.statusCode == 301 ||
                     response.statusCode == 302) {
 /**
@@ -199,32 +231,17 @@ export class HttpHandle{
                             
                             if (self.isJson(response))
                             {
-                                htmlstr = JSON.parse(htmlstr);
+                                try
+                                {
+                                    htmlstr = JSON.parse(htmlstr);
+                                }
+                                catch (e)
+                                {
+                                    onErr(-4, "request json error");
+                                    return;
+                                }
                             }
                             cb(htmlstr,response);
-                            
-
-                            //var fs = require('fs');
-                            //fs.open('123.txt', 'w+', function (err: any, fd: any) {
-                            //   if (err) {
-                            //      console.error(err);
-                            //      return;
-                            //   }
-
-
-                               //var iconv = require("iconv-lite");
-                               //let x = iconv.decode(decoded,'gb2312');
-                               //fs.writeSync(fd, x,0, "utf-8");
-
-                            //   //fs.writeSync(fd, buf, 0, "utf-8");
-                            //   
-                            //   //fs.writeSync(fd, body,0, "utf-8");
-                            //   //fs.writeSync(fd, body,0, "gb2312");
-                            //   
-                            //    fs.writeSync(fd, decoded,0, "utf-8");
-                            //}); 
-
-
                         })
 
                     } 
@@ -240,39 +257,66 @@ export class HttpHandle{
             });
             response.on('error', function (e:any) {
                 BLUE.error("request error");
+                onErr(-5,"request error" );
             });
-
-            //let parse = (html) => {
-            //    let $ = cheerio.load(html); //采用cheerio模块解析html
-            //    //let select = "td[class='headfont12']";
-            //    let select = "head";
-            //    let s = $(select);
-            //    BLUE.log(s);
-            //}
-
         }
         
         //断点下载
         let h = self._headers;  
-        if (self._buf)
+        if (setRange)
         {
-
+            if (self._buf == null)
+            {
+                self._buf =Buffer.from("");// Buffer.alloc([]);
+            }
 //-----------------
 //Accept-Ranges: bytes
 //Content-Range: bytes 0-2000/4932    //从0开始
-//Content-Length: 2001          //起始和终止都是闭区间
+//Content-Length: 2001          //起始闭区间,终止是闭区间?
+
+
+//https://blog.csdn.net/thewindkee/article/details/80189434
+//https://www.cnblogs.com/1995hxt/p/5692050.html
+//Range: bytes=10- ：第10个字节及最后个字节的数据
+//Range: bytes=40-100 ：第40个字节到第100个字节之间的数据.
 //-----------------
             //res.setHeader("Accept-Ranges", "bytes");
             //res.setHeader("Content-Range", `bytes ${start}-${end}/${total}`);
             let start = self._buf.length;
-            let end= self._contentLength - 1;
             let r = {
-                    "Accept-Ranges": "bytes"
-                    ,"Content-Range": "bytes "+start+"-"+end+"/" + self._contentLength
+                    "Range": "bytes "+start+"-"+""+"/" + self._contentLength
                 };
+            //let r = {
+            //    //"Range": "bytes 0-5000" 
+            //    "Range": "bytes 0-" 
+            //};
+            //h["Connection"] ="keep-alive";
             h = BLUE.mergeObject(h,r);
-        }         
+            //if (self._range_etag)
+            //{
+            //    h["if-range"] = self._range_etag;
+            //}
+            //if (!h["if-range"] && self._range_last_md)
+            //{
+            //    h["if-range"] = self._range_last_md;
+            //}
 
+/*
+当（中断之后）重新开始请求更多资源片段的时候，必须确保自从上一个片段被接收之后该资源没有进行过修改。
+The If-Range 请求首部可以用来生成条件式范围请求：
+
+假如条件满足的话，条件请求就会生效，服务器会返回状态码为 206 Partial 的响应，以及相应的消息主体
+假如条件未能得到满足，那么就会返回状态码为 200 OK 的响应，同时返回整个资源。该首部可以与 Last-Modified 验证器或者 ETag 一起使用，但是二者不能同时使用
+If-Range: Wed, 21 Oct 2015 07:28:00 GMT 
+
+*/
+
+
+        }         
+        else {
+            //self._buf =new Buffer([]);
+            self._buf =Buffer.from("");// Buffer.alloc([]);
+        }
         let req = null;
         let op = {
             host: self._host,
@@ -329,5 +373,9 @@ export class HttpHandle{
     {
         this.mReq.cb = null;
         this.mReq.destroy();
+    }
+    public getBufLength()
+    {
+        return this._buf ? this._buf.length : 0;
     }
 }

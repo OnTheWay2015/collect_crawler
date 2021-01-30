@@ -8,6 +8,9 @@ export class CatalogPage extends BlueNode{
     protected async onRequestRes(data: any,res:any) {
         let self = this;
         super.onRequestRes(data, res); 
+        
+        //BLUE.log(data);
+        
         let $ = cheerio.load(data); //采用cheerio模块解析html
         let itm = {};
         let els = self.selectDom($,$, [
@@ -28,6 +31,11 @@ export class CatalogPage extends BlueNode{
             {
                 continue;
             }
+
+            //test
+            //datav = "130787";// 400M
+            //datav ="132173"; //1.6m
+
             let path =  "/index.php?ac=music_getMusic";
             let postUrl = self.getWebSit() + path;
             let addheaders = { 
@@ -45,7 +53,9 @@ export class CatalogPage extends BlueNode{
                 postUrl,
                 pdata,
                 self.mRootData);
-                
+            
+            //test
+            //break;
 
             //let info:any = await self.AX().post(postUrl,{id:datav});
             
