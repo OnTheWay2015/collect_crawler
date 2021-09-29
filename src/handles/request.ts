@@ -128,7 +128,7 @@ export class HttpHandle{
             self._range_etag= "";
         }
 
-        let body = '';
+        //let body = '';
         // 处理响应的回调函数
         let callback = function (response:HTTP.IncomingMessage) {
             
@@ -151,7 +151,7 @@ export class HttpHandle{
 
             // 不断更新数据
             response.on('data', function (data: string) {
-                body += data;
+                //body += data;
                 //if (!self._buf) {
                 //    self._buf = Buffer.from(data);
                 //} else {

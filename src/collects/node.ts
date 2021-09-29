@@ -517,6 +517,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
     //@ res HTTP.IncomingMessage
     protected onRequestErr(e:any,res:any ): void {
         let self = this; 
+        BLUE.error("onRequestErr mProcessData:" + JSON.stringify(self.mProcessData));
         if (e==-1)
         {//connect error
             BLUE.error("onRequestErr("+e+") err["+res+"] tag["+self.tag+"] url["+ decodeURI(self.getUrl())+"]");
