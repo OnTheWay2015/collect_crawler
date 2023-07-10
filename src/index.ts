@@ -33,17 +33,28 @@ module TTT {
       //puppeteer api文档
       //https://puppeteer.bootcss.com/api 
 
+      PUPPETEER.defaultArgs({
+         headless:true, //是否无头模式
+      })
+
       const brower = await PUPPETEER.launch();
       const page = await brower.newPage();
 
       await page.setViewport({width:1080,height:720});
       await page.goto(url);
 
+
+      //await page.waitForSelector('ul.gl-warp>li'); //等待选择器要选的元素,复杂选择器
+      //await page.waitForSelector('#s_btn_wr>#su'); //
+
+//
       await page.screenshot({
          path:"./test.png"
          ,type:"png"
       });
-      await page.waitFor(25000);
+
+      
+      await page.waitFor(15000);
 
       let h: any = await page.$("html");
       //BLUE.log(h.innerText); 
@@ -54,6 +65,23 @@ module TTT {
 
       let content = await page.content();
       //BLUE.log(content);
+
+
+      //await page.waitForSelector('.bg s_btn_wr>#su'); //s_btn_wr
+      await page.waitForSelector('#su'); //s_btn_wr
+      await page.waitForSelector('#kw'); //s_btn_wr
+
+      let input_kw: any = await page.$('#kw');
+      let btn_su: any = await page.$('#su');
+      await input_kw.type("666");
+      await btn_su.click();
+
+      await page.waitFor(15000);
+      await page.screenshot({
+         path:"./test_after.png"
+         ,type:"png"
+      });
+
 
       await page.close();
       await brower.close();
