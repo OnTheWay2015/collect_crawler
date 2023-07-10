@@ -60,7 +60,7 @@ export class KY_Page extends BlueNode{
             eval(fstring);
         }
         catch (err) {
-            BLUE.error(err);
+            //BLUE.error(err);
             BLUE.log(" --- eval error :" + fstring);
             return;
         }

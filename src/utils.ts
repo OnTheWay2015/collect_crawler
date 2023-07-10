@@ -18,10 +18,13 @@ export function error(str:string){
 
 
 export function mergeObject(to: any, from: any): void {
+    let str = JSON.stringify(to)
+    let toobj:any = JSON.parse(str); 
     for (let k in from) {
-        to[k] = from[k];
+        toobj[k] = from[k];
     }
-    return to;
+    return toobj;
+
 }
 
 //--------------------------------
@@ -113,7 +116,7 @@ export class pages_st
     }
 }
 
-export function getPagesST(els:any, $:any,segkey:string="-") //$ = cheerio.load(...)
+export function getPagesST(els:any, $:any,segkey:string="-", numcb:any=null,urlcb:any=null) //$ = cheerio.load(...)
 {
         let opurl = "";
         let count = 0;
@@ -129,16 +132,31 @@ export function getPagesST(els:any, $:any,segkey:string="-") //$ = cheerio.load(
             {
                 opurl = url;
             }
-            let num = parseInt( $(element).text());
+            let num = 0;
+            if (numcb)
+            {
+                num = numcb(url);
+            }
+            else
+            {
+                parseInt( $(element).text());
+            }
             count = num > count ? num : count;
         }
 
         let st = new pages_st();
-        let index1 = opurl.lastIndexOf(segkey);
-        let index2 = opurl.lastIndexOf(".");
-        let url_seg1 = opurl.substr(0,index1+1);
-        let url_seg2 = opurl.substr(index2,opurl.length);
-        st.url_fmt = url_seg1+"{re}"+ url_seg2;
+        if (urlcb)
+        {
+            st.url_fmt = urlcb(opurl);
+        }
+        else
+        {
+            let index1 = opurl.lastIndexOf(segkey);
+            let index2 = opurl.lastIndexOf(".");
+            let url_seg1 = opurl.substr(0, index1 + 1);
+            let url_seg2 = opurl.substr(index2, opurl.length);
+            st.url_fmt = url_seg1 + "{re}" + url_seg2;
+        }
         st.pagecount = count;
         return  st;
 }

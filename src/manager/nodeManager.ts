@@ -158,6 +158,11 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             return;
 
         }
+        if (url== undefined)
+        {
+            BLUE.error("processNode error! tag[" + tag + "] url undefined");
+            return;
+        }
         let n:BlueNode= new ncls( 
             tag
             ,url

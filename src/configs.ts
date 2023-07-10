@@ -12,13 +12,15 @@ export const DB_COL_KINDS:string="KINDS";
 export const DB_COL_EXERCISES:string="EXERCISES";
 
 
-export const CFG_NODE_PROCESS_CNT:number= 40;
-export const CFG_NODE_PROCESS_LIMIT_CNT:number= 10;
-export const CFG_HTTP_RETRY_CNT:number= 5;
+export const CFG_NODE_PROCESS_CNT:number= 50;
+export const CFG_NODE_PROCESS_LIMIT_CNT:number= 5;
+export const CFG_HTTP_RETRY_CNT:number= 2;
 
-export const HTTP_EXPIRE_TM:number=30 * 1000;
+export const HTTP_EXPIRE_TM:number=3* 60 * 1000;
 export const FILE_EXPIRE_TM:number= 240 *60 * 1000;
+//export const FILE_EXPIRE_TM:number= 3 *60 * 1000;
 
+//export let FILE_DIR_ROOT: string = "./ttt_bt";
 export let FILE_DIR_ROOT: string = "./ttt";
 
 export function setFileDirRoot(path: string) {
@@ -35,8 +37,10 @@ export enum NODE_TAG {
     STEP_CATALOG = "STEP_CATALOG",//对应每个目录项处理
     STEP_CATALOG_PAGE = "STEP_CATALOG_PAGE",//对应目录页处理
     STEP_PAGE = "STEP_PAGE",//对应选中页处理
+    STEP_FILE_PAGE= "STEP_FILE_PAGE",
     STEP_FILE_BASE= "STEP_FILE",//FileBase
     
+    STEP_FILE_IMG= "STEP_FILE_IMG",
     STEP_FILE_M4A = "STEP_FILE_M4A",//FileM4A
 
     STEP_1 = "STEP_1",

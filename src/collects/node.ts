@@ -172,13 +172,14 @@ export class BlueNode implements NodeIF {
         self.mState = NodeState.default;
         self.dTM= 0;
         self.mRetryCnt++;
+        BLUE.error("retry tag["+self.tag+"] buf_length["+ (self.mRequest? self.mRequest.getBufLength() : 0 )+"] url["+decodeURI(self.getUrl())+"] reset["+reset+"]");
+        console.log(self.mRequest); 
         if (reset)
         {
             self._resetflag = reset;
             if (self.mRequest) self.mRequest.stop();
             self.mRequest = null ;
         }
-        BLUE.error("retry tag["+self.tag+"] buf_length["+ (self.mRequest? self.mRequest.getBufLength() : 0 )+"] url["+decodeURI(self.getUrl())+"] reset["+reset+"]");
     }
 
     public process(tm: number): void {
@@ -257,6 +258,13 @@ export class BlueNode implements NodeIF {
         data?:any, //{addheaders,}
         rootData?:any ): void {
         BLUE.log("AddSubNode tag["+tag+"] url["+url+"]  **FROM**  tag["+this.tag+"] url["+this.getUrl()+"]");
+        
+        if (url== undefined)
+        {
+            BLUE.error("addSubNode url undefined! tag[" + tag + "]  url["+this.getUrl()+"]");
+            return;
+        }
+        
         this.mSubNodes.push({tag:tag,url:url,data:data,rootData:rootData});
     }
 
@@ -415,10 +423,13 @@ export class BlueNode implements NodeIF {
     protected getPathSingle(url:string)
     {
         let str = PATH.dirname(url); 
-        let h = this.getHost();
-        h = h.substr(h.indexOf(".")+1);
-        let i = str.indexOf(h);
-        str = str.substr(i+h.length);
+        str = str.substr(str.indexOf("//")+2);
+        str = str.substr(str.indexOf("/")+1);
+        
+        //let h = this.getHost();
+        //h = h.substr(h.indexOf(".")+1);
+        //let i = str.indexOf(h);
+        //str = str.substr(i+h.length);
         return str;
     }
     protected getWebSit()
@@ -611,17 +622,17 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
                 BLUE.error("selectDom error on sel[" + sels[i - 1] + "]");
                 return [];
             }
-            res_ary = this.findhandle($,res_ary,sels,i);
+            res_ary = this.findhandle($,res_ary,sels[i]);
         }
         return res_ary.length ==1 ? res_ary[0] : res_ary;
     }
-    private findhandle($:any,res_ary:any,sels:any,idx:number)
+    private findhandle($:any,res_ary:any,sel_key:string)
     {
         let new_res_ary = [];
         for (let j = 0; j < res_ary.length; j++) {
             let res = res_ary[j];
             for (let k = 0; k < res.length; k++) {
-                let r = $(res[k]).find(sels[idx]);
+                let r = $(res[k]).find(sel_key);
                 if (r.length > 0) {
                     new_res_ary.push(r);
                 }
@@ -676,14 +687,22 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         let self = this;
         let filename = ext != "" ? name + ext : name;
         let wpath = self.mProcessData && self.mProcessData["writePath"] ?
-            self.mProcessData["writePath"] : ".";
+            self.mProcessData["writePath"] : "";
+            //self.mProcessData["writePath"] : ".";
 
 
         if (wpath.indexOf('/') == 0) {
             wpath = configs.FILE_DIR_ROOT + wpath;
         }
         else {
-            wpath = configs.FILE_DIR_ROOT + "/" + wpath;
+            if (wpath.length > 0)
+            {
+                wpath = configs.FILE_DIR_ROOT + "/" + wpath;
+            }
+            else
+            {
+                wpath = configs.FILE_DIR_ROOT;
+            }
         }
 
         let r = FS.existsSync(wpath);//检查目录文件是否存在
@@ -729,10 +748,21 @@ export class BlueNodeFile extends BlueNode
 {
     protected onRequestRes(data: any,res:any): void {
         let self = this;
+        if (data.indexOf("<html")>=0)
+        {
+            return;
+        }
         super.onRequestRes(data, res); 
         BLUE.log("BlueNodeFile act");
-        let filename =this.getFileNameFromUrl();
-        self.writefile(filename,data);
+        let pdata = self.mProcessData;
+        let filename = pdata.name? pdata.name : this.getFileNameFromUrl();
+        let ext = ""; 
+        if (pdata.fileExt)
+        {
+            ext = pdata.fileExt;
+        } 
+        
+        self.writefile(filename,data,ext);
     }
 
     protected onInit(): void {
