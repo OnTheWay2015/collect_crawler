@@ -13,7 +13,8 @@ import * as FS from 'fs';
 import * as PATH from 'path';
 
 import { app_hehe } from './work/hehe/app_hehe';
-import { QQMC_APP } from './work/qqmc/QQMC_APP';
+import { noval_APP } from './work/noval/noval_APP';
+//import { QQMC_APP } from './work/qqmc/QQMC_APP';
 //import { KY_APP } from './work/djkuyao/KY_APP';
 //import { appWork } from './work/kekedj/appWork';
 
@@ -92,7 +93,7 @@ module TTT {
    };
 
    //test
-   test_view ();
+   //test_view ();
 
 
    //work
@@ -102,7 +103,8 @@ module TTT {
    
    
    //let a =new QQMC_APP();
-   //a.start();
+   let a =new noval_APP();
+   a.start();
 }
 
 

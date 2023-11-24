@@ -6,15 +6,12 @@ import * as zlib from 'zlib';
 import { DEBUG_PRINT_PAGE_CONTENT } from '../configs';
 
 import * as FS from 'fs';
-import { BlueNode } from '../collects/node';
+import { BlueNode, IReq,REQ_ERR } from '../collects/node';
 
 var querystring = require('querystring');
  
 
-export enum REQ_ERR {
-    E_STATUS=1,
-}
-export class HttpHandle{
+export class HttpHandle implements IReq{
     //private _options = {
     //    host: 'www.baidu.com',
     //    port: '80',
@@ -33,6 +30,7 @@ export class HttpHandle{
     private _headers:any = {};
     private _main!:any;
     private mReq!:any; 
+    private mResponse!: HTTP.IncomingMessage
     constructor(url:string,main:any,headers:any,method:string=BLUE.GET) {
         let self = this;
         let ust:BLUE.urlST|null = BLUE.transURLSt(url);
@@ -62,6 +60,14 @@ export class HttpHandle{
         //   //"Pragma": "no-cache",
         //}
         self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
+    }
+    public getSetCookies():any 
+    {
+        if (!this.mResponse)
+        {
+            return null
+        }
+        return this.mResponse.headers["set-cookie"];
     }
     public debugPrintHeaders()
     {
@@ -131,7 +137,7 @@ export class HttpHandle{
         //let body = '';
         // 处理响应的回调函数
         let callback = function (response:HTTP.IncomingMessage) {
-            
+            self.mResponse = response 
             //response.setEncoding('utf-8'); //防止中文乱码. 不可乱用.保持原生stream
             let headers = response.headers;
             //BLUE.log( JSON.stringify(headers));
@@ -165,12 +171,12 @@ export class HttpHandle{
                 {
                     if (response.statusCode == 206 )
                     {//断点续传, 没这个是不支持断点下载
-                        onErr(-6, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
+                        onErr(REQ_ERR.E_6, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
                         return ;
                     }
                     else if (self._buf.length != self._contentLength)
                     {//长度不对
-                        onErr(-7, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
+                        onErr(REQ_ERR.E_7, "contentLength[" + self._contentLength + "] recv len[" + self._buf.length + "]  ");
                         return ;
                     }
 
@@ -203,7 +209,7 @@ export class HttpHandle{
 
                     if (self._contentLength > 0 && self._buf.length != self._contentLength )
                     {
-                        onErr(-3, "contentLength["+self._contentLength+"] recv len["+self._buf.length+"]  ");
+                        onErr(REQ_ERR.E_3, "contentLength["+self._contentLength+"] recv len["+self._buf.length+"]  ");
                         return;
                     }
                     let htmlstr = self._buf;
@@ -237,11 +243,11 @@ export class HttpHandle{
                                 }
                                 catch (e)
                                 {
-                                    onErr(-4, "request json error");
+                                    onErr(REQ_ERR.E_4, "request json error");
                                     return;
                                 }
                             }
-                            cb(htmlstr,response);
+                            cb(htmlstr,self);
                         })
 
                     } 
@@ -250,14 +256,14 @@ export class HttpHandle{
                         if (self.isJson(response)) {
                             htmlstr = JSON.parse(htmlstr);
                         }
-                        cb(htmlstr, response);
+                        cb(htmlstr, self);
                     }
                     
                 }
             });
             response.on('error', function (e:any) {
                 BLUE.error("request error");
-                onErr(-5,"request error" );
+                onErr(REQ_ERR.E_5,"request error" );
             });
         }
         
@@ -343,11 +349,11 @@ If-Range: Wed, 21 Oct 2015 07:28:00 GMT
         req.on('connect', (res, socket, head) => {
             socket.on('error', (e:any) => {
                 BLUE.error('HTTP.request  connect ====>' + e.message);
-                onErr(-1, e.message);
+                onErr(REQ_ERR.E_1, e.message);
             })
         }).on('error', function (e: any) {
             BLUE.error('HTTP.request error ====>' + e.message)
-            onErr(-2, e.message);
+            onErr(REQ_ERR.E_2, e.message);
         });
         if (self._postData)
         {

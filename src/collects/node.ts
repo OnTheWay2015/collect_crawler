@@ -1,5 +1,6 @@
 import * as configs from "../configs";
-import { HttpHandle, REQ_ERR } from "../handles/request";
+import { HttpHandle } from "../handles/request";
+import { PuppeteerHandle } from "../handles/request_by_puppeteer";
 //import { DB_item, DB_handle, DB_CONN, DB_OP } from "../handles/dbHandler";
 import * as BLUE from '../utils';
 import * as cheerio from 'cheerio';
@@ -67,14 +68,46 @@ enum NodeState{
 }
 
 
+export enum REQ_ERR {
+    E_STATUS=1,
+    E_1=1001,
+    E_2=1002,
+    E_3=1003,
+    E_4=1004,
+    E_5=1005,
+    E_6=1006,
+    E_7=1007,
+}
+
+
+export enum REQ_TYPE {
+    NORMAL =1,
+    PUPPETEER = 2, 
+}
+export interface IReq {
+    setPostData(v:any):void
+    stop():void
+    act(cb: (h: string, res:IReq) => void,
+        onErr: (err: REQ_ERR, res:IReq) => void, reset: boolean, setRange: boolean): void
+    isHttps(): boolean
+    getPath(): string
+    getHost(): string
+    getHttpProtoStr(): string
+
+    getBufLength(): number
+    getSetCookies():any 
+
+    }
+
 export class BlueNode implements NodeIF {
     public tag!: configs.NODE_TAG;
+    public mReqType!:REQ_TYPE;
     protected mProcessData!: any
     protected mRootData!: any
     protected mUrl!: string;
     protected mState!: NodeState;
     protected mComplete!: Boolean;
-    protected mRequest!: HttpHandle|null;
+    protected mRequest!: IReq|null;
     protected mSubNodes!:Array<any>;
     //protected mItemDB!:DB_item;
     //protected mDBHandle!:DB_handle;
@@ -98,6 +131,7 @@ export class BlueNode implements NodeIF {
         self.mUrl = url;
         self.mState = NodeState.default;
         self.mRetryCnt = 0;
+        self.mReqType=  REQ_TYPE.NORMAL;
         //self.mDBHandle = new DB_handle(dbconn);
        
         self.mitms = [];
@@ -105,6 +139,10 @@ export class BlueNode implements NodeIF {
         self.addUrlProcessMark(url);
         self.init();
         self.expireTM = this.getExpireTm();
+    }
+    public setReqType(t:REQ_TYPE )
+    {
+        this.mReqType=  t;
     }
     private init(): void {
         this.onInit();
@@ -172,7 +210,7 @@ export class BlueNode implements NodeIF {
         self.mState = NodeState.default;
         self.dTM= 0;
         self.mRetryCnt++;
-        BLUE.error("retry tag["+self.tag+"] buf_length["+ (self.mRequest? self.mRequest.getBufLength() : 0 )+"] url["+decodeURI(self.getUrl())+"] reset["+reset+"]");
+        //BLUE.error("retry tag["+self.tag+"] buf_length["+ (self.mRequest? self.mRequest.getBufLength() : 0 )+"] url["+decodeURI(self.getUrl())+"] reset["+reset+"]");
         console.log(self.mRequest); 
         if (reset)
         {
@@ -246,10 +284,11 @@ export class BlueNode implements NodeIF {
     }
     public debugString(): string
     {
-        let self = this;
-        let bufstr = self.mRequest ? self.mRequest.getBufLength() : 0;
-        let datastr = self.mProcessData? JSON.stringify(self.mProcessData) : "";
-        return "tag["+self.tag+"] state["+self.mState+"] url["+ decodeURI(self.getUrl())+"] buf_length["+bufstr+"] processData["+datastr+"]" ;
+        //let self = this;
+        //let bufstr = self.mRequest ? self.mRequest.getBufLength() : 0;
+        //let datastr = self.mProcessData? JSON.stringify(self.mProcessData) : "";
+        //return "tag["+self.tag+"] state["+self.mState+"] url["+ decodeURI(self.getUrl())+"] buf_length["+bufstr+"] processData["+datastr+"]" ;
+        return "";
     }
     
     protected addSubNode(
@@ -277,17 +316,17 @@ export class BlueNode implements NodeIF {
     }
     public debugPrintHeaders()
     {
-        if (this.mRequest)
-        {
-            this.mRequest.debugPrintHeaders();
-            if (this.mProcessData.postData) {
-                BLUE.log(JSON.stringify(this.mProcessData.postData));   
-            }
-        }
-        else
-        {
-            BLUE.error("error: node request not created! ");
-        }
+        //if (this.mRequest)
+        //{
+        //    this.mRequest.debugPrintHeaders();
+        //    if (this.mProcessData.postData) {
+        //        BLUE.log(JSON.stringify(this.mProcessData.postData));   
+        //    }
+        //}
+        //else
+        //{
+        //    BLUE.error("error: node request not created! ");
+        //}
     }
     protected setState(s: NodeState): void {
         let self = this;
@@ -304,7 +343,14 @@ export class BlueNode implements NodeIF {
                 }
                 else
                 {
-                    self.mRequest = new HttpHandle(self.mUrl, self.pMain, h, self._method);
+                    if (self.mReqType == REQ_TYPE.PUPPETEER)
+                    {
+                        self.mRequest = new PuppeteerHandle(self.mUrl, self.pMain, h, self._method);
+                    }
+                    else
+                    {
+                        self.mRequest = new HttpHandle(self.mUrl, self.pMain, h, self._method);
+                    }
                 }
                 if (self.mProcessData.postData) {
                     self.mRequest.setPostData(self.mProcessData.postData);
@@ -474,7 +520,7 @@ export class BlueNode implements NodeIF {
     //@ res HTTP.IncomingMessage
     protected onRequestRes(htmlstr: string, res: any): void {
     }
-    private _onRequestRes(htmlstr: string, res: any): void {
+    private _onRequestRes(htmlstr: string, res: IReq): void {
         let self = this;
         if (htmlstr == null)
         {
@@ -490,7 +536,9 @@ Set-Cookie: BD_HOME=0; path=/
 Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_26350_29461; path=/; domain=.baidu.com
 
         */
-        let cookies: any = res.headers["set-cookie"];
+
+//getSetCookies
+        let cookies: any = res.getSetCookies();// res.headers["set-cookie"];
         let aa: string = "";
         let ck: string = "";
         if (cookies != null) {

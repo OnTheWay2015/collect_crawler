@@ -172,6 +172,9 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             , rootData);
         
             let clsinfo =self._nodeInfos[tag]; 
+        if (clsinfo.reqtype){
+            n.setReqType(clsinfo.reqtype)
+        }
         if (clsinfo.ispost)
         {
             n.setHttpMethod(BLUE.POST);
