@@ -12,11 +12,12 @@ export class noval_Root extends BlueNode{
         let self = this;
         super.onRequestRes(data, res); 
         let $ = cheerio.load(data); //采用cheerio模块解析html
-        //BLUE.log($.html());
+        BLUE.log($.html());
 
 
         let els = self.selectDom($, $, [
             'div[id="content"]'
+            //'div'
         ]);
         if (els == null || els.length <=0) {
             BLUE.error("noval_Root no Dom element select")

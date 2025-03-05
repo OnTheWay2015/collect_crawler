@@ -85,15 +85,28 @@ export class PuppeteerHandle implements IReq{
       PUPPETEER.defaultArgs({
          headless:true, //是否无头模式
       })
-let _func = async ()=>
+
+
+      let _func = async ()=>
 {
 
     if (!PuppeteerBrower) {
         PuppeteerBrower = await PUPPETEER.launch();
     }
 
+    // 获取page实例
     const page = await PuppeteerBrower.newPage();
 
+    // 将webdriver字段删除，防止反爬虫
+    await page.evaluateOnNewDocument(() => {
+        let a:any = navigator
+        const newProto = a.__proto__;
+        delete newProto.webdriver;
+        a.__proto__ = newProto;
+    })
+    // 设置useragent，如果headless设置为true，则必做
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36 Edg/85.0.564.41');
+    
     //await page.setViewport({ width: 1080, height: 720 });
     await page.goto(self._url);
 

@@ -25,7 +25,8 @@ module TTT {
    //let url ="http://www.djye.com/player/25473.htm";//download page
    //------------- 
    //let url ="https://www.djkuyao.com/dance";//root
-   let url ="https://www.baidu.com"
+   //let url ="https://www.baidu.com"
+   let url="http://www.aixiashu.info/109/109533/41816930.html"//招黑体质开局修行在废土 
    
    //let url ="https://www.djkuyao.com/dance/play-64617.html";//page
    //------------- 
@@ -40,6 +41,17 @@ module TTT {
 
       const brower = await PUPPETEER.launch();
       const page = await brower.newPage();
+
+
+    // 将webdriver字段删除，防止反爬虫
+    await page.evaluateOnNewDocument(() => {
+        let a:any = navigator
+        const newProto = a.__proto__;
+        delete newProto.webdriver;
+        a.__proto__ = newProto;
+    })
+    // 设置useragent，如果headless设置为true，则必做
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36 Edg/85.0.564.41');
 
       await page.setViewport({width:1080,height:720});
       await page.goto(url);
@@ -103,6 +115,8 @@ module TTT {
    
    
    //let a =new QQMC_APP();
+   
+   
    let a =new noval_APP();
    a.start();
 }

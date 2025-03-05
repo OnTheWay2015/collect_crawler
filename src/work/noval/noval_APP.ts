@@ -49,6 +49,11 @@ export class noval_APP extends M.appMain implements APP {
     //private url="http://www.aixiashu.info/21/21709/11343431.html"
     //private url="http://www.aixiashu.info/85/85774/33611653.html"  // 离婚后的我开始转运了 
     private url="http://www.aixiashu.info/109/109533/41816930.html"//招黑体质开局修行在废土 
+    //private url="http://www.aixiashu.info/120/120637/45786865.html"  //长生从炼丹宗师开始
+    //private url="http://www.aixiashu.info/102/102210/39765914.html";// 红楼之挽天倾
+    //private url="http://www.aixiashu.info/113/113491/43047206.html"// 我的金融科技帝国
+    //private url="http://www.aixiashu.info/124/124928/47636662.html" // 我一个特技演员疯狂整活很合理吧
+    //private url="http://www.aixiashu.info/123/123388/46994966.html" // 苟在诊所练医术 
     private sttag:NODE_TAG = NODE_TAG.ROOT;
     public start(): void {
 
@@ -59,8 +64,7 @@ export class noval_APP extends M.appMain implements APP {
 //let data = ""
 //let callback = function (res:HTTP.IncomingMessage) {
 //    res.on('data', chunk => {
-//        data+=chunk;
-//    });
+//        data+=chunk;//    });
 // 
 //    res.on('end', () => {
 //        //console.log(JSON.parse(data));
