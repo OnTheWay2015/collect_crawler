@@ -644,7 +644,9 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         self.setComplete(true);
     }
 
-    //@  $,采用cheerio模块解析html 
+    //@  $,cheerio 根实例 function 
+    //@op 操作 cheerio 元素,object
+    //@sels 
     protected selectDom($:any, op:any, sels: string[]): any[] {
         let len = sels.length;
         if (len <= 0) {

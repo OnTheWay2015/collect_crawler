@@ -67,8 +67,9 @@ module TTT {
       });
 
       
-      await page.waitFor(15000);
-
+      //await page.waitFor(15000);
+      await new Promise(r => setTimeout(r, 10000));
+      
       let h: any = await page.$("html");
       //BLUE.log(h.innerText); 
       //BLUE.log(h.innerHTML);
@@ -89,7 +90,8 @@ module TTT {
       await input_kw.type("666");
       await btn_su.click();
 
-      await page.waitFor(15000);
+      //await page.waitFor(15000);
+      await new Promise(r => setTimeout(r, 10000));
       await page.screenshot({
          path:"./test_after.png"
          ,type:"png"

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",/* 用来指定要使用的模块标准: 'none', 'commonjs'(标准输出 JS), 'amd'(ES6 模块写法), 'system', 'umd', 'es2015', or 'ESNext'. */
-        "target":"es5",
+        "target":"es2015",
         "outDir": "./s_out",
         "strict": true, 
         //"outFile": "./bin/index.js",
@@ -17,6 +17,7 @@
     ],
     "exclude": [
         "node_modules",
+        "C:\\Users\\71304\\AppData\\Roaming\\npm\\node_modules",
         "bin/**/*.d.ts"
     ]
 }

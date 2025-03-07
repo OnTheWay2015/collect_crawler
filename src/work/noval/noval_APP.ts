@@ -27,6 +27,21 @@ export class noval_APP extends M.appMain implements APP {
     }
 
 
+    private _changeString(fname:string):void {
+            let data = FS.readFileSync(fname)
+            let content = data.toString().replace(/。/g,"。\r\n");
+            FS.writeFileSync(fname,content)
+    }
+
+    private changeString():void {
+       let files = FS.readdirSync(FILE_DIR_ROOT)
+        let self = this;
+        files.forEach((file)=>{
+            let fname = FILE_DIR_ROOT + "/" + file
+            self._changeString(fname);
+        });
+    }
+
     private packbook():void {
        var files = FS.readdirSync(FILE_DIR_ROOT)
        var wfile = FILE_DIR_ROOT + "/" + "__book.txt";
@@ -48,17 +63,24 @@ export class noval_APP extends M.appMain implements APP {
     //private url="http://www.b5200.org/76_76215/146897388.html" //第一章
     //private url="http://www.aixiashu.info/21/21709/11343431.html"
     //private url="http://www.aixiashu.info/85/85774/33611653.html"  // 离婚后的我开始转运了 
-    private url="http://www.aixiashu.info/109/109533/41816930.html"//招黑体质开局修行在废土 
+    //private url="http://www.aixiashu.info/109/109533/41816930.html"//招黑体质开局修行在废土 
     //private url="http://www.aixiashu.info/120/120637/45786865.html"  //长生从炼丹宗师开始
     //private url="http://www.aixiashu.info/102/102210/39765914.html";// 红楼之挽天倾
     //private url="http://www.aixiashu.info/113/113491/43047206.html"// 我的金融科技帝国
     //private url="http://www.aixiashu.info/124/124928/47636662.html" // 我一个特技演员疯狂整活很合理吧
     //private url="http://www.aixiashu.info/123/123388/46994966.html" // 苟在诊所练医术 
+
+    //private url="https://www.bi09.cc/book/45102/1.html";
+    //private url = "https://www.bi09.cc/book/228540/1.html" //重生60带空间
+    private url ="https://www.bi09.cc/book/151088/1.html" //从1987开始
     private sttag:NODE_TAG = NODE_TAG.ROOT;
     public start(): void {
 
         
-        this.packbook();
+        //this.packbook();
+        //return;
+
+        this.changeString();
         return;
 
 //let data = ""
@@ -79,8 +101,8 @@ export class noval_APP extends M.appMain implements APP {
 //
 //return
         let nds = [
-            { tag: NODE_TAG.ROOT, n: noval_Root , reqtype:REQ_TYPE.PUPPETEER}
-            //{ tag: NODE_TAG.ROOT, n: noval_Root }
+            //{ tag: NODE_TAG.ROOT, n: noval_Root , reqtype:REQ_TYPE.PUPPETEER}
+            { tag: NODE_TAG.ROOT, n: noval_Root }
           //  , { tag: NODE_TAG.STEP_CATALOG, n:noval_Catalog}
           //  , { tag: NODE_TAG.STEP_CATALOG_PAGE, n:noval_CatalogPage}
           //  , { tag: NODE_TAG.STEP_FILE_M4A, n: noval_M4A,limit:true}
