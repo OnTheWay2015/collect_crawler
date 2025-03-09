@@ -21,8 +21,8 @@ export const FILE_EXPIRE_TM:number= 240 *60 * 1000;
 //export const FILE_EXPIRE_TM:number= 3 *60 * 1000;
 
 //export let FILE_DIR_ROOT: string = "./ttt_bt";
-//export let FILE_DIR_ROOT: string = "./downloadbook";
-export let FILE_DIR_ROOT: string = "./downloadbook1";
+export let FILE_DIR_ROOT: string = "./downloadbook";
+//export let FILE_DIR_ROOT: string = "./downloadbook1";
 //export let FILE_DIR_ROOT: string = "./downloadbook2";
 
 export function setFileDirRoot(path: string) {

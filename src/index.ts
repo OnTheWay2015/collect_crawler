@@ -14,6 +14,7 @@ import * as PATH from 'path';
 
 import { app_hehe } from './work/hehe/app_hehe';
 import { noval_APP } from './work/noval/noval_APP';
+import { noval01_APP } from './work/noval01/noval01_APP';
 //import { QQMC_APP } from './work/qqmc/QQMC_APP';
 //import { KY_APP } from './work/djkuyao/KY_APP';
 //import { appWork } from './work/kekedj/appWork';
@@ -119,7 +120,8 @@ module TTT {
    //let a =new QQMC_APP();
    
    
-   let a =new noval_APP();
+   //let a =new noval_APP();
+   let a =new noval01_APP();
    a.start();
 }
 
