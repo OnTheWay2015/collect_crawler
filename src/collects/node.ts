@@ -755,8 +755,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
             }
         }
 
-        let r = FS.existsSync(wpath);//检查目录文件是否存在
-        if (!r) self.mkdirsSync(wpath);//创建目录
+
 
         let wfile = filename;
         if (wfile.indexOf('/') == 0) {
@@ -765,11 +764,17 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
         else {
             wfile = wpath + "/" + wfile;
         }
+        let d = PATH.dirname(wfile)
+        let r = FS.existsSync(d);//检查目录文件是否存在
+        if (!r) self.mkdirsSync(d);//创建目录
+
+
         FS.writeFile(wfile, buf, function (error) {
             if (error) {
-                BLUE.log(wfile + '写入失败')
+                BLUE.error(self.getUrl())
+                BLUE.error(wfile + '写入失败')
             } else {
-                BLUE.log(wfile + '写入成功了')
+                //BLUE.log(wfile + '写入成功了')
             }
         });
     }

@@ -33,12 +33,14 @@ export class noval01_APP extends M.appMain implements APP {
     }
 
     private _packbook(tag:string):void {
-        var opdir = FILE_DIR_ROOT + "/../"+tag
+        var opdir = FILE_DIR_ROOT + "/"+tag
        var files = FS.readdirSync( opdir )
-       var wfile = opdir + "/" + "__book.txt";
+       var wfile =FILE_DIR_ROOT  + "/" + tag + ".txt";
         for (let i=1;i<=files.length;i++)
         {
-            let data = FS.readFileSync( opdir + "/" + i + ".txt")
+            let fn = opdir + "/" + i + ".txt"
+            if (!FS.existsSync(fn))  continue;
+            let data = FS.readFileSync( fn )
             FS.appendFileSync(wfile,"第"+ i + "章\r\n")
             FS.appendFileSync(wfile,data.toString())
             FS.appendFileSync(wfile,"\r\n")
@@ -49,7 +51,8 @@ export class noval01_APP extends M.appMain implements APP {
         FS.writeFileSync(wfile, content)
     }
 
-    private packbook(tags:any):void {
+    private packbook():void {
+       var tags= FS.readdirSync( FILE_DIR_ROOT )
         for (let i=0;i<tags.length;i++)
         {
             this._packbook(tags[i]);
@@ -66,7 +69,18 @@ export class noval01_APP extends M.appMain implements APP {
     //private url ="https://www.bi09.cc/book/140921/" //太平令
     //private url ="https://www.bi09.cc/book/178024/" //我的超能力每周刷新
     //private url ="https://www.bi09.cc/book/141829/" //1979黄金时代
-    private url ="https://www.bi09.cc/book/141390/" //高武纪元
+    //private url ="https://www.bi09.cc/book/141390/" //高武纪元
+    //private url ="https://www.bi09.cc/book/43259/" //离婚后的我开始转运了
+    //private url ="https://www.bi09.cc/book/172104/" //择日走红
+    
+    //private url ="https://www.bi09.cc/book/43312/" //重塑千禧年代
+    //private url ="https://www.bi09.cc/book/44952/" //赤心巡天
+    //private url ="https://www.bi09.cc/book/179582/" //重生在火红年代的悠闲生活
+    //private url ="https://www.bi09.cc/book/159393/" //离婚后，我继承了游戏里的财产
+    //private url ="https://www.bi09.cc/book/109819/" //导演的快乐你不懂
+    //private url ="https://www.bi09.cc/book/168391/" //重回1980年去享福
+    //private url ="https://www.bi09.cc/book/123813/" //我是导演，我不比烂
+    private url ="https://www.bi09.cc/book/138808/" //重生飞扬年代
     //private url ="" //
     //private url ="" //
     //private url ="" //
@@ -76,19 +90,13 @@ export class noval01_APP extends M.appMain implements APP {
     ;//
     private sttag:NODE_TAG = NODE_TAG.ROOT;
     public start(): void {
-        this.packbook([
-            "downloadbook 01"
-            ,"downloadbook 02"
-            ,"downloadbook 03"
-            ,"downloadbook 04"
-            ,"downloadbook 05"
-        ]);
+        this.packbook();
         return;
 
         let nds = [
             //{ tag: NODE_TAG.ROOT, n: noval01_Root , reqtype:REQ_TYPE.PUPPETEER}
             { tag: NODE_TAG.ROOT, n: noval01_Root }
-          , { tag: NODE_TAG.STEP_CATALOG, n:noval01_Catalog,limit:5}
+          , { tag: NODE_TAG.STEP_CATALOG, n:noval01_Catalog,limit:20}
         ];
         let self = this;
         self.init(

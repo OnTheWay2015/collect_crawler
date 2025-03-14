@@ -41,11 +41,16 @@ export class noval01_Catalog extends BlueNode{
             return;
         }
 
+
+        let d = self.getUrlori();
+        d = PATH.dirname(d);
+        d= d.substr(d.lastIndexOf("/")+1) + "/"; 
+
         let ccc = $(els[0]).text()
-        ccc =ccc.substring(0,ccc.length - 66) 
-            //BLUE.log(ccc);
-        let filename = self.mProcessData.filename?self.mProcessData.filename:"__noname";
-        self.writefile(filename,ccc,".txt");
+        ccc = ccc.substring(0, ccc.length - 66)
+        //BLUE.log(ccc);
+        let filename = self.mProcessData.filename ? self.mProcessData.filename : "__noname";
+        self.writefile( d+ filename, ccc, ".txt");
     }
 }
  

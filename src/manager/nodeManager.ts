@@ -82,7 +82,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             arrProcessIng.length<limit)
         {
             let n:any = arrProcess.shift();
-            BLUE.log("processNode act ProcessIng! tag[" + n.tag + "] oriUrl["+n.getUrlori()+"] ");
+            //BLUE.log("processNode act ProcessIng! tag[" + n.tag + "] oriUrl["+n.getUrlori()+"] ");
             arrProcessIng.push(n);
         }
 
@@ -95,7 +95,7 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
             if (n.isComplete())
             {
 
-                BLUE.log("processNode complete! tag[" + n.tag + "] url["+decodeURI( n.getUrl())+"]");
+                //BLUE.log("processNode complete! tag[" + n.tag + "] url["+decodeURI( n.getUrl())+"]");
                 arrProcessIng.splice(i,1);
             }
         } 
