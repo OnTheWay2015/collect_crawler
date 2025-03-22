@@ -2,7 +2,7 @@
 import {APP } from "../app"
 import * as M from "../appMain"; 
 
-import { NODE_TAG } from '../../configs';
+import { NODE_TAG } from '../../constants';
 import { KY_Page } from './KY_page';
 import { KY_Root} from './KY_root';
 import { KY_Catalog} from './KY_catalog';

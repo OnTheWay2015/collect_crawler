@@ -1,6 +1,6 @@
 import * as BLUE from "../utils";
-import * as configs from "../configs";
-import { NODE_TAG } from "../configs";
+import * as constants from "../constants";
+import { NODE_TAG } from "../constants";
 import { ProcessManager, ProcessIF } from "../manager/processManager";
 import { NodeManager } from "../manager/nodeManager";
 //import { DB_CONN, DB_handle } from "../handles/dbHandler"
@@ -26,7 +26,7 @@ export class appMain {
         self._cb = cb;
         if (dbflag)
         {
-            //self.p_dbbase = new DB_CONN(configs.DB_IP, { useUnifiedTopology: true }, {})
+            //self.p_dbbase = new DB_CONN(constants.DB_IP, { useUnifiedTopology: true }, {})
             //self.p_dbgrades = new DB_handle(self.p_dbbase);
             //self.p_dbkinds = new DB_handle(self.p_dbbase);
             //self.p_dbexes = new DB_handle(self.p_dbbase);
@@ -52,11 +52,11 @@ export class appMain {
         //this.initDBNext(
         //    dbh
         //   ,[
-        //    {dbname:configs.DB_BASE,colname:configs.DB_COL_GRADES, unique:true,keys:{gid:1}}
-        //    ,{dbname:configs.DB_BASE,colname:configs.DB_COL_KINDS, unique:true,keys:{kid:1}}
-        //    ,{dbname:configs.DB_BASE,colname:configs.DB_COL_EXERCISES, unique:true,keys:{eid:1}}
-        //    ,{dbname:configs.DB_BASE,colname:configs.DB_COL_EXERCISES, unique:false,keys:{gid:1}}
-        //    ,{dbname:configs.DB_BASE,colname:configs.DB_COL_EXERCISES, unique:false,keys:{kid:1}}
+        //    {dbname:constants.DB_BASE,colname:constants.DB_COL_GRADES, unique:true,keys:{gid:1}}
+        //    ,{dbname:constants.DB_BASE,colname:constants.DB_COL_KINDS, unique:true,keys:{kid:1}}
+        //    ,{dbname:constants.DB_BASE,colname:constants.DB_COL_EXERCISES, unique:true,keys:{eid:1}}
+        //    ,{dbname:constants.DB_BASE,colname:constants.DB_COL_EXERCISES, unique:false,keys:{gid:1}}
+        //    ,{dbname:constants.DB_BASE,colname:constants.DB_COL_EXERCISES, unique:false,keys:{kid:1}}
         //   ] 
         //    ,cb);
     }
@@ -88,6 +88,13 @@ export class appMain {
         let self = this;
         self.p_procMgr.start();
         self._start(url,t);
+    }
+    protected workStartArray(urls:[string], t:NODE_TAG) {
+        let self = this;
+        self.p_procMgr.start();
+        urls.forEach(url=> {
+            self._start(url,t);
+        });
     }
     public test(url:string, t:NODE_TAG ) {
         let self = this;

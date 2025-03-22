@@ -1,5 +1,5 @@
 
-import * as configs from "../configs";
+import * as constants from "../constants";
 import { BlueNode, BlueNodeFile } from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';

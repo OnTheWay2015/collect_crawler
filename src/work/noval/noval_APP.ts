@@ -2,14 +2,11 @@
 import {APP } from "../app"
 import * as M from "../appMain"; 
 
-import { NODE_TAG,HEADER_TAG,FILE_DIR_ROOT  } from '../../configs';
+import { NODE_TAG,HEADER_TAG,FILE_DIR_ROOT  } from '../../constants';
 //import { noval_Page } from './noval_page';
 import { noval_Root} from './noval_root';
 //import { noval_CatalogPage} from './noval_catalogpage';
 import { BN_FileM4A } from '../BN_FileM4A';
-import { noval_M4A } from "./noval_M4A";
-import { noval_CatalogPage } from "./noval_catalogpage";
-import { noval_Catalog } from "./noval_catalog";
 
 
 import * as HTTP from 'http';
@@ -72,34 +69,13 @@ export class noval_APP extends M.appMain implements APP {
 
     //private url="https://www.bi09.cc/book/45102/1.html";
     //private url = "https://www.bi09.cc/book/228540/1.html" //重生60带空间
-    private url ="https://www.bi09.cc/book/151088/1.html" //从1987开始
+    //private url ="https://www.bi09.cc/book/151088/1.html" //从1987开始
+    private url="https://www.shoujixs.com/shoujixs_188095_45080744.html"  //  这主播真狗，挣够200就下播
+    //private url=""  // 
+    //private url=""  // 
+    //private url=""  // 
     private sttag:NODE_TAG = NODE_TAG.ROOT;
     public start(): void {
-
-        
-        //this.packbook();
-        //return;
-
-        this.changeString();
-        return;
-
-//let data = ""
-//let callback = function (res:HTTP.IncomingMessage) {
-//    res.on('data', chunk => {
-//        data+=chunk;//    });
-// 
-//    res.on('end', () => {
-//        //console.log(JSON.parse(data));
-//        console.log(data);
-//    });
-//}
-// 
-//HTTP.get(this.url, callback).on('error', err => {
-//    console.log('Error: ', err.message);
-//});
-//
-//
-//return
         let nds = [
             //{ tag: NODE_TAG.ROOT, n: noval_Root , reqtype:REQ_TYPE.PUPPETEER}
             { tag: NODE_TAG.ROOT, n: noval_Root }

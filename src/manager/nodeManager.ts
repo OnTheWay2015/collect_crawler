@@ -1,6 +1,6 @@
 
-   import * as configs from "../configs"; 
-    import { NODE_TAG } from "../configs";
+   import * as constants from "../constants"; 
+    import { NODE_TAG } from "../constants";
    import * as BLUE from "./../utils"; 
    import {BlueNode } from "../collects/node"; 
    import {ManagerBaseIF}  from "./managerBase"; 
@@ -33,8 +33,8 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
 
     }
     public update(tm: number) {
-        this._update(tm, this._nodesProcess,this._nodesProcessIng, configs.CFG_NODE_PROCESS_CNT);
-        this._update(tm, this._nodesProcessLimit,this._nodesProcessIngLimit,configs.CFG_NODE_PROCESS_LIMIT_CNT );
+        this._update(tm, this._nodesProcess,this._nodesProcessIng, constants.CFG_NODE_PROCESS_CNT);
+        this._update(tm, this._nodesProcessLimit,this._nodesProcessIngLimit,constants.CFG_NODE_PROCESS_LIMIT_CNT );
         this.dumpProcessNodes(tm);
     }
 
@@ -51,12 +51,12 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         let f = (ary: any) => {
             for (let i = 0; i <ary.length;i++) {
                 let n = ary[i];
-                BLUE.error(" node ["+n.debugString()+"] ");
+                BLUE.log(" node ["+n.debugString()+"] ");
             }
         }
-        BLUE.error(" ##################### process  normal ##############################");
+        BLUE.log(" ##################### process  normal ##############################");
         f(self._nodesProcessIng);
-        BLUE.error(" ##################### process  limit ##############################");
+        BLUE.log(" ##################### process  limit ##############################");
         f(self._nodesProcessIngLimit);
     }
 
@@ -178,14 +178,14 @@ export class NodeManager implements ManagerBaseIF, ProcessIF {
         if (clsinfo.ispost)
         {
             n.setHttpMethod(BLUE.POST);
-            n.setHttpHeader(self.pHolder.getDefHeaders(configs.HEADER_TAG.AJAX));
+            n.setHttpHeader(self.pHolder.getDefHeaders(constants.HEADER_TAG.AJAX));
         }
         else
         {
-            n.setHttpHeader(self.pHolder.getDefHeaders(configs.HEADER_TAG.PAGE));
+            n.setHttpHeader(self.pHolder.getDefHeaders(constants.HEADER_TAG.PAGE));
         }
 
-        BLUE.log("processNode add ok! tag[" + tag + "] url["+url+"] ");
+        //BLUE.log("processNode add ok! tag[" + tag + "] url["+url+"] ");
         if (self._limitTags && self._limitTags[tag])
         {
             //self._nodesProcessLimit.push(n);

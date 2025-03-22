@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -90,7 +90,7 @@ export class KY_Page extends BlueNode{
         let addheaders = { headers: { referer: self.getUrl() } };
         let pdata = BLUE.mergeObject(self.mProcessData, addheaders);
         self.addSubNode(
-            configs.NODE_TAG.STEP_FILE_M4A,//File
+            constants.NODE_TAG.STEP_FILE_M4A,//File
             durl,
             pdata,
             self.mRootData);

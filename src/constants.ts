@@ -13,7 +13,7 @@ export const DB_COL_EXERCISES:string="EXERCISES";
 
 
 export const CFG_NODE_PROCESS_CNT:number= 50;
-export const CFG_NODE_PROCESS_LIMIT_CNT:number= 5;
+export const CFG_NODE_PROCESS_LIMIT_CNT:number= 15;
 export const CFG_HTTP_RETRY_CNT:number= 2;
 
 export const HTTP_EXPIRE_TM:number=3* 60 * 1000;

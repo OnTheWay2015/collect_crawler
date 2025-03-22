@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -28,10 +28,10 @@ export class Page extends BlueNode{
         filename = filename.substr(0,filename.indexOf("."));
         let fpdir = dir;
         if (fpdir.indexOf('/') == 0) {
-            fpdir = configs.FILE_DIR_ROOT + fpdir;
+            fpdir = constants.FILE_DIR_ROOT + fpdir;
         }
         else {
-            fpdir = configs.FILE_DIR_ROOT + "/" + fpdir;
+            fpdir = constants.FILE_DIR_ROOT + "/" + fpdir;
         }
         let fullpath = fpdir  + "/"+ filename + ".json";
         let cfr = FS.existsSync(fullpath);//检查目录文件是否存在
@@ -44,10 +44,10 @@ export class Page extends BlueNode{
         let fdir=  dir;
 
         if (fdir.indexOf('/') == 0) {
-            fdir = configs.FILE_DIR_ROOT + fdir;
+            fdir = constants.FILE_DIR_ROOT + fdir;
         }
         else {
-            fdir = configs.FILE_DIR_ROOT + "/" + fdir;
+            fdir = constants.FILE_DIR_ROOT + "/" + fdir;
         }
         let fname= PATH.basename(uri);
 
@@ -56,14 +56,14 @@ export class Page extends BlueNode{
         if (!r) 
         {
             self.addSubNode(
-                configs.NODE_TAG.STEP_FILE_BASE,
+                constants.NODE_TAG.STEP_FILE_BASE,
                 uri,
                 { writePath: dir },
                 self.mRootData);
         }
         else
         {
-           if (configs.LOG_NOTICE) BLUE.log("try get file["+pathFile+"] exsit!");
+           if (constants.LOG_NOTICE) BLUE.log("try get file["+pathFile+"] exsit!");
         }
 
 

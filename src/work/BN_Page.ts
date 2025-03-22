@@ -1,4 +1,4 @@
-import * as configs from "../configs";
+import * as constants from "../constants";
 import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
@@ -76,7 +76,7 @@ export class BN_Page extends BlueNode{
         for (let k in links) {
             let url =  self.getFullUrl(k,self.getUrl());
             self.addSubNode(
-                configs.NODE_TAG.STEP_5,
+                constants.NODE_TAG.STEP_5,
                 url,
                 {},//{ writePath: wpath },
                 self.mRootData);

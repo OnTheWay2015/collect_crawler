@@ -1,5 +1,5 @@
 //class="itemarea clearfix"
-import * as configs from "../configs";
+import * as constants from "../constants";
 import { BlueNode } from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
@@ -42,12 +42,12 @@ export class BN_GradeExTypeList extends BlueNode{
                 desc:kindname };
             self.addInsertItm(
                 self.pMain.p_dbgrades
-                , configs.DB_BASE
-                , configs.DB_COL_KINDS
+                , constants.DB_BASE
+                , constants.DB_COL_KINDS
                 , [itm]);
 
             self.addSubNode(
-                configs.NODE_TAG.STEP_1,
+                constants.NODE_TAG.STEP_1,
                 url,
                 { gid:self.mProcessData.gid,kid:kid},
                 self.mRootData);

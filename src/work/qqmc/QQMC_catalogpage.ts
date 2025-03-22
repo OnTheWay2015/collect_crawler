@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -40,12 +40,12 @@ export class QQMC_CatalogPage extends BlueNode {
             let d = { name: name, json:namejson};
             let pdata = BLUE.mergeObject(self.mProcessData, d);
 
-            let fullpath = configs.FILE_DIR_ROOT + "/" + namejson;
+            let fullpath = constants.FILE_DIR_ROOT + "/" + namejson;
             let cfr = FS.existsSync(fullpath);//检查目录文件是否存在
             if (!cfr) {
 
                 self.addSubNode(
-                    configs.NODE_TAG.STEP_FILE_M4A,//File
+                    constants.NODE_TAG.STEP_FILE_M4A,//File
                     durl,
                     pdata,
                     self.mRootData);

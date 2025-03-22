@@ -8,7 +8,8 @@
         public pHolder!:any; //appmain
         private _tableStore!:{[key:string]:ProcessIF}; 
         private _vec!:ProcessIF[];
-        private _tmInterval:number = 333;
+        //private _tmInterval:number = 333;
+        private _tmInterval:number = 33;
         constructor(holder:any) { 
             let self = this;
             self._tableStore = {};

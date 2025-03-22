@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -33,7 +33,7 @@ export class KY_CatalogPage extends BlueNode{
             //}
             url = self.getFullUrl(url,self.getUrl());
             self.addSubNode(
-                configs.NODE_TAG.STEP_PAGE,
+                constants.NODE_TAG.STEP_PAGE,
                 url,
                 itm,
                 self.mRootData);

@@ -2,7 +2,7 @@
 import {APP } from "../app"
 import * as M from "../appMain"; 
 
-import { NODE_TAG } from '../../configs';
+import { NODE_TAG } from '../../constants';
 //import { QQMC_Page } from './QQMC_page';
 import { QQMC_Root} from './QQMC_root';
 //import { QQMC_CatalogPage} from './QQMC_catalogpage';

@@ -2,9 +2,10 @@
 import {APP } from "../app"
 import * as M from "../appMain"; 
 
-import { NODE_TAG,HEADER_TAG,FILE_DIR_ROOT  } from '../../configs';
+import { NODE_TAG,HEADER_TAG,FILE_DIR_ROOT  } from '../../constants';
 import { noval01_Root} from './noval01_root';
 import { noval01_Catalog } from "./noval01_catalog";
+import { noval01_CatalogPage } from "./noval01_catalogpage";
 
 
 import * as HTTP from 'http';
@@ -80,8 +81,8 @@ export class noval01_APP extends M.appMain implements APP {
     //private url ="https://www.bi09.cc/book/109819/" //导演的快乐你不懂
     //private url ="https://www.bi09.cc/book/168391/" //重回1980年去享福
     //private url ="https://www.bi09.cc/book/123813/" //我是导演，我不比烂
-    private url ="https://www.bi09.cc/book/138808/" //重生飞扬年代
-    //private url ="" //
+    //private url ="https://www.bi09.cc/book/138808/" //重生飞扬年代
+    private url ="https://www.baidu.com" //
     //private url ="" //
     //private url ="" //
     //private url ="" //
@@ -96,12 +97,14 @@ export class noval01_APP extends M.appMain implements APP {
         let nds = [
             //{ tag: NODE_TAG.ROOT, n: noval01_Root , reqtype:REQ_TYPE.PUPPETEER}
             { tag: NODE_TAG.ROOT, n: noval01_Root }
-          , { tag: NODE_TAG.STEP_CATALOG, n:noval01_Catalog,limit:20}
+          , { tag: NODE_TAG.STEP_CATALOG, n:noval01_Catalog,limit:true}
+          , { tag: NODE_TAG.STEP_CATALOG_PAGE, n:noval01_CatalogPage,limit:true}
         ];
         let self = this;
         self.init(
             () => {
                 self.workStart(this.url,this.sttag);
+                //workStartArray
             }
             , false
             , nds

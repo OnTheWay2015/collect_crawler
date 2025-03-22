@@ -1,4 +1,4 @@
-import * as configs from "../configs";
+import * as constants from "../constants";
 import { BlueNode} from "../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../utils';
@@ -37,13 +37,13 @@ export class BN_GradeExTypes extends BlueNode{
                 desc:name};
             self.addInsertItm(
                 self.pMain.p_dbgrades
-                , configs.DB_BASE
-                , configs.DB_COL_EXERCISES
+                , constants.DB_BASE
+                , constants.DB_COL_EXERCISES
                 , [itm]);
             
             //.shtml
             self.addSubNode(
-                configs.NODE_TAG.STEP_4,//题目内容hhh
+                constants.NODE_TAG.STEP_4,//题目内容hhh
                 url,
                 { gid:self.mProcessData.gid,kid:self.mProcessData.kid,eid:eid},
                 self.mRootData);
@@ -51,7 +51,7 @@ export class BN_GradeExTypes extends BlueNode{
             let s = url.replace(".shtml", "_2.shtml");
             BLUE.log("step_5 url["+s+"]");
             self.addSubNode(
-                configs.NODE_TAG.STEP_5,//题目答案
+                constants.NODE_TAG.STEP_5,//题目答案
                 s,
                 { gid:self.mProcessData.gid,kid:self.mProcessData.kid,eid:eid},
                 self.mRootData);
@@ -72,7 +72,7 @@ export class BN_GradeExTypes extends BlueNode{
             }
             url = self.getFullUrl(url);
             self.addSubNode(
-                configs.NODE_TAG.STEP_2,
+                constants.NODE_TAG.STEP_2,
                 url,
                 { gid:self.mProcessData.gid,kid:self.mProcessData.kid},
                 self.mRootData);

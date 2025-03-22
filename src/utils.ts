@@ -1,5 +1,5 @@
 import { BlueNode } from "./collects/node";
-import { LOG_ERROR, LOG_NOTICE, LOG_WARING } from "./configs";
+import { LOG_ERROR, LOG_NOTICE, LOG_WARING } from "./constants";
 
 export const GET:string="get";
 export const POST:string="post";
@@ -160,3 +160,4 @@ export function getPagesST(els:any, $:any,segkey:string="-", numcb:any=null,urlc
         st.pagecount = count;
         return  st;
 }
+

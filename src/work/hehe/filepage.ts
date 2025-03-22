@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -31,7 +31,7 @@ export class FilePage extends BlueNode{
             let pdata = BLUE.mergeObject(self.mProcessData, addheaders);
 
             self.addSubNode(
-                configs.NODE_TAG.STEP_FILE_BASE,
+                constants.NODE_TAG.STEP_FILE_BASE,
                 url,
                 pdata,
                 self.mRootData);

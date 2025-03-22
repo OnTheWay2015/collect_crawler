@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -49,7 +49,7 @@ export class CatalogPage extends BlueNode{
             BLUE.mergeObject(pdata, self.mProcessData);
             BLUE.mergeObject(pdata, addheaders);
             self.addSubNode(
-                configs.NODE_TAG.STEP_PAGE,
+                constants.NODE_TAG.STEP_PAGE,
                 postUrl,
                 pdata,
                 self.mRootData);
@@ -60,7 +60,7 @@ export class CatalogPage extends BlueNode{
             //let info:any = await self.AX().post(postUrl,{id:datav});
             
             //self.addSubNode(
-            //    configs.NODE_TAG.STEP_FILE_M4A,
+            //    constants.NODE_TAG.STEP_FILE_M4A,
             //    info.mp3,
             //    itm,
             //    self.mRootData);

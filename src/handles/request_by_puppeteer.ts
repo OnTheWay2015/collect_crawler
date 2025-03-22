@@ -1,7 +1,7 @@
 
 import * as BLUE from "../utils"
 import * as zlib from 'zlib';
-import { DEBUG_PRINT_PAGE_CONTENT } from '../configs';
+import { DEBUG_PRINT_PAGE_CONTENT } from '../constants';
 
 import * as FS from 'fs';
 import { BlueNode, IReq,REQ_ERR } from '../collects/node';

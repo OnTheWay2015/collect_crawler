@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -47,19 +47,19 @@ export class Page extends BlueNode {
 
                 if (v.type == 3) {//bt file
                     self.addSubNode(
-                        configs.NODE_TAG.STEP_FILE_PAGE,
+                        constants.NODE_TAG.STEP_FILE_PAGE,
                         arr[i].content,
                         pdata,
                         self.mRootData);
                 }
                 else if (v.type == 2 || v.type==4) {//img file
                     let fname = PATH.basename(linkmd5+imgfileExt);
-                    let pathFile = configs.FILE_DIR_ROOT +"/" + fname;
+                    let pathFile = constants.FILE_DIR_ROOT +"/" + fname;
                     let r = FS.existsSync(pathFile);//检查目录文件是否存在
                     pdata["fileExt"] = imgfileExt;
                     if (!r) {
                         self.addSubNode(
-                            configs.NODE_TAG.STEP_FILE_BASE,
+                            constants.NODE_TAG.STEP_FILE_BASE,
                             v.content,
                             pdata,
                             self.mRootData);

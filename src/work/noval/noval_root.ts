@@ -1,4 +1,4 @@
-import * as configs from "../../configs";
+import * as constants from "../../constants";
 import { BlueNode} from "../../collects/node";
 import * as cheerio from 'cheerio';
 import * as BLUE from '../../utils';
@@ -18,6 +18,7 @@ export class noval_Root extends BlueNode{
     protected process02(data: any,res:any): void {
         let self = this;
         super.onRequestRes(data, res); 
+        data = self.testEncoding(data);
         let $ = cheerio.load(data); //采用cheerio模块解析html
         //BLUE.log($.html());
 
@@ -28,7 +29,7 @@ export class noval_Root extends BlueNode{
 
 
         let [chapterEle] = self.selectDom($, $, [
-            'div[class="content"]'
+            'div[id="zjny"]'
         ]);
         if (chapterEle == null ) {
             BLUE.error("noval_Root no Dom content element select")
@@ -37,26 +38,25 @@ export class noval_Root extends BlueNode{
 
 
 
-        let [chapterName] = self.selectDom($, chapterEle, [
-            'h1[class="wap_none"]'
-        ]);
-        if (chapterName== null ) {
-            BLUE.error("noval_Root no Dom chapterName element select")
-            return;
-        }
+        //let [chapterName] = self.selectDom($, chapterEle, [
+        //    'h1[class="wap_none"]'
+        //]);
+        //if (chapterName== null ) {
+        //    BLUE.error("noval_Root no Dom chapterName element select")
+        //    return;
+        //}
 
-        let chapterNameStr= $(chapterName).text()
+        //let chapterNameStr= $(chapterName).text()
 
+        //let els = self.selectDom($,chapterEle, [
+        //    'div[id="chaptercontent"]'
+        //]);
+        //if (els == null || els.length <=0) {
+        //    BLUE.error("noval_Root no Dom element select")
+        //    return;
+        //}
 
-        let els = self.selectDom($,chapterEle, [
-            'div[id="chaptercontent"]'
-        ]);
-        if (els == null || els.length <=0) {
-            BLUE.error("noval_Root no Dom element select")
-            return;
-        }
-
-        let ccc = $(els[0]).text()
+        let ccc = $(chapterEle).text()
         ccc =ccc.substring(0,ccc.length - 66) 
             //BLUE.log(ccc);
         let page = self.mRootData.m_page?self.mRootData.m_page:1;
@@ -65,22 +65,31 @@ export class noval_Root extends BlueNode{
         //self.writefile(chapterNameStr,ccc,".txt");
 
 
-        let [bottom_btn]= self.selectDom($, chapterEle, [
-            'a[id="pb_next"]'
+        let bottom_btns= self.selectDom($, $, [
+            'div[class="bottem2"]'
+            ,'a'
         ]);
 
-        if (bottom_btn == null ){
+        if (bottom_btns == null ){
             BLUE.error("book end")
             return;
         }
-            let path = $(bottom_btn).attr("href");
+        for (let i=0, len = bottom_btns.length;i<len;i++)
+        {
+            let element = bottom_btns[i];
+            let str = $(element).text()
+            if (str == null || str!= "下一章")
+            {
+                continue;
+            }
+            let path = $(element).attr("href");
             let postUrl = self.getWebSit() + path;
             self.addSubNode(
-                configs.NODE_TAG.ROOT,
+                constants.NODE_TAG.ROOT,
                 postUrl,
                 {},
                 {m_page:page+1});
-
+        } 
     }
 
 
@@ -127,7 +136,7 @@ export class noval_Root extends BlueNode{
             let path = $(element).attr("href");
             let postUrl = self.getWebSit() + path;
             self.addSubNode(
-                configs.NODE_TAG.ROOT,
+                constants.NODE_TAG.ROOT,
                 postUrl,
                 {},
                 {m_page:page+1});

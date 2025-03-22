@@ -2,7 +2,7 @@
 import {APP } from "../app"
 import * as M from "../appMain"; 
 
-import { NODE_TAG,HEADER_TAG  } from '../../configs';
+import { NODE_TAG,HEADER_TAG  } from '../../constants';
 import { Page } from './page';
 import { Catalog} from './catalog';
 import { CatalogPage} from './catalogpage';

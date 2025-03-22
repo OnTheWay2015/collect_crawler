@@ -1,4 +1,4 @@
-import * as configs from "../configs";
+import * as constants from "../constants";
 import { HttpHandle } from "../handles/request";
 import { PuppeteerHandle } from "../handles/request_by_puppeteer";
 //import { DB_item, DB_handle, DB_CONN, DB_OP } from "../handles/dbHandler";
@@ -44,7 +44,7 @@ export enum URL_MARK{
 
 export interface NodeIF{
     pMain:any;//appmain
-    tag:configs.NODE_TAG;
+    tag:constants.NODE_TAG;
     process(tm:number):void;
     isComplete():Boolean;
     setComplete(b: Boolean): void;
@@ -100,7 +100,7 @@ export interface IReq {
     }
 
 export class BlueNode implements NodeIF {
-    public tag!: configs.NODE_TAG;
+    public tag!: constants.NODE_TAG;
     public mReqType!:REQ_TYPE;
     protected mProcessData!: any
     protected mRootData!: any
@@ -118,7 +118,7 @@ export class BlueNode implements NodeIF {
     protected mRetryCnt!: number;
 
     private _method:string= BLUE.GET;
-    constructor(tag: configs.NODE_TAG,
+    constructor(tag: constants.NODE_TAG,
         url: string,
         main: any,
         data?: any, //{headers,}
@@ -156,7 +156,7 @@ export class BlueNode implements NodeIF {
     }
     protected getExpireTm()
     {
-        return this.expireTM > 0 ? this.expireTM : configs.HTTP_EXPIRE_TM;
+        return this.expireTM > 0 ? this.expireTM : constants.HTTP_EXPIRE_TM;
     }
 
     /**
@@ -229,7 +229,7 @@ export class BlueNode implements NodeIF {
         if ( NodeState.httpReq == self.mState && 
             self.dTM > self.expireTM )
         {
-            if (self.mRetryCnt >= configs.CFG_HTTP_RETRY_CNT)
+            if (self.mRetryCnt >= constants.CFG_HTTP_RETRY_CNT)
             {
                 self.setComplete(true);
                 BLUE.error("expire tm err! node state[" + self.mState + "] url[" + self.getUrl() + "]");
@@ -292,11 +292,11 @@ export class BlueNode implements NodeIF {
     }
     
     protected addSubNode(
-        tag: configs.NODE_TAG,
+        tag: constants.NODE_TAG,
         url:string,
         data?:any, //{addheaders,}
         rootData?:any ): void {
-        BLUE.log("AddSubNode tag["+tag+"] url["+url+"]  **FROM**  tag["+this.tag+"] url["+this.getUrl()+"]");
+        //BLUE.log("AddSubNode tag["+tag+"] url["+url+"]  **FROM**  tag["+this.tag+"] url["+this.getUrl()+"]");
         
         if (url== undefined)
         {
@@ -388,7 +388,7 @@ export class BlueNode implements NodeIF {
     private rangflag()
     {
         return false;
-        //return this.tag == configs.NODE_TAG.STEP_FILE_BASE || this.tag == configs.NODE_TAG.STEP_FILE_M4A;
+        //return this.tag == constants.NODE_TAG.STEP_FILE_BASE || this.tag == constants.NODE_TAG.STEP_FILE_M4A;
     }
     private nextUpdateDB(err:any, itmsOP:any){
         let self = this;
@@ -742,16 +742,16 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
 
 
         if (wpath.indexOf('/') == 0) {
-            wpath = configs.FILE_DIR_ROOT + wpath;
+            wpath = constants.FILE_DIR_ROOT + wpath;
         }
         else {
             if (wpath.length > 0)
             {
-                wpath = configs.FILE_DIR_ROOT + "/" + wpath;
+                wpath = constants.FILE_DIR_ROOT + "/" + wpath;
             }
             else
             {
-                wpath = configs.FILE_DIR_ROOT;
+                wpath = constants.FILE_DIR_ROOT;
             }
         }
 
@@ -822,7 +822,7 @@ export class BlueNodeFile extends BlueNode
 
     protected onInit(): void {
         super.onInit();
-        this.setExpireTm( configs.FILE_EXPIRE_TM );
+        this.setExpireTm( constants.FILE_EXPIRE_TM );
     }
 }
 
