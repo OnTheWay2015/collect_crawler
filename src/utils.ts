@@ -1,5 +1,7 @@
 import { BlueNode } from "./collects/node";
 import { LOG_ERROR, LOG_NOTICE, LOG_WARING } from "./constants";
+import * as FS from 'fs';
+import * as PATH from 'path';
 
 export const GET:string="get";
 export const POST:string="post";
@@ -19,7 +21,7 @@ export function error(str:string){
 
 export function mergeObject(to: any, from: any): void {
     let str = JSON.stringify(to)
-    let toobj:any = JSON.parse(str); 
+    let toobj:any = ParseJson(str); 
     for (let k in from) {
         toobj[k] = from[k];
     }
@@ -27,12 +29,30 @@ export function mergeObject(to: any, from: any): void {
 
 }
 
+export function ParseJson(str: string): any {
+    try {
+        const obj = JSON.parse(str);
+        return obj;
+    } catch (e: any) {
+        error("ParseJson err:" + e.message);
+        return null;
+    }
+}
+
+export function JsonToStr(j: any): string {
+    return JSON.stringify(j);
+}
+
+
 //--------------------------------
 export class urlST{
     public isHttps:boolean = false;
     public host:string= "";
+    public proto:string= "http://";
     public path:string= "/";
     public port:number= 0;
+    public auto_name:string= "";
+    public url:string= "";
 }
 
 export function transURLSt(u: string): urlST | null {
@@ -48,12 +68,14 @@ export function transURLSt(u: string): urlST | null {
     let regHttps = /^[hH]{1}[tT]{2}[pP]{1}[sS]{1}:\/\//;
     let regHttp = /^[hH]{1}[tT]{2}[pP]{1}:\/\//;
     let ret = new urlST();
+    ret.url = url;
     if (url_seg.length>0)
     {
         ret.port =parseInt(url_seg);
     }
     if (regHttps.test(url)) {
         ret.isHttps = true;
+        ret.proto = "https://";
         url = url.slice(8);
         //log("https act!");
     }
@@ -85,6 +107,20 @@ export function transURLSt(u: string): urlST | null {
     return ret;
 } 
 
+
+// 递归创建目录 同步方法
+export function mkdirsSync(dirname: string) {
+    if (FS.existsSync(dirname)) {
+        return true;
+    } else {
+        if (mkdirsSync(PATH.dirname(dirname))) { //path.dirname 返回上层目录; ./aaa/bbb 时返回 ./aaa
+            FS.mkdirSync(dirname);
+            return true;
+        }
+    }
+}
+
+
 export function getGradeid(k: string): number {
     if ( k.indexOf("一") >= 0 ) return 1;
     if ( k.indexOf("二") >= 0 ) return 2;
@@ -104,6 +140,50 @@ export function getExeid(k:string):number{
 
     return 0;
 }
+
+
+//let obj2 = JSON.parse(JSON.stringify(obj1)); // 简单深拷贝
+export function deepClone(obj:any):any {
+    if (obj === null || typeof obj !== "object") {
+        return obj;
+    }
+
+    let copy:any = Array.isArray(obj) ? [] : {};
+
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            copy[key] = deepClone(obj[key]); // 递归拷贝每个属性
+        }
+    }
+/*
+优点：
+    能够拷贝对象中的所有嵌套属性。
+    支持数组的深拷贝。
+局限性：
+    对于深度非常大的嵌套对象，递归可能会导致性能问题。
+    无法处理循环引用的对象结构
+*/
+    return copy;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export class pages_st

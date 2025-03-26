@@ -21,7 +21,7 @@ export class PuppeteerHandle implements IReq{
     private _method:string= BLUE.GET;
 
     private _headers:any = {};
-    private _main!:any;
+    //private _main!:any;
     private mReq!:any; 
     constructor(url:string,main:any,headers:any,method:string=BLUE.GET) {
         let self = this;
@@ -39,8 +39,8 @@ export class PuppeteerHandle implements IReq{
         }
        
         self._method = method;
-        self._main= main;
-        self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
+        //self._main= main;
+        //self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
     }
 
     public getSetCookies():any 
@@ -123,7 +123,8 @@ export class PuppeteerHandle implements IReq{
     //BLUE.log(html);
     
     //FS.writeFileSync(PATH.join("./", "exportHtml.html"), html);
-
+    await new Promise(r => setTimeout(r, 20000));
+    
     let content = await page.content();
     //BLUE.log(content);
     //FS.writeFileSync(PATH.join("./", "exportHtmlcontent.txt"), content);

@@ -3,14 +3,8 @@ import { ConfMgr } from "../conf";
 import * as BLUE from '../utils';
 import { ActionTimes } from "./actiontimes";
 import { ActionInterval } from "./actioninterval";
-import { MakeAction } from "./_actions";
-
-
-export enum ACTION_TYPE{
-	BASE =1,
-	TIMES,
-	INTERVAL,
-};
+import * as _actions from "./_actions";
+import { ActionHolderBase } from "./holderbase";
 
 export enum ACTION_EXEC_TYPE {
 	RANDOM = 1,
@@ -41,29 +35,37 @@ export enum ActionState {
 
 export type AIACTION_CONFIG = {
 	id: number; 
-	TP: ACTION_TYPE;
+	TP: string;
 	//ActionID: number = 0;//引用 AIACTION_CONFIG.id 
 	ExecTP:ACTION_EXEC_TYPE;
 	Actions: [number]; //引用 AIACTION_CONFIG.id 
 	NodeLeft:number; //当前执行后,返回 	ExecState.FAILED  时选择
 	NodeRight:number; //当前执行后,返回 	ExecState.OK 时选择	
-	TargetValue:number[][];
+	//TargetValue:number[][];
+	TargetValue:any[][];
 };
 
 
 export class ActionBase {
-	private m_State:ActionState = ActionState.NONE;
+	private m_data:any = {};
+	private m_tm_expire: number = 0;
+	private m_tm_used: number = 0;
+	private m_State: ActionState = ActionState.NONE;
 	private m_pCurr:ActionBase|null = null;
 	private m_ExecRes:ExecState = ExecState.OK;
-	private m_pParent:ActionBase|null =null;
-	private m_Holder!:any;
+	private m_key_for_fill:string = ""
+	private m_markinfo!:BLUE.urlST
+	protected m_pParent!:ActionBase|null;
+	protected m_Holder!:ActionHolderBase
 	protected m_TaskposCurr:number=0;
 	protected m_Level:number=0;
 	protected m_pAIActionConfig!:AIACTION_CONFIG;
-    constructor(Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
     {
 		let self = this;
-		self.m_pParent = Parent;
+		if (Parent!=null){
+			self.m_pParent = Parent;
+		}
 		self.m_pAIActionConfig = conf;
 		self.m_Level = level;
 		self.m_Holder = holder;
@@ -103,7 +105,8 @@ export class ActionBase {
                     //    Done(ExecState:: FAILED);
                     //}
                 }
-                break;
+				self.DoWaitDriver(tm);
+				break;
             case ActionState.WAITING:
                 self.DoWaiting(tm);
                 break;
@@ -128,7 +131,7 @@ export class ActionBase {
 		//LogDebug("ActionBase::DoPrepare Level:[%d] ",m_Level );
 		let self = this;
 		this.m_State = ActionState.RUN;
-		if (self.m_pAIActionConfig == null || self.m_pAIActionConfig.TP <= 0) {
+		if (self.m_pAIActionConfig == null || self.m_pAIActionConfig.TP == _actions.ACTION_TYPE.NONE) {
 			self.Done(ExecState.FAILED);
 			return;
 		}
@@ -140,7 +143,12 @@ export class ActionBase {
 
 		}
 
-		self.Prepare();
+		if (self.m_pParent)
+		{
+			self.m_pParent.SetSubMarkInfo(self);
+		}
+
+		self.Prepare(); //执行位置在方法最后
 	}
 
 	protected Prepare() {
@@ -222,11 +230,11 @@ public DoChoseTask()
 	let Conf = ConfMgr.GetActionConfigById(ActionConfId);
 	if (Conf == null)
 	{
-		BLUE.error("ActionConfId["+ ActionConfId +"] is null!" );
+		self.Errorlog("ActionConfId["+ ActionConfId +"] is null!" );
 		self.GoState( ActionState.TRY_SUB_NODE);
 		return;
 	}
-	if (Conf.TP<=0)
+	if (Conf.TP<=_actions.ACTION_TYPE.NONE)
 	{
 		self.GoState( ActionState.TRY_SUB_NODE);
 		return ;
@@ -251,7 +259,7 @@ public DoTrySubNode()
 	let ActionConfId = self.m_pAIActionConfig.NodeLeft;//FAILED
 	if (self.m_ExecRes == ExecState.OK)
 	{
-		ActionConfId = self.m_pAIActionConfig.NodeLeft;
+		ActionConfId = self.m_pAIActionConfig.NodeRight;
 	}
 	
 	if (ActionConfId <= 0) {
@@ -262,7 +270,7 @@ public DoTrySubNode()
 	let Conf = ConfMgr.GetActionConfigById(ActionConfId);
 	if (Conf == null)
 	{
-		BLUE.error("ActionConfId["+ ActionConfId +"] is null!" );
+		self.Errorlog("ActionConfId["+ ActionConfId +"] is null!" );
 		self.Done( ExecState.FAILED );
 		return;
 	}
@@ -301,14 +309,41 @@ public StartActionConfig()
 }
 
 
-private Create(Conf:AIACTION_CONFIG):ActionBase|null 
+protected Create(Conf:AIACTION_CONFIG):ActionBase|null 
 {
 	let self = this;
-	return MakeAction(null, self,Conf,self.m_Level);
+	return _actions.MakeAction(self.m_Holder, self,Conf,self.m_Level);
 }
 
 
-public DoWaiting(tm:number)
+public SetTmExpire(tm:number)
+{
+	this.m_tm_expire = tm;
+}
+
+private DoWaitDriver(tm:number)
+{
+	let self = this;
+	if (self.m_tm_expire > 0 )
+	{
+		self.m_tm_used+=tm;
+		if (self.m_tm_used > self.m_tm_expire)
+		{
+			self.Errorlog(" tm_expire !");
+			self.Done(ExecState.FAILED);
+			return;
+		}
+	}
+	self.WaitDriver(tm);
+}
+protected WaitDriver(tm:number)
+{
+	let self = this;
+}
+
+
+
+private DoWaiting(tm:number)
 {
 	let self = this;
 	self.Waiting(tm);
@@ -379,6 +414,7 @@ protected OnSubResult(res:ExecState )
 	else
 	{
 		self.Errorlog("ExecState["+res+"]");
+		self.Done(ExecState.FAILED);
 	}
 }
 
@@ -396,7 +432,7 @@ private Clear()
 	self.GoState( ActionState.NONE);
 	self.m_ExecRes = ExecState.OK;
 	self.m_Level = 0;
-	self.m_Holder = null;	
+	//self.m_Holder = null;	
 
 	//self.m_TargetValue = {};
 }
@@ -445,8 +481,7 @@ protected setExecRes(res:ExecState)
 	this.m_ExecRes = res;
 	this.Errorlog("setExecRes["+res+"]");
 }
-protected getExecRes():ExecState
-{
+protected getExecRes():ExecState{
 	return this.m_ExecRes;
 }
 
@@ -455,7 +490,7 @@ protected Errorlog(str:string):void
 
 	let self = this;
 	let pRootConfig = self.GetRootConfig();
-	BLUE.error("ERR ==>RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
+	BLUE.error("ERR ==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
 	BLUE.error(str);
 }
 
@@ -469,6 +504,82 @@ protected GetRootConfig():AIACTION_CONFIG
 	}
 	return p.m_pAIActionConfig;
 }
+
+	//数据处理超过父子节点时，用 __store 存到 holder 里
+    protected SetDataByKey(key:string, v:any):void
+    {
+		key = this.GetStoreKey(key);
+		let self = this;
+		let lkey = "__store."
+		let r = new RegExp(lkey);
+		if (key.indexOf(lkey) < 0)
+		{
+        	_actions.SetDataByKey(self.m_data,key,v);
+		}
+		else{
+			key = key.replace( r,"");
+        	_actions.SetDataByKey(self.m_Holder.getData(),key,v);
+		}
+    }
+
+    public GetDataByKey(key:string):any
+    {
+		key = this.GetStoreKey(key);
+		let self = this;
+		let lkey = "__store."
+		let r = new RegExp(lkey);
+		if (key.indexOf(lkey) < 0)
+		{
+        	return _actions.GetDataByKey(self.m_data,key);
+		}
+		else{
+			key = key.replace( r,"");
+        	return _actions.GetDataByKey(self.m_Holder.getData(),key);
+		}
+    }
+    public GetParentDataByKey(key:string):any
+    {
+		//key = this.GetStoreKey(key);
+		return this.m_pParent!.GetDataByKey(key);
+	}
+
+	public SetMarkInfo(i:BLUE.urlST)
+	{
+		this.m_markinfo = i;
+	}
+
+	protected GetMarkInfo():BLUE.urlST
+	{
+		return this.m_markinfo ;
+	}
+
+	public SetSubMarkInfo(sub:ActionBase)
+	{
+		sub.SetMarkInfo(this.m_markinfo);	
+	}
+
+	//public SetStoreKeyFill(k:string)
+	//{
+	//	//this.m_key_for_fill = k;
+	//}
+
+	private GetStoreKey(kfmt:string):string
+	{
+		let self =this;
+		let k = kfmt;
+    	let r = /\{.*\}/;
+    	if (r.test(k)) {
+			let p = self.m_markinfo.path;
+			if (p.indexOf(".")>=0)
+			{
+				p = p.replace(/\..*/g,"");
+			}
+			k = k.replace(r,p)	
+		}
+		return k;
+	}
+
+
 };
 
 

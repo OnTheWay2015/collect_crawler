@@ -18,6 +18,7 @@ import { noval_APP } from './work/noval/noval_APP';
 import { noval01_APP } from './work/noval01/noval01_APP';
 import { ConfMgr } from './conf';
 import { MakeAction } from './acts/_actions';
+import { ActionHolderBase } from './acts/holderbase';
 //import { QQMC_APP } from './work/qqmc/QQMC_APP';
 //import { KY_APP } from './work/djkuyao/KY_APP';
 //import { appWork } from './work/kekedj/appWork';
@@ -127,10 +128,11 @@ module TTT {
 
    ConfMgr.init();
    let n = 33;
-	let Conf = ConfMgr.GetActionConfigById(100);
+	let Conf = ConfMgr.GetActionConfigById(1000);
    if (Conf)
    {
-      let act = MakeAction(null, null, Conf, 0);
+      let holder = new ActionHolderBase();
+      let act = MakeAction(holder, null, Conf, 0);
       if (act) {
          act.StartActionConfig();
          setInterval(() => {

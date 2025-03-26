@@ -14,7 +14,7 @@ class ConfManager {
         //let p = currentPath + "/configs/config.json"
         let p = "./configs/config.json"
         let data = FS.readFileSync(p, { encoding: 'utf8' });
-        self.m_conf = JSON.parse(data);
+        self.m_conf = BLUE.ParseJson(data);
         //BLUE.log(self.m_conf);
         if (self.m_conf["actions"]) {
             self.m_conf["actions"].forEach((conf: any) => {

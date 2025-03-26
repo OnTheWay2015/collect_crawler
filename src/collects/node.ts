@@ -782,15 +782,7 @@ Set-Cookie: H_PS_PSSID=1460_21081_29523_29520_29238_28519_29098_28834_29221_2635
 
     // 递归创建目录 同步方法
     protected mkdirsSync(dirname: string) {
-        let self = this;
-        if (FS.existsSync(dirname)) {
-            return true;
-        } else {
-            if (self.mkdirsSync(PATH.dirname(dirname))) { //path.dirname 返回上层目录; ./aaa/bbb 时返回 ./aaa
-                FS.mkdirSync(dirname);
-                return true;
-            }
-        }
+        BLUE.mkdirsSync(dirname);
     }
 
     //protected AX()

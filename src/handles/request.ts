@@ -46,20 +46,22 @@ export class HttpHandle implements IReq{
         }
        
         self._method = method;
-        self._main= main;
-        //self._headers = {
-        //    "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
-        //    //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
-        //    "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        //   "Accept-Encoding": "gzip, deflate",
-        //   //"Accept-Encoding": "identity",
-        //   "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-        //   //"Connection": "keep-alive",
-        //   "Cache-Control": "max-age=0",
-        //   //"Cookie":"",
-        //   //"Pragma": "no-cache",
-        //}
-        self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
+        self._headers = headers;
+        //self._main= main;
+        self._headers = {
+            "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
+            //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
+            "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+           "Accept-Encoding": "gzip, deflate",
+           //"Accept-Encoding": "identity",
+           "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+           //"Connection": "keep-alive",
+           "Cache-Control": "max-age=0",
+           //"Cookie":"",
+           //"Pragma": "no-cache",
+        }
+
+        //self.mergeHeaders(self._headers, main.p_nodeMgr.getReqHeaders(), headers);
     }
     public getSetCookies():any 
     {

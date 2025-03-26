@@ -13,8 +13,8 @@ export class ActionInterval extends ActionBase
 protected override Prepare():void
 {
     let self = this;
-   if ( self.m_pAIActionConfig.TargetValue.length <=0||     
-        self.m_pAIActionConfig.TargetValue[0].length <=0  )
+   if ( self.m_pAIActionConfig.TargetValue.length <1||     
+        self.m_pAIActionConfig.TargetValue[0].length <1)
     {
         self.Errorlog("no TargetValue");
         self.Done(ExecState.FAILED);
