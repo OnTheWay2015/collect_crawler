@@ -38,12 +38,18 @@ export class ActionWriteTextFile extends ActionBase
             self.Errorlog("processdata is null");
             return ExecState.FAILED;
         }
+
+        let fn = self.getWriteFileName(self.m_filename);
+        let d = PATH.dirname(fn)
+        let r = FS.existsSync(d);//检查目录文件是否存在
+        if (!r) BLUE.mkdirsSync(d);//创建目录
+        
         if (!self.m_travelflag) {
             if (!processdata.v) {
                 self.Errorlog("processdata.v is null");
                 return ExecState.FAILED;
             }
-            FS.appendFileSync(self.m_filename, processdata.v)
+            FS.appendFileSync(fn, processdata.v)
         } else {
             let eles = processdata;
             let ary: any[] = []
@@ -60,20 +66,26 @@ export class ActionWriteTextFile extends ActionBase
             ary.sort(cfun);
 
            
-        let d = PATH.dirname(self.m_filename)
-        let r = FS.existsSync(d);//检查目录文件是否存在
-        if (!r) BLUE.mkdirsSync(d);//创建目录
 
             for (let i = 0; i < ary.length; i++) {
                 let data = ary[i].v;
+                data = ary[i].k + "\r\n" + data  
                 //FS.appendFileSync(wfile,data.toString())
-                FS.appendFileSync(self.m_filename, data)
+                FS.appendFileSync(fn, data)
             }
         }
         return ExecState.OK;
     }
 
-
+    private getWriteFileName(n:string):string
+    {
+        let self = this;
+        let r = /\{.*\}/;
+        if (r.test(n)) {
+            n = n.replace(r, self.GetStoreTag())
+        }
+        return n;
+    }
 
 
 };

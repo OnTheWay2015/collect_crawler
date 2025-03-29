@@ -3,6 +3,7 @@ import { ActionBase, AIACTION_CONFIG } from "./actionbase";
 import { ActionHttp } from './actionhttp';
 import { ActionHttpFailedStore } from './actionhttpfailedstore';
 import { ActionInterval } from "./actioninterval";
+import { ActionReadTextFile } from './actionreadtextfile';
 import { ActionStoreFilterAttr } from './actionstore_filter_attr';
 import { ActionStoreFilterText } from './actionstore_filter_text';
 import { ActionStoreFilterTrans } from './actionstore_filter_trans';
@@ -26,7 +27,7 @@ import { ActionWriteTextFile } from './actionwritetextfile';
 //};
 
 
-export enum ACTION_TYPE{ //因为在配置里有对应的数值,所以该枚举类型的位置不要调换 
+export enum ACTION_TYPE{ 
 	NONE="",
 	BASE ="BASE",
 	TIMES="TIMES",
@@ -36,6 +37,7 @@ export enum ACTION_TYPE{ //因为在配置里有对应的数值,所以该枚举�
 	STORE_FILTER_ATTR="STORE_FILTER_ATTR", 
 	TRAVEL_LINKS="TRAVEL_LINKS",
 	WRITE_TXT_FILE="WRITE_TXT_FILE",
+	READ_TXT_FILE="READ_TXT_FILE",
 	STORE_FILTER_TEXT="STORE_FILTER_TEXT", 
 	STORE_FILTER_TRANS="STORE_FILTER_TRANS", 
 	HTTP_FAILED_STORE="HTTP_FAILED_STORE",
@@ -61,6 +63,7 @@ export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,L
         , [String(ACTION_TYPE.STORE_FILTER_TRANS)]: ActionStoreFilterTrans
         , [String(ACTION_TYPE.TRAVEL_LINKS)]: ActionTravelLinks
         , [String(ACTION_TYPE.WRITE_TXT_FILE)]: ActionWriteTextFile
+        , [String(ACTION_TYPE.READ_TXT_FILE)]: ActionReadTextFile
 
     }
     

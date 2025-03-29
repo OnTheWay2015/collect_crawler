@@ -1,18 +1,22 @@
 {
-    "actions":[
+	"desc":"笔趣阁"
+    ,"actions":[
         {
-             "id":0
+             "id":1001
              ,"TP":"BASE" 
-             ,"ExecTP":1
-             ,"Actions":[]
+             ,"ExecTP":2
+             ,"ActionsAllTouchFalg":true
+             ,"Actions":[81]
             ,"NodeRight":0
             ,"NodeLeft":0
-        } 
+            ,"TargetValue":[[]]
+        }
         ,{
              "id":1000
              ,"TP":"BASE" 
-             ,"ExecTP":1
-             ,"Actions":[2000]
+             ,"ExecTP":2
+             ,"ActionsAllTouchFalg":true
+             ,"Actions":[2000,2001]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[[]]
@@ -21,11 +25,25 @@
              "id":2000
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
+             ,"Tag":"132795"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biqu01.cc/index/50212/","GET",false,"storehtml"]
+                [ 1,"https://www.biqu04.cc/book/132795/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        }
+        ,{
+             "id":2001
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+             ,"Tag":"180621"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu04.cc/book/180621/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -154,7 +172,7 @@
                 ["__store.bbbb.travel_chaps_{x}","__store.cccc.travel_chaps_{x}"]
                 ,[
                     ["『点此报错』『加入书签』",""]
-                    ,["请收藏本站：https://www.biqu01.cc。笔趣阁手机版：https://m.biqu01.cc ",""]
+                    ,["请收藏本站：https://www.biqu04.cc。笔趣阁手机版：https://m.biqu04.cc ",""]
                     ,["。”","\r\n"]
                     ,["。","。\r\n"]
                 ]
@@ -168,7 +186,7 @@
             ,"NodeRight":0
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ "wdir/writefilename.txt","__store.cccc",true]
+                [ "wdir/{x}.txt","__store.cccc",true]
                 ,[""]
             ]
         }
@@ -183,16 +201,55 @@
         }
         ,{
              "id":80
-             ,"TP":"INTERVAL"
+             ,"TP":"BASE"
+             ,"ExecTP":1
+             ,"Actions":[81]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[]
+        }
+        ,{
+             "id":81
+             ,"TP":"READ_TXT_FILE"
+             ,"ExecTP":1
+			 ,"Tag":"xxxx"
+             ,"Actions":[]
+            ,"NodeRight":82
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["wdir/zzzz.txt","xxx"]
+            ]
+        }
+        ,{
+             "id":82
+             ,"TP":"STORE_FILTER_TRANS"
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":83
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["xxx","xxx"]
+                ,[
+                    ["『点此报错』『加入书签』",""]
+                    ,["笔趣阁手机版：https://m.biqu04.cc ",""]
+                    ,["请收藏本站：https://www.biqu04.cc",""]
+                    ,["。”","\r\n"]
+                    ,["。","。\r\n"]
+                ]
+            ]
+        }
+        ,{
+             "id":83
+             ,"TP":"WRITE_TXT_FILE" 
              ,"ExecTP":1
              ,"Actions":[]
             ,"NodeRight":0
             ,"NodeLeft":0
-            ,"TargetValue":[[10000]]
+            ,"TargetValue":[
+                [ "wdir/{x}.txt","xxx",false]
+                ,[""]
+            ]
         }
-
-
-
         ,null
     ]
     ,"a":1

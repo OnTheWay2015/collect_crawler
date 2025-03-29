@@ -36,8 +36,10 @@ export enum ActionState {
 export type AIACTION_CONFIG = {
 	id: number; 
 	TP: string;
+	Tag: string;
 	//ActionID: number = 0;//引用 AIACTION_CONFIG.id 
 	ExecTP:ACTION_EXEC_TYPE;
+	ActionsAllTouchFalg:boolean;
 	Actions: [number]; //引用 AIACTION_CONFIG.id 
 	NodeLeft:number; //当前执行后,返回 	ExecState.FAILED  时选择
 	NodeRight:number; //当前执行后,返回 	ExecState.OK 时选择	
@@ -55,6 +57,8 @@ export class ActionBase {
 	private m_ExecRes:ExecState = ExecState.OK;
 	private m_key_for_fill:string = ""
 	private m_markinfo!:BLUE.urlST
+	private m_store_tag:string = ""
+	//private m_ActionsAllTouchFalg:boolean = false;
 	protected m_pParent!:ActionBase|null;
 	protected m_Holder!:ActionHolderBase
 	protected m_TaskposCurr:number=0;
@@ -69,8 +73,21 @@ export class ActionBase {
 		self.m_pAIActionConfig = conf;
 		self.m_Level = level;
 		self.m_Holder = holder;
+
+		if (conf.Tag) {
+			self.m_store_tag = Parent ? Parent.GetStoreTag() + "-" + conf.Tag : conf.Tag
+		}
+		else {
+			self.m_store_tag = Parent ? Parent.GetStoreTag() : ""
+		}	
+
+
     }
 
+	public GetStoreTag():string
+	{
+		return this.m_store_tag;
+	}
 
 /*	
     AIDriverParams m_TargetValue;
@@ -393,7 +410,7 @@ protected OnSubResult(res:ExecState )
 		return;
 	}
 
-	if (res == ExecState.OK )
+	if (res == ExecState.OK || self.m_pAIActionConfig.ActionsAllTouchFalg )
 	{
 		if (self.m_pAIActionConfig.ExecTP == ACTION_EXEC_TYPE.PARALLEL )
 		{
@@ -517,7 +534,7 @@ protected GetRootConfig():AIACTION_CONFIG
         	_actions.SetDataByKey(self.m_data,key,v);
 		}
 		else{
-			key = key.replace( r,"");
+			key = key.replace( r, self.m_store_tag );
         	_actions.SetDataByKey(self.m_Holder.getData(),key,v);
 		}
     }
@@ -533,7 +550,7 @@ protected GetRootConfig():AIACTION_CONFIG
         	return _actions.GetDataByKey(self.m_data,key);
 		}
 		else{
-			key = key.replace( r,"");
+			key = key.replace( r,self.m_store_tag);
         	return _actions.GetDataByKey(self.m_Holder.getData(),key);
 		}
     }
@@ -563,7 +580,7 @@ protected GetRootConfig():AIACTION_CONFIG
 	//	//this.m_key_for_fill = k;
 	//}
 
-	private GetStoreKey(kfmt:string):string
+	protected GetStoreKey(kfmt:string):string
 	{
 		let self =this;
 		let k = kfmt;
