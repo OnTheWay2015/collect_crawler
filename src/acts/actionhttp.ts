@@ -43,7 +43,9 @@ export class ActionHttp extends ActionBase {
         let ary02 = self.m_pAIActionConfig.TargetValue[1];
         self.m_header = ary02[0];
     
-    
+        
+        self.log( "start req==>" + self.m_Url);
+        
         let ust:BLUE.urlST = BLUE.transURLSt(self.m_Url)!;
         self.SetMarkInfo(ust);
     }
@@ -71,6 +73,13 @@ export class ActionHttp extends ActionBase {
     }
 
 
+    protected WaitDriverTmExpire()
+    {
+        let self = this;
+        let info = this.GetMarkInfo();
+        self.Errorlog( "req==>" + info.url );
+        super.WaitDriverTmExpire();
+    }
 
     
     private cbok(htmlstr: string, res: IReq) {

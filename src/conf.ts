@@ -8,12 +8,11 @@ class ConfManager {
 
     private m_conf:any;
     private m_confActions:any={};
-    public init(cb?: (res: number) => void) {
+    public init(fname:string,cb?: (res: number) => void) {
         let self = this;
         const currentPath = FS.realpathSync('.');
         //let p = currentPath + "/configs/config.json"
-        let p = "./configs/config.json"
-        let data = FS.readFileSync(p, { encoding: 'utf8' });
+        let data = FS.readFileSync(fname, { encoding: 'utf8' });
         self.m_conf = BLUE.ParseJson(data);
         //BLUE.log(self.m_conf);
         if (self.m_conf["actions"]) {

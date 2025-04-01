@@ -35,7 +35,8 @@ module TTT {
    
    //let url ="https://www.djkuyao.com/dance/play-64617.html";//page
    //------------- 
-  
+   
+
     let test_view = async ()=>{
       //puppeteer api文档
       //https://puppeteer.bootcss.com/api 
@@ -126,9 +127,16 @@ module TTT {
    
    //let a =new noval_APP();
 
-   ConfMgr.init();
+process.argv.forEach((val, index) => { 
+  console.log(`${index}: ${val}`); 
+});
+
+
+   //let p = "./configs/config.json"
+   ConfMgr.init(process.argv[2]);
    let n = 33;
-	let Conf = ConfMgr.GetActionConfigById(1000);
+   let aid = parseInt(process.argv[3]);
+	let Conf = ConfMgr.GetActionConfigById(aid);
    if (Conf)
    {
       let holder = new ActionHolderBase();

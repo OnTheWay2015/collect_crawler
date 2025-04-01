@@ -1,7 +1,11 @@
+import * as BLUE from '../utils';
 import * as _actions from "./_actions";
     export class ActionHolderBase {
         private m_processdata: any = {};
         constructor() {
+        }
+        public OnAIEnd() {
+            BLUE.log(" end !!!!!!!!!!!!!!!!")            
         }
         public getData(): any {
 

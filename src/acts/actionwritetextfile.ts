@@ -69,7 +69,8 @@ export class ActionWriteTextFile extends ActionBase
 
             for (let i = 0; i < ary.length; i++) {
                 let data = ary[i].v;
-                data = ary[i].k + "\r\n" + data  
+                let kk =  ary[i].k
+                data = "第" + kk + "章" + "\r\n" + data  
                 //FS.appendFileSync(wfile,data.toString())
                 FS.appendFileSync(fn, data)
             }

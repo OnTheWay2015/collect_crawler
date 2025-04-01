@@ -45,6 +45,7 @@ export type AIACTION_CONFIG = {
 	NodeRight:number; //当前执行后,返回 	ExecState.OK 时选择	
 	//TargetValue:number[][];
 	TargetValue:any[][];
+	Expiretm:number;
 };
 
 
@@ -80,7 +81,10 @@ export class ActionBase {
 		else {
 			self.m_store_tag = Parent ? Parent.GetStoreTag() : ""
 		}	
-
+		if (conf.Expiretm)
+		{
+			self.SetTmExpire(conf.Expiretm);
+		}
 
     }
 
@@ -346,8 +350,7 @@ private DoWaitDriver(tm:number)
 		self.m_tm_used+=tm;
 		if (self.m_tm_used > self.m_tm_expire)
 		{
-			self.Errorlog(" tm_expire !");
-			self.Done(ExecState.FAILED);
+			self.WaitDriverTmExpire();
 			return;
 		}
 	}
@@ -357,8 +360,12 @@ protected WaitDriver(tm:number)
 {
 	let self = this;
 }
-
-
+protected WaitDriverTmExpire()
+{
+	let self = this;
+	self.Errorlog(" tm_expire !");
+	self.Done(ExecState.FAILED);
+}
 
 private DoWaiting(tm:number)
 {
@@ -380,7 +387,8 @@ protected DoEnd()
 	self.GoState( ActionState.NONE);
 	if (self.m_pParent == null)
 	{
-		//m_pHoldChar->AIEnd(m_ExecRes,m_pAIActionConfig.ActionID);
+		//self.m_Holder->AIEnd(m_ExecRes,m_pAIActionConfig.ActionID);
+		self.m_Holder.OnAIEnd();	
 	}
 	else
 	{
@@ -482,7 +490,7 @@ public GoState( s : ActionState)
 
 
 	let self = this;
-	self.Errorlog(" GoState from [" + ActionStateStr[self.m_State] + "] to curr[" + ActionStateStr[s] + "]  ExecRes:" + self.m_ExecRes);
+	self.log(" GoState from [" + ActionStateStr[self.m_State] + "] to curr[" + ActionStateStr[s] + "]  ExecRes:" + self.m_ExecRes);
 	self.m_State = s;
 }
 
@@ -496,15 +504,21 @@ protected getState():ActionState
 protected setExecRes(res:ExecState)
 {
 	this.m_ExecRes = res;
-	this.Errorlog("setExecRes["+res+"]");
+	this.log("setExecRes["+res+"]");
 }
 protected getExecRes():ExecState{
 	return this.m_ExecRes;
 }
 
+protected log(str:string):void
+{
+	let self = this;
+	let pRootConfig = self.GetRootConfig();
+	BLUE.log("ERR ==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
+	BLUE.log(str);
+}
 protected Errorlog(str:string):void
 {
-
 	let self = this;
 	let pRootConfig = self.GetRootConfig();
 	BLUE.error("ERR ==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");

@@ -46,10 +46,10 @@ export class ActionStoreSingle extends ActionBase {
         }
         let htmlstr = processdata.v;
         let $ = cheerio.load(htmlstr); //采用cheerio模块解析html
-        //BLUE.log($.html());
         let sels = _actions.selectDom($,$,self.m_DomSelectTags);
         if (sels.length<=0)
         {
+            BLUE.log($.html());
             return ExecState.FAILED;
         }
         sels.unshift($);

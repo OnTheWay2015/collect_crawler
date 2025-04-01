@@ -80,8 +80,27 @@ export class ActionTravelLinks extends ActionBase {
         }
 
 
+
+        let rs = [
+            new RegExp("\\)")  // 注意‌双重转义
+            , new RegExp("\\)")
+        ]
+        let testkey = (k: string) => {
+            for (let i=0;i<rs.length;i++)
+            {
+                if (rs[i].test(k))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         eles.forEach((e: string) => {
-        
+       
+            if (!testkey(e)){
+                return;
+            }            
+
             let n = PATH.basename(e)
             if (n.lastIndexOf(".") > 0) {
                 n = n.substr(0,n.lastIndexOf("."));
@@ -116,7 +135,7 @@ export class ActionTravelLinks extends ActionBase {
         if (act) {
             //act.SetStoreKeyFill(info.store_key_fill);
             act.StartActionConfig();
-            act.SetTmExpire(30000);
+            //act.SetTmExpire(30000);
             self.m_travelCnt++;
             self.m_travelersStore.push(act);
         }

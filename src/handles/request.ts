@@ -46,17 +46,22 @@ export class HttpHandle implements IReq{
         }
        
         self._method = method;
-        self._headers = headers;
+        //self._headers = headers;
         //self._main= main;
         self._headers = {
-            "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", //win
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
             //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
-            "Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-           "Accept-Encoding": "gzip, deflate",
+            //"Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "Accept":"*/*",
+           //"Accept-Encoding": "gzip, deflate",
+           //"Accept-Encoding": "gzip, deflate, br, zstd", //todo zstd
+           "Accept-Encoding": "gzip, deflate, br",
            //"Accept-Encoding": "identity",
-           "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-           //"Connection": "keep-alive",
-           "Cache-Control": "max-age=0",
+           //"Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+           //"Accept-Language": "zh-CN,zh;q=0.9",
+           "Connection": "keep-alive",
+           //"Cache-Control": "no-cache",
+
            //"Cookie":"",
            //"Pragma": "no-cache",
         }
@@ -110,6 +115,15 @@ export class HttpHandle implements IReq{
         let value="application/json";
         return ((headers[key] !=null) && headers[key]==value);
 
+    }
+    private isBrotli(res:HTTP.IncomingMessage):boolean{
+        //let headers = res.headers;
+        //return ((headers["content-encoding"] !=null) && headers["content-encoding"]=="gzip");
+        
+        let headers = res.headers;
+        let key ="content-encoding";
+        let value="br";
+        return ((headers[key] !=null) && headers[key]==value);
     }
     private isGzip(res:HTTP.IncomingMessage):boolean{
         //let headers = res.headers;
@@ -215,33 +229,12 @@ export class HttpHandle implements IReq{
                         return;
                     }
                     let htmlstr = self._buf;
-                    if (self.isGzip(response)) {
-                        if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log("gzip page download!");
-                        zlib.gunzip(self._buf, function (err: any, decoded:any /*Buffer*/ ) {
-                            if (err != null)
-                            {
-                                BLUE.error( "request zlib err: " + err.message);
-                            }
-                            htmlstr = decoded.toString()
-                            if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log(htmlstr);
-                            if (DEBUG_PRINT_PAGE_CONTENT) 
-                            {
-                                let wfile = "ttttest.html"
-                                FS.writeFile(wfile, htmlstr, function (error) {
-                                    if (error) {
-                                        BLUE.log(wfile + '写入失败')
-                                    } else {
-                                        BLUE.log(wfile + '写入成功了')
-                                    }
-                                });
-
-                            }
-                            
-                            if (self.isJson(response))
+                    let afterZipcb= (r:HTTP.IncomingMessage,hstr:string)=>{
+                            if (self.isJson(r))
                             {
                                 try
                                 {
-                                    htmlstr = JSON.parse(htmlstr);
+                                    htmlstr = JSON.parse(hstr);
                                 }
                                 catch (e)
                                 {
@@ -250,17 +243,49 @@ export class HttpHandle implements IReq{
                                 }
                             }
                             cb(htmlstr,self);
-                        })
+                            return; 
+                    };
+                    //isBrotli
+                    if (self.isGzip(response)) {
+                        if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log("gzip page download!");
+                        zlib.gunzip(self._buf, function (err: any, decoded:any /*Buffer*/ ) {
+                            if (err != null)
+                            {
+                                BLUE.error( "request zlib err: " + err.message);
+                            }
+                            htmlstr = decoded.toString();
+                            afterZipcb(response, htmlstr);
+                            //if (DEBUG_PRINT_PAGE_CONTENT) BLUE.log(htmlstr);
+                            //if (DEBUG_PRINT_PAGE_CONTENT) 
+                            //{
+                            //    let wfile = "ttttest.html"
+                            //    FS.writeFile(wfile, htmlstr, function (error) {
+                            //        if (error) {
+                            //            BLUE.log(wfile + '写入失败')
+                            //        } else {
+                            //            BLUE.log(wfile + '写入成功了')
+                            //        }
+                            //    });
 
+                            //}
+                            
+                        })
                     } 
+                    else if (self.isBrotli(response))
+                    {
+                        zlib.brotliDecompress(self._buf, function (err: any, decoded:any /*Buffer*/ ) {
+                            if (err != null)
+                            {
+                                BLUE.error( "request zlib err: " + err.message);
+                            }
+                            htmlstr = decoded.toString();
+                            afterZipcb(response, htmlstr);
+                        });
+                    }
                     else
                     {
-                        if (self.isJson(response)) {
-                            htmlstr = JSON.parse(htmlstr);
-                        }
-                        cb(htmlstr, self);
+                        afterZipcb(response, htmlstr);
                     }
-                    
                 }
             });
             response.on('error', function (e:any) {

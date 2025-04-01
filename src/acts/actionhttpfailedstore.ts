@@ -36,11 +36,12 @@ export class ActionHttpFailedStore extends ActionBase {
 
 
         let processdata = self.GetParentDataByKey(self.m_storekey_single); 
-        if (!processdata)//第一个应该是 cheerio $ 
+        if (!processdata)
         {
             processdata = {v:[]};
             self.SetDataByKey(self.m_storekey_single, processdata );
         }
+        BLUE.log( "Failed url =>["+markinfo.url+"]")
         processdata.v.push(markinfo.url); 
 
         return ExecState.OK;
