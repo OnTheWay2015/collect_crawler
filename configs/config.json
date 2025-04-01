@@ -1,5 +1,5 @@
 {
-	"desc":"笔趣阁"
+	"desc":"笔趣阁 https://www.biqu09.cc"
     ,"actions":[
         {
              "id":1001
@@ -16,7 +16,7 @@
              ,"TP":"BASE" 
              ,"ExecTP":2
              ,"ActionsAllTouchFalg":true
-             ,"Actions":[2000,2001]
+             ,"Actions":[2000,2001,2002,2003]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[[]]
@@ -25,28 +25,102 @@
              "id":2000
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
-             ,"Tag":"132795"
+             ,"Tag":"肆意神豪生活录"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biqu04.cc/book/132795/","GET",false,"storehtml"]
+                [ 1,"https://www.biqu09.cc/book/24062/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
-        ,{
+                
+		     
+		        ,{
              "id":2001
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
-             ,"Tag":"180621"
+			 ,"Expiretm":"30000"
+             ,"Tag":"我有十万亿舔狗金"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biqu04.cc/book/180621/","GET",false,"storehtml"]
+                [ 1,"https://www.biqu09.cc/book/138749/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
+		        ,{
+             "id":2002
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+			 ,"Expiretm":"30000"
+             ,"Tag":"天才鬼医"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu09.cc/book/461/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        }
+		        ,{
+             "id":2003
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+			 ,"Expiretm":"30000"
+             ,"Tag":"最强外卖员"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu09.cc/book/6742/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        }
+				        ,{
+             "id":2004
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+			 ,"Expiretm":"30000"
+             ,"Tag":"古董商的寻宝之旅"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu09.cc/book/45889/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        }
+		        ,{
+             "id":112004
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+			 ,"Expiretm":"30000"
+             ,"Tag":"古董商的寻宝之旅"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu09.cc/book/45889/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        }
+		        ,{
+             "id":2005
+             ,"TP":"HTTP_REQ" 
+             ,"ExecTP":1
+			 ,"Expiretm":"30000"
+             ,"Tag":"从九百层归来"
+             ,"Actions":[]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [ 1,"https://www.biqu09.cc/book/5518/","GET",false,"storehtml"]
+                ,[{}]
+            ]
+        } 
+		
         ,{
              "id":3000
              ,"TP":"STORE_SINGLE" 
@@ -83,7 +157,7 @@
             ,"NodeRight":7000
             ,"NodeLeft":7000
             ,"TargetValue":[
-                ["chapter_links","dir.chapters",6000,30]
+                ["chapter_links","dir.chapters",6000,300]
                 ,[
                 ]
             ]
@@ -93,6 +167,7 @@
              "id":6000
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
+			 ,"Expiretm":"30000"
              ,"Actions":[]
             ,"NodeRight":8000
             ,"NodeLeft":11000
@@ -109,7 +184,7 @@
             ,"NodeRight":12000
             ,"NodeLeft":0
             ,"TargetValue":[
-                ["failed_{}"]
+                ["__store.f.{}"]
             ]
         }
         ,{
@@ -129,7 +204,7 @@
             ,"NodeRight":0
             ,"NodeLeft":0
             ,"TargetValue":[
-                ["failed_{}","dir.chapters",6000,10]
+                ["__store.f.{}","dir.chapters",6000,10]
                 ,[
                 ]
             ]
@@ -172,8 +247,8 @@
                 ["__store.bbbb.travel_chaps_{x}","__store.cccc.travel_chaps_{x}"]
                 ,[
                     ["『点此报错』『加入书签』",""]
-                    ,["请收藏本站：https://www.biqu04.cc。笔趣阁手机版：https://m.biqu04.cc ",""]
-                    ,["。”","\r\n"]
+                    ,["请收藏本站：https://www.biqu09.cc。笔趣阁手机版：https://m.biqu09.cc ",""]
+                    ,["。”",".”\r\n"]
                     ,["。","。\r\n"]
                 ]
             ]
@@ -231,9 +306,9 @@
                 ["xxx","xxx"]
                 ,[
                     ["『点此报错』『加入书签』",""]
-                    ,["笔趣阁手机版：https://m.biqu04.cc ",""]
-                    ,["请收藏本站：https://www.biqu04.cc",""]
-                    ,["。”","\r\n"]
+                    ,["笔趣阁手机版：https://m.biqu09.cc ",""]
+                    ,["请收藏本站：https://www.biqu09.cc",""]
+                    ,["。”",".”\r\n"]
                     ,["。","。\r\n"]
                 ]
             ]
