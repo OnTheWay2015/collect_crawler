@@ -4,13 +4,14 @@ import { ActionHttp } from './actionhttp';
 import { ActionHttpFailedStore } from './actionhttpfailedstore';
 import { ActionInterval } from "./actioninterval";
 import { ActionReadTextFile } from './actionreadtextfile';
-import { ActionStoreFilterAttr } from './actionstore_filter_attr';
-import { ActionStoreFilterText } from './actionstore_filter_text';
-import { ActionStoreFilterTrans } from './actionstore_filter_trans';
+import { ActionFilterAttr } from './action_filter_attr';
+import { ActionFilterText } from './action_filter_text';
+import { ActionTextTrans } from './actiontexttrans';
 import { ActionStoreSingle } from './actionstoresingle';
 import { ActionTimes } from "./actiontimes";
 import { ActionTravelLinks } from './actiontravellinks';
 import { ActionWriteTextFile } from './actionwritetextfile';
+import { ActionStoreTextMatch } from './actionstoretextmatch';
 
 //export enum ACTION_TYPE{ //因为在配置里有对应的数值,所以该枚举类型的位置不要调换 
 //	BASE =1,
@@ -18,11 +19,11 @@ import { ActionWriteTextFile } from './actionwritetextfile';
 //	INTERVAL,
 //	HTTP_REQ,
 //	STORE_SINGLE ,
-//	STORE_FILTER_ATTR, 
+//	FILTER_ATTR, 
 //	TRAVEL_LINKS,
 //	WRITE_TXT_FILE,
-//	STORE_FILTER_TEXT, 
-//	STORE_FILTER_TRANS, 
+//	FILTER_TEXT, 
+//	TEXT_TRANS, 
 //	HTTP_FAILED_STORE,
 //};
 
@@ -34,12 +35,13 @@ export enum ACTION_TYPE{
 	INTERVAL="INTERVAL",
 	HTTP_REQ="HTTP_REQ",
 	STORE_SINGLE ="STORE_SINGLE",
-	STORE_FILTER_ATTR="STORE_FILTER_ATTR", 
+	STORE_TEXT_MATCH="STORE_TEXT_MATCH",
+	FILTER_ATTR="FILTER_ATTR", 
 	TRAVEL_LINKS="TRAVEL_LINKS",
 	WRITE_TXT_FILE="WRITE_TXT_FILE",
 	READ_TXT_FILE="READ_TXT_FILE",
-	STORE_FILTER_TEXT="STORE_FILTER_TEXT", 
-	STORE_FILTER_TRANS="STORE_FILTER_TRANS", 
+	FILTER_TEXT="FILTER_TEXT", 
+	TEXT_TRANS="TEXT_TRANS", 
 	HTTP_FAILED_STORE="HTTP_FAILED_STORE",
 };
 
@@ -58,9 +60,10 @@ export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,L
         , [String(ACTION_TYPE.HTTP_REQ)]: ActionHttp
         , [String(ACTION_TYPE.HTTP_FAILED_STORE)]:ActionHttpFailedStore 
         , [String(ACTION_TYPE.STORE_SINGLE)]: ActionStoreSingle
-        , [String(ACTION_TYPE.STORE_FILTER_ATTR)]: ActionStoreFilterAttr
-        , [String(ACTION_TYPE.STORE_FILTER_TEXT)]: ActionStoreFilterText
-        , [String(ACTION_TYPE.STORE_FILTER_TRANS)]: ActionStoreFilterTrans
+        , [String(ACTION_TYPE.STORE_TEXT_MATCH)]:ActionStoreTextMatch 
+        , [String(ACTION_TYPE.FILTER_ATTR)]: ActionFilterAttr
+        , [String(ACTION_TYPE.FILTER_TEXT)]: ActionFilterText
+        , [String(ACTION_TYPE.TEXT_TRANS)]: ActionTextTrans
         , [String(ACTION_TYPE.TRAVEL_LINKS)]: ActionTravelLinks
         , [String(ACTION_TYPE.WRITE_TXT_FILE)]: ActionWriteTextFile
         , [String(ACTION_TYPE.READ_TXT_FILE)]: ActionReadTextFile
@@ -74,9 +77,9 @@ export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,L
     //    , [Number(ACTION_TYPE.HTTP_REQ)]: ActionHttp
     //    , [Number(ACTION_TYPE.HTTP_FAILED_STORE)]: 
     //    , [Number(ACTION_TYPE.STORE_SINGLE)]: ActionStoreSingle
-    //    , [Number(ACTION_TYPE.STORE_FILTER_ATTR)]: ActionStoreFilterAttr
-    //    , [Number(ACTION_TYPE.STORE_FILTER_TEXT)]: ActionStoreFilterText
-    //    , [Number(ACTION_TYPE.STORE_FILTER_TRANS)]: ActionStoreFilterTrans
+    //    , [Number(ACTION_TYPE.FILTER_ATTR)]: ActionFilterAttr
+    //    , [Number(ACTION_TYPE.FILTER_TEXT)]: ActionFilterText
+    //    , [Number(ACTION_TYPE.TEXT_TRANS)]: ActionTextTrans
     //    , [Number(ACTION_TYPE.TRAVEL_LINKS)]: ActionTravelLinks
     //    , [Number(ACTION_TYPE.WRITE_TXT_FILE)]: ActionWriteTextFile
 
@@ -91,9 +94,9 @@ export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,L
 	//	,[Number(ACTION_TYPE.HTTP_REQ)]:"HTTP_REQ"
 	//	,[Number(ACTION_TYPE.HTTP_FAILED_STORE)]:"HTTP_FAILED_STORE"
 	//	,[Number(ACTION_TYPE.STORE_SINGLE )]:"STORE_SINGLE"
-	//	,[Number(ACTION_TYPE.STORE_FILTER_ATTR)]:"STORE_FILTER_ATTR"
-	//	,[Number(ACTION_TYPE.STORE_FILTER_TEXT)]:"STORE_FILTER_TEXT"
-	//	,[Number(ACTION_TYPE.STORE_FILTER_TRANS)]:"STORE_FILTER_TRANS"
+	//	,[Number(ACTION_TYPE.FILTER_ATTR)]:"FILTER_ATTR"
+	//	,[Number(ACTION_TYPE.FILTER_TEXT)]:"FILTER_TEXT"
+	//	,[Number(ACTION_TYPE.TEXT_TRANS)]:"TEXT_TRANS"
 	//	,[Number(ACTION_TYPE.TRAVEL_LINKS)]:"TRAVEL_LINKS"
 	//	,[Number(ACTION_TYPE.WRITE_TXT_FILE)]:"WRITE_TXT_FILE"
 	//}

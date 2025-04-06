@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}\\s_out\\index.js",
             "skipFiles": [ //此处不配置内容时，可调试默认包 比如 https
             ],
-            "args": ["./configs/config02.json","1000"] ,// 设置启动参数
+            "args": ["./configs/config.json","1000"] ,// 设置启动参数
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

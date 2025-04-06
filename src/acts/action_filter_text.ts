@@ -8,7 +8,7 @@ import { ActionBase, ActionState, ExecState } from "./actionbase";
 import * as cheerio from 'cheerio';
 import { ActionStoreSingle } from "./actionstoresingle";
 
-export class ActionStoreFilterText extends ActionBase {
+export class ActionFilterText extends ActionBase {
     
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
@@ -29,13 +29,13 @@ export class ActionStoreFilterText extends ActionBase {
         self.m_getkey_single = ary01[0]; //
         self.m_storekey_single = ary01[1]; //
 
-        if ( !(self.m_pParent instanceof ActionStoreSingle))
-        {
-            self.Errorlog("need parent ActionStoreSingle");
-            self.Done(ExecState.FAILED);
-            return;
+        //if ( !(self.m_pParent instanceof ActionStoreSingle))
+        //{
+        //    self.Errorlog("need parent ActionStoreSingle");
+        //    self.Done(ExecState.FAILED);
+        //    return;
 
-        }
+        //}
         //todo check parent is  actionstoresingle
     }
 

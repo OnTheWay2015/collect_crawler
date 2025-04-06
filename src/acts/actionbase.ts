@@ -364,7 +364,9 @@ protected WaitDriverTmExpire()
 {
 	let self = this;
 	self.Errorlog(" tm_expire !");
-	self.Done(ExecState.FAILED);
+	//self.Done(ExecState.FAILED);
+	self.setExecRes(ExecState.FAILED);
+	self.GoState(ActionState.TRY_SUB_NODE);
 }
 
 private DoWaiting(tm:number)
@@ -512,6 +514,7 @@ protected getExecRes():ExecState{
 
 protected log(str:string):void
 {
+	return;
 	let self = this;
 	let pRootConfig = self.GetRootConfig();
 	BLUE.log("ERR ==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
