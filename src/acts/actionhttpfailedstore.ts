@@ -9,8 +9,8 @@ import { ActionBase, ActionState, ExecState } from "./actionbase";
 export class ActionHttpFailedStore extends ActionBase {
     
     private m_storekey_single: string = "";
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -35,7 +35,7 @@ export class ActionHttpFailedStore extends ActionBase {
         }
 
 
-        let processdata = self.GetParentDataByKey(self.m_storekey_single); 
+        let processdata = self.GetDataByKey(self.m_storekey_single); 
         if (!processdata)
         {
             processdata = {v:[]};

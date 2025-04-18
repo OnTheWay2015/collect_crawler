@@ -140,7 +140,7 @@ process.argv.forEach((val, index) => {
    if (Conf)
    {
       let holder = new ActionHolderBase();
-      let act = MakeAction(holder, null, Conf, 0);
+      let act = MakeAction({},holder, null, Conf, 0);
       if (act) {
          act.StartActionConfig();
          setInterval(() => {

@@ -50,7 +50,7 @@ export type AIACTION_CONFIG = {
 
 
 export class ActionBase {
-	private m_data:any = {};
+	private m_dataProcess:any;
 	private m_tm_expire: number = 0;
 	private m_tm_used: number = 0;
 	private m_State: ActionState = ActionState.NONE;
@@ -65,22 +65,29 @@ export class ActionBase {
 	protected m_TaskposCurr:number=0;
 	protected m_Level:number=0;
 	protected m_pAIActionConfig!:AIACTION_CONFIG;
-    constructor(Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
+    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
     {
 		let self = this;
+		let pTag:string = "";
 		if (Parent!=null){
 			self.m_pParent = Parent;
+			let pust = Parent?.GetMarkInfo();
+			pTag = pust.tag;
 		}
 		self.m_pAIActionConfig = conf;
 		self.m_Level = level;
 		self.m_Holder = holder;
 
-		if (conf.Tag) {
-			self.m_store_tag = Parent ? Parent.GetStoreTag() + "-" + conf.Tag : conf.Tag
+        let ust:BLUE.urlST = new BLUE.urlST();
+		ust.tag  = conf.Tag ? pTag + conf.Tag : pTag
+        self.SetMarkInfo(ust);
+
+		if (!pdata)
+		{
+			self.Errorlog("pData is null");
 		}
-		else {
-			self.m_store_tag = Parent ? Parent.GetStoreTag() : ""
-		}	
+		self.m_dataProcess = pdata;
+
 		if (conf.Expiretm)
 		{
 			self.SetTmExpire(conf.Expiretm);
@@ -88,10 +95,10 @@ export class ActionBase {
 
     }
 
-	public GetStoreTag():string
-	{
-		return this.m_store_tag;
-	}
+	//public GetStoreTag():string
+	//{
+	//	return this.m_store_tag;
+	//}
 
 /*	
     AIDriverParams m_TargetValue;
@@ -333,7 +340,7 @@ public StartActionConfig()
 protected Create(Conf:AIACTION_CONFIG):ActionBase|null 
 {
 	let self = this;
-	return _actions.MakeAction(self.m_Holder, self,Conf,self.m_Level);
+	return _actions.MakeAction(self.m_dataProcess,self.m_Holder, self,Conf,self.m_Level);
 }
 
 
@@ -542,41 +549,41 @@ protected GetRootConfig():AIACTION_CONFIG
 	//数据处理超过父子节点时，用 __store 存到 holder 里
     protected SetDataByKey(key:string, v:any):void
     {
-		key = this.GetStoreKey(key);
 		let self = this;
 		let lkey = "__store."
 		let r = new RegExp(lkey);
+		let markinfo = self.GetMarkInfo();
 		if (key.indexOf(lkey) < 0)
 		{
-        	_actions.SetDataByKey(self.m_data,key,v);
+			let p = markinfo.path;
+			key += p;
+        	_actions.SetDataByKey(self.m_dataProcess ,key,v);
 		}
 		else{
-			key = key.replace( r, self.m_store_tag );
+			key = this.GetStoreKey(key);
+			key = key.replace( r, markinfo.tag);
         	_actions.SetDataByKey(self.m_Holder.getData(),key,v);
 		}
     }
 
     public GetDataByKey(key:string):any
     {
-		key = this.GetStoreKey(key);
 		let self = this;
 		let lkey = "__store."
 		let r = new RegExp(lkey);
+		let markinfo = self.GetMarkInfo();
 		if (key.indexOf(lkey) < 0)
 		{
-        	return _actions.GetDataByKey(self.m_data,key);
+			let p = markinfo.path;
+			key += p;
+        	return _actions.GetDataByKey(self.m_dataProcess ,key);
 		}
 		else{
-			key = key.replace( r,self.m_store_tag);
+			key = this.GetStoreKey(key);
+			key = key.replace( r,markinfo.tag);
         	return _actions.GetDataByKey(self.m_Holder.getData(),key);
 		}
     }
-    public GetParentDataByKey(key:string):any
-    {
-		//key = this.GetStoreKey(key);
-		return this.m_pParent!.GetDataByKey(key);
-	}
-
 	public SetMarkInfo(i:BLUE.urlST)
 	{
 		this.m_markinfo = i;
@@ -592,10 +599,6 @@ protected GetRootConfig():AIACTION_CONFIG
 		sub.SetMarkInfo(this.m_markinfo);	
 	}
 
-	//public SetStoreKeyFill(k:string)
-	//{
-	//	//this.m_key_for_fill = k;
-	//}
 
 	protected GetStoreKey(kfmt:string):string
 	{
@@ -603,7 +606,8 @@ protected GetRootConfig():AIACTION_CONFIG
 		let k = kfmt;
     	let r = /\{.*\}/;
     	if (r.test(k)) {
-			let p = self.m_markinfo.path;
+			let markinfo = self.GetMarkInfo();
+			let p = markinfo.path;
 			if (p.indexOf(".")>=0)
 			{
 				p = p.replace(/\..*/g,"");
@@ -611,6 +615,17 @@ protected GetRootConfig():AIACTION_CONFIG
 			k = k.replace(r,p)	
 		}
 		return k;
+	}
+
+	protected FormMarkKey(k:string):string
+	{
+		let self = this;
+        let ust = self.GetMarkInfo();
+        let fn = self.GetStoreKey(k);
+        fn =  fn.replace("/","_");
+        fn =  fn.replace("?","");
+        fn = ust.tag +"_" + fn;
+		return fn;
 	}
 
 

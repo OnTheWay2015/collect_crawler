@@ -13,8 +13,8 @@ export class ActionStoreSingle extends ActionBase {
     private m_storekey_single: string = "";
     private m_DomSelectTags!:string[];
     private m_store_array:boolean = true;
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
 
@@ -39,7 +39,7 @@ export class ActionStoreSingle extends ActionBase {
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetParentDataByKey(self.m_getkey_single); 
+        let processdata = self.GetDataByKey(self.m_getkey_single); 
         if (!processdata|| !processdata.v )
         {
             return ExecState.FAILED;

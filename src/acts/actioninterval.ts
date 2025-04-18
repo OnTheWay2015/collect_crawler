@@ -4,9 +4,9 @@ export class ActionInterval extends ActionBase
 {
     private m_t :number = 0;
     private m_tlimit :number = 0;
-    constructor(Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
     {
-        super(Parent,conf, holder,level);
+        super(pdata,Parent,conf, holder,level);
     }
 
 

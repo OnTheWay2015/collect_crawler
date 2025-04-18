@@ -12,8 +12,8 @@ export class ActionFilterAttr extends ActionBase {
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     private m_filter_key:string="";
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -41,7 +41,7 @@ export class ActionFilterAttr extends ActionBase {
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetParentDataByKey(self.m_getkey_single); 
+        let processdata = self.GetDataByKey(self.m_getkey_single); 
         let cheerio_eles= processdata.v;
         if (!cheerio_eles|| cheerio_eles.length<=1)//第一个应该是 cheerio $ 
         {

@@ -9,47 +9,56 @@ export class ActionWriteTextFile extends ActionBase
 {
     private m_getkey_single: string = "";
     private m_filename: string = "";
+    private m_dir: string = "";
     private m_travelflag: boolean= false;
-    constructor(Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
     {
-        super(Parent,conf, holder,level);
+        super(pdata,Parent,conf, holder,level);
     }
 
 
     protected override Prepare(): void {
         let self = this;
         if (self.m_pAIActionConfig.TargetValue.length < 1 ||
-            self.m_pAIActionConfig.TargetValue[0].length < 3) {
+            self.m_pAIActionConfig.TargetValue[0].length < 4) {
             self.Errorlog("no TargetValue");
             self.Done(ExecState.FAILED);
             return;
         }
         let ary01 = self.m_pAIActionConfig.TargetValue[0];
-        self.m_filename= ary01[0]; //
-        self.m_getkey_single = ary01[1]; //
-        self.m_travelflag = ary01[2]
+        self.m_dir= ary01[0]; //
+        self.m_filename= ary01[1]; //
+        self.m_getkey_single = ary01[2]; //
+        self.m_travelflag = ary01[3]
     }
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetParentDataByKey(self.m_getkey_single); 
+        let processdata = self.GetDataByKey(self.m_getkey_single); 
         if (!processdata )
         {
             self.Errorlog("processdata is null");
             return ExecState.FAILED;
         }
 
-        let fn = self.getWriteFileName(self.m_filename);
-        let d = PATH.dirname(fn)
-        let r = FS.existsSync(d);//检查目录文件是否存在
-        if (!r) BLUE.mkdirsSync(d);//创建目录
+        //let ust = self.GetMarkInfo();
+        //let fn = self.GetStoreKey(self.m_filename);
+        //fn =  fn.replace("/","_");
+        //fn =  fn.replace("?","");
+        //fn = ust.tag +"_" + fn;
         
+        
+        let fn = self.FormMarkKey(self.m_filename);
+        let r = FS.existsSync(self.m_dir);//检查目录文件是否存在
+        if (!r) BLUE.mkdirsSync(self.m_dir);//创建目录
+        
+        let wfn = self.m_dir + "/" + fn;
         if (!self.m_travelflag) {
             if (!processdata.v) {
                 self.Errorlog("processdata.v is null");
                 return ExecState.FAILED;
             }
-            FS.appendFileSync(fn, processdata.v)
+            FS.writeFileSync(wfn, processdata.v)
         } else {
             let eles = processdata;
             let ary: any[] = []
@@ -63,30 +72,30 @@ export class ActionWriteTextFile extends ActionBase
                 //result is negative, a is sorted before b.
                 //result is positive, b is sorted before a.
             };
+
             ary.sort(cfun);
-
-           
-
+            
+            FS.writeFileSync(wfn, "");
             for (let i = 0; i < ary.length; i++) {
                 let data = ary[i].v;
                 let kk =  ary[i].k
                 data = "第" + kk + "章" + "\r\n" + data  
                 //FS.appendFileSync(wfile,data.toString())
-                FS.appendFileSync(fn, data)
+                FS.appendFileSync(wfn, data)
             }
         }
         return ExecState.OK;
     }
 
-    private getWriteFileName(n:string):string
-    {
-        let self = this;
-        let r = /\{.*\}/;
-        if (r.test(n)) {
-            n = n.replace(r, self.GetStoreTag())
-        }
-        return n;
-    }
+    //private getWriteFileName(n:string):string
+    //{
+    //    let self = this;
+    //    let r = /\{.*\}/;
+    //    if (r.test(n)) {
+    //        n = n.replace(r, self.GetStoreTag())
+    //    }
+    //    return n;
+    //}
 
 
 };

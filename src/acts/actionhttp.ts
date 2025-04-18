@@ -15,8 +15,8 @@ export class ActionHttp extends ActionBase {
     private m_storekeyhtml: string = "";
 
     private m_RetryCnt: number = 0;
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
 
@@ -47,6 +47,8 @@ export class ActionHttp extends ActionBase {
         self.log( "start req==>" + self.m_Url);
         
         let ust:BLUE.urlST = BLUE.transURLSt(self.m_Url)!;
+        let ust_cur = self.GetMarkInfo();
+        ust.tag = ust_cur.tag;
         self.SetMarkInfo(ust);
     }
 

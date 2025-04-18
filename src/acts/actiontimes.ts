@@ -5,9 +5,9 @@ export class ActionTimes extends ActionBase
     private m_tlimit:number = 0;
     private m_RunTimes:number = 0;
     private m_tryok:boolean= false;
-    constructor(Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
     {
-        super(Parent,conf, holder,level);
+        super(pdata,Parent,conf, holder,level);
     }
 
 

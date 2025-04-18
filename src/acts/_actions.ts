@@ -48,7 +48,7 @@ export enum ACTION_TYPE{
 
 export const BASE_URL:string = "BASE_URL"
 //===================================================
-export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,Level:number):ActionBase|null
+export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,Level:number):ActionBase|null
 {
 	//SAFE_DELETE(self.m_self.pCurr);
 	//ActionBase* self.pCurr = nullptr;
@@ -105,7 +105,7 @@ export function MakeAction(holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,L
 	BLUE.log("try create cls["+Conf.TP+"]");	
 	if (cls[Conf.TP])
 	{
-		return  new cls[Conf.TP](ab,Conf, holder,Level+1);
+		return  new cls[Conf.TP](pdata,ab,Conf, holder,Level+1);
 	}
 	BLUE.error("*** create cls["+Conf.TP+"] failed");	
 	return null;	

@@ -13,8 +13,8 @@ export class ActionTextTrans extends ActionBase {
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     private m_trans_kvs!:any[];
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -36,7 +36,7 @@ export class ActionTextTrans extends ActionBase {
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetParentDataByKey(self.m_getkey_single); 
+        let processdata = self.GetDataByKey(self.m_getkey_single); 
         if (!processdata.v)
         {
             return ExecState.FAILED;

@@ -16,7 +16,17 @@
              ,"TP":"BASE" 
              ,"ExecTP":2
              ,"ActionsAllTouchFalg":true
-             ,"Actions":[2001]
+             ,"Actions":[2000]
+            ,"NodeRight":3000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+        ,{
+             "id":1010
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+             ,"ActionsAllTouchFalg":true
+             ,"Actions":[2000,2001,2002,2003,2004]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[[]]
@@ -25,12 +35,12 @@
              "id":2000
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
-             ,"Tag":"白袍总管"
+             ,"Tag":"综影视_姑娘你别跑"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/46102/","GET",false,"storehtml"]
+                [ 1,"https://www.biq04.cc/book/229633/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -41,12 +51,12 @@
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
 			 ,"Expiretm":"30000"
-             ,"Tag":"苟在妖武乱世修仙"
+             ,"Tag":"开局怒怼圣人女娲列表"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/158499/","GET",false,"storehtml"]
+                [ 1,"https://www.biq04.cc/book/36960/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -55,12 +65,12 @@
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
 			 ,"Expiretm":"30000"
-             ,"Tag":"重返2000大国机长"
+             ,"Tag":"直上青云_从高考落榜开始"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/117849/","GET",false,"storehtml"]
+                [ 1,"https://www.biq04.cc/book/223839/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -69,12 +79,12 @@
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
 			 ,"Expiretm":"30000"
-             ,"Tag":"苟在仙界成大佬"
+             ,"Tag":"炼器修仙传"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/136988/","GET",false,"storehtml"]
+                [ 1,"https://www.biq04.cc/book/228154/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -83,12 +93,12 @@
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
 			 ,"Expiretm":"30000"
-             ,"Tag":"大国军垦"
+             ,"Tag":"长生从吸收妖魔开始"
              ,"Actions":[]
             ,"NodeRight":3000
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/35343/","GET",false,"storehtml"]
+                [ 1,"https://www.biq04.cc/book/229659/","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -239,8 +249,8 @@
             ,"TargetValue":[
                 ["__store.bbbb.travel_chaps_{x}","__store.cccc.travel_chaps_{x}"]
                 ,[
-                    ["『点此报错』『加入书签』",""]
-                    ,["请收藏本站：https://www.biqu04.cc。笔趣阁手机版：https://m.biqu04.cc ",""]
+                    ["『点此报错』.*『加入书签』",""]
+                    ,["请.*http.*笔.*\\.cc",""]
                     ,["。”",".”\r\n"]
                     ,["。","。\r\n"]
                 ]
@@ -254,7 +264,7 @@
             ,"NodeRight":0
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ "wdir/{x}.txt","__store.cccc",true]
+                [ "wdir","f.txt","__store.cccc",true]
                 ,[""]
             ]
         }
@@ -280,12 +290,12 @@
              "id":81
              ,"TP":"READ_TXT_FILE"
              ,"ExecTP":1
-			 ,"Tag":"xxxx"
+			 ,"Tag":"100"
              ,"Actions":[]
             ,"NodeRight":82
             ,"NodeLeft":0
             ,"TargetValue":[
-                ["wdir/zzzz.txt","xxx"]
+                ["wdir","f.txt","xxx"]
             ]
         }
         ,{
@@ -298,9 +308,9 @@
             ,"TargetValue":[
                 ["xxx","xxx"]
                 ,[
-                    ["『点此报错』『加入书签』",""]
-                    ,["笔趣阁手机版：https://m.biqu04.cc ",""]
-                    ,["请收藏本站：https://www.biqu04.cc",""]
+                    ["『.*』",""]
+                    ,["请.*http.*cc",""]
+                    ,["笔.*cc",""]
                     ,["。”",".”\r\n"]
                     ,["。","。\r\n"]
                 ]
@@ -314,7 +324,7 @@
             ,"NodeRight":0
             ,"NodeLeft":0
             ,"TargetValue":[
-                [ "wdir/{x}.txt","xxx",false]
+                [ "wdir","f.txt","xxx",false]
                 ,[""]
             ]
         }

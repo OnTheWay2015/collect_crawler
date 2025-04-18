@@ -19,8 +19,8 @@ export class ActionTravelLinks extends ActionBase {
     private m_travelLimitCnt:number= 5;
     private m_travelCnt:number= 0;
     private m_subres:ExecState = ExecState.OK;
-    constructor(Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(Parent, conf, holder, level);
+    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -42,7 +42,7 @@ export class ActionTravelLinks extends ActionBase {
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetParentDataByKey(self.m_getkey_single); 
+        let processdata = self.GetDataByKey(self.m_getkey_single); 
         if (!processdata|| !processdata.v )
         {
             self.Errorlog("processdata is null");

@@ -53,6 +53,8 @@ export class urlST{
     public port:number= 0;
     public auto_name:string= "";
     public url:string= "";
+    public tag:string= "";
+    //public mate:object={};
 }
 
 export function transURLSt(u: string): urlST | null {
