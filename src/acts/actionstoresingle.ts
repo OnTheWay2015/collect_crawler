@@ -5,7 +5,6 @@ import { PuppeteerHandle } from "../handles/request_by_puppeteer";
 import * as BLUE from "../utils"; 
 import  * as _actions  from "./_actions";
 import { ActionBase, ActionState, ExecState } from "./actionbase";
-import * as cheerio from 'cheerio';
 
 export class ActionStoreSingle extends ActionBase {
     
@@ -39,20 +38,21 @@ export class ActionStoreSingle extends ActionBase {
 
     protected override Run(): ExecState {
         let self = this;
-        let processdata = self.GetDataByKey(self.m_getkey_single); 
-        if (!processdata|| !processdata.v )
-        {
-            return ExecState.FAILED;
-        }
-        let htmlstr = processdata.v;
-        let $ = cheerio.load(htmlstr); //采用cheerio模块解析html
+        //let processdata = self.GetDataByKey(self.m_getkey_single); 
+        //if (!processdata|| !processdata.v )
+        //{
+        //    return ExecState.FAILED;
+        //}
+        //let htmlstr = processdata.v;
+        //let $ = cheerio.load(htmlstr); //采用cheerio模块解析html
+        let $ = self.GetMarkInfo().$;
         let sels = _actions.selectDom($,$,self.m_DomSelectTags);
         if (sels.length<=0)
         {
             BLUE.log($.html());
             return ExecState.FAILED;
         }
-        sels.unshift($);
+        //sels.unshift($);
         //if (self.m_store_array)
         {
             let k = self.m_storekey_single;

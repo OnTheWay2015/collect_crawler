@@ -63,8 +63,12 @@ export class ActionWriteTextFile extends ActionBase
             let eles = processdata;
             let ary: any[] = []
             for (let key in eles) {
-                let kk = key.substring(key.lastIndexOf("/")+1);
-                ary.push({ k: parseInt(kk), v: eles[key].v });
+                let m =new RegExp("([0-9]+$)");
+                let mk = key.match(m);
+                let kk = mk?.at(0)?.toString();
+                let keyidx = kk == undefined ? 0 : parseInt(kk);
+                //let kk = key.substring(key.lastIndexOf("/")+1);
+                ary.push({ k:keyidx, v: eles[key].v });
             }
 
             let cfun = (a: any, b: any) => {
@@ -84,6 +88,7 @@ export class ActionWriteTextFile extends ActionBase
                 FS.appendFileSync(wfn, data)
             }
         }
+        self.log("write file ok:"+ wfn);
         return ExecState.OK;
     }
 

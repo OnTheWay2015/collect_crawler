@@ -68,7 +68,7 @@ export class ActionTravelLinks extends ActionBase {
         let ust:BLUE.urlST = self.GetMarkInfo();   
         let reg = new RegExp("^http"); //test full url
         if (ust && !reg.test(ele))
-        {
+        {// 拼接host,完成 url 
             if (ele.indexOf("/") == 0)//绝对路径
             {
                 prefix =ust.proto + ust.host;
@@ -80,11 +80,11 @@ export class ActionTravelLinks extends ActionBase {
         }
 
 
-
         let rs = [
             new RegExp("\\)")  // 注意‌双重转义
             , new RegExp("\\)")
         ]
+        //排查乱码 url
         let testkey = (k: string) => {
             for (let i=0;i<rs.length;i++)
             {
@@ -96,19 +96,10 @@ export class ActionTravelLinks extends ActionBase {
             return true;
         }
         eles.forEach((e: string) => {
-       
             if (!testkey(e)){
+                self.Errorlog( "error link:" + e);
                 return;
             }            
-
-            let n = PATH.basename(e)
-            if (n.lastIndexOf(".") > 0) {
-                n = n.substr(0,n.lastIndexOf("."));
-            }
-            //dir = PATH.dirname(e);
-            //dir = dir.substr(dir.lastIndexOf("/") + 1);
-            //dir = dir +"." + n 
-        
             self.m_travellinks.push({url:prefix + e } );
         });
 

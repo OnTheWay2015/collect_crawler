@@ -2,10 +2,15 @@ import * as BLUE from '../utils';
 import * as _actions from "./_actions";
     export class ActionHolderBase {
         private m_processdata: any = {};
-        constructor() {
+        private m_callback:any;
+        constructor(cb:any) {
+            this.m_callback = cb;
         }
         public OnAIEnd() {
-            BLUE.log(" end !!!!!!!!!!!!!!!!")            
+            //BLUE.log(" end !!!!!!!!!!!!!!!!")     
+            if (this.m_callback){
+                this.m_callback();
+            }       
         }
         public getData(): any {
 

@@ -68,19 +68,13 @@ export class ActionBase {
     constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
     {
 		let self = this;
-		let pTag:string = "";
 		if (Parent!=null){
 			self.m_pParent = Parent;
-			let pust = Parent?.GetMarkInfo();
-			pTag = pust.tag;
 		}
 		self.m_pAIActionConfig = conf;
 		self.m_Level = level;
 		self.m_Holder = holder;
 
-        let ust:BLUE.urlST = new BLUE.urlST();
-		ust.tag  = conf.Tag ? pTag + conf.Tag : pTag
-        self.SetMarkInfo(ust);
 
 		if (!pdata)
 		{
@@ -140,7 +134,7 @@ export class ActionBase {
                 break;
             case ActionState.END:
                 {
-                    //Log("---->END TP:[%d] ID[%d]", m_pAIActionConfig.TP,m_pAIActionConfig.ActionID);
+                    BLUE.log("---->END TP:"+ self.m_pAIActionConfig.TP+" , ID: " + self.m_pAIActionConfig.id+" , Level: " + self.m_Level);
                     self.DoEnd();
                     return;
                 }
@@ -171,10 +165,22 @@ export class ActionBase {
 
 		}
 
+		let ust: BLUE.urlST = new BLUE.urlST();
+		let conf = self.m_pAIActionConfig;
 		if (self.m_pParent)
 		{
-			self.m_pParent.SetSubMarkInfo(self);
+			let pust = self.m_pParent.GetMarkInfo();
+			Object.assign(ust,pust);
+			ust.tag = conf.Tag ? conf.Tag : "";
+			if (pust.tag != "")
+			{
+				ust.tag = conf.Tag ?pust.tag + "_" +conf.Tag : pust.tag; 
+			}
 		}
+		else {
+			ust.tag = conf.Tag ? conf.Tag : "";
+		}
+		self.SetMarkInfo(ust);
 
 		self.Prepare(); //执行位置在方法最后
 	}
@@ -524,7 +530,7 @@ protected log(str:string):void
 	return;
 	let self = this;
 	let pRootConfig = self.GetRootConfig();
-	BLUE.log("ERR ==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
+	BLUE.log("==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
 	BLUE.log(str);
 }
 protected Errorlog(str:string):void
@@ -553,14 +559,14 @@ protected GetRootConfig():AIACTION_CONFIG
 		let lkey = "__store."
 		let r = new RegExp(lkey);
 		let markinfo = self.GetMarkInfo();
+		key = this.GetStoreKey(key);
 		if (key.indexOf(lkey) < 0)
 		{
-			let p = markinfo.path;
-			key += p;
+			//let p = markinfo.path;
+			//key += p;
         	_actions.SetDataByKey(self.m_dataProcess ,key,v);
 		}
 		else{
-			key = this.GetStoreKey(key);
 			key = key.replace( r, markinfo.tag);
         	_actions.SetDataByKey(self.m_Holder.getData(),key,v);
 		}
@@ -572,49 +578,66 @@ protected GetRootConfig():AIACTION_CONFIG
 		let lkey = "__store."
 		let r = new RegExp(lkey);
 		let markinfo = self.GetMarkInfo();
+
+		let data = null;
 		if (key.indexOf(lkey) < 0)
 		{
-			let p = markinfo.path;
-			key += p;
-        	return _actions.GetDataByKey(self.m_dataProcess ,key);
+			data = self.m_dataProcess ;
 		}
 		else{
-			key = this.GetStoreKey(key);
 			key = key.replace( r,markinfo.tag);
-        	return _actions.GetDataByKey(self.m_Holder.getData(),key);
+			data = self.m_Holder.getData();
 		}
+		key = this.GetStoreKey(key);
+		return _actions.GetDataByKey(data, key);
     }
+	public SetMarkInfo$($:any)
+	{
+		this.m_markinfo.$ = $;
+	}
 	public SetMarkInfo(i:BLUE.urlST)
 	{
 		this.m_markinfo = i;
 	}
 
-	protected GetMarkInfo():BLUE.urlST
+	public GetMarkInfo():BLUE.urlST
 	{
 		return this.m_markinfo ;
 	}
 
-	public SetSubMarkInfo(sub:ActionBase)
-	{
-		sub.SetMarkInfo(this.m_markinfo);	
-	}
+	//public SetSubMarkInfo(sub:ActionBase)
+	//{
+	//	sub.SetMarkInfo(this.m_markinfo);	
+	//}
 
 
 	protected GetStoreKey(kfmt:string):string
 	{
-		let self =this;
+		let self = this;
 		let k = kfmt;
-    	let r = /\{.*\}/;
-    	if (r.test(k)) {
-			let markinfo = self.GetMarkInfo();
-			let p = markinfo.path;
-			if (p.indexOf(".")>=0)
-			{
-				p = p.replace(/\..*/g,"");
-			}
-			k = k.replace(r,p)	
+		let r = /\{.*\}/;
+		let markinfo = self.GetMarkInfo();
+		let p = markinfo.path;
+		if (p.indexOf(".") >= 0) {
+			p = p.replace(/\..*/g, "");
 		}
-		return k;
+		let [key, tagidx] = k.split(" ");
+		if (tagidx) {
+			let pp = p.split("/");
+			let idx = parseInt(tagidx);
+			if (idx < pp.length) {
+				p = pp[idx];
+			}
+			else{
+				self.Errorlog(" key tag err!");
+			}
+		}
+
+
+		if (r.test(key)) {
+			key = key.replace(r, p)
+		}
+		return key;
 	}
 
 	protected FormMarkKey(k:string):string

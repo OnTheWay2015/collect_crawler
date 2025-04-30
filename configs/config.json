@@ -1,335 +1,567 @@
 {
-	"desc":"笔趣阁 https://www.biqu04.cc"
-    ,"actions":[
+    "desc": "笔趣阁 https://www.biqu04.cc", 
+	"entry":[ 	2001, 
+                2002, 
+                2003, 
+                2004, 
+                2005, 
+                2006, 
+                2007, 
+                2008],
+    "actions": [
         {
-             "id":1001
-             ,"TP":"BASE" 
-             ,"ExecTP":2
-             ,"ActionsAllTouchFalg":true
-             ,"Actions":[81]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[[]]
-        }
-        ,{
-             "id":1000
-             ,"TP":"BASE" 
-             ,"ExecTP":2
-             ,"ActionsAllTouchFalg":true
-             ,"Actions":[2000]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[[]]
-        }
-        ,{
-             "id":1010
-             ,"TP":"BASE" 
-             ,"ExecTP":2
-             ,"ActionsAllTouchFalg":true
-             ,"Actions":[2000,2001,2002,2003,2004]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[[]]
-        }
-        ,{
-             "id":2000
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-             ,"Tag":"综影视_姑娘你别跑"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/229633/","GET",false,"storehtml"]
-                ,[{}]
+            "id": 1001, 
+            "TP": "BASE", 
+            "ExecTP": 2, 
+            "ActionsAllTouchFalg": true, 
+            "Actions": [
+                81
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [ ]
             ]
-        }
-                
-		     
-		        ,{
-             "id":2001
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Tag":"开局怒怼圣人女娲列表"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/36960/","GET",false,"storehtml"]
-                ,[{}]
+        }, 
+        {
+            "id": 1000, 
+            "TP": "BASE", 
+            "ExecTP": 2, 
+            "ActionsAllTouchFalg": true, 
+            "Actions": [
+                2007
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [ ]
             ]
-        }
-		        ,{
-             "id":2002
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Tag":"直上青云_从高考落榜开始"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/223839/","GET",false,"storehtml"]
-                ,[{}]
+        }, 
+        {
+            "id": 1002, 
+            "TP": "BASE", 
+            "ExecTP": 2, 
+            "ActionsAllTouchFalg": true, 
+            "Actions": [
+                 
+                2001, 
+                2002, 
+                2003, 
+                2004, 
+                2005, 
+                2006, 
+                2007, 
+                2008
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [ ]
             ]
-        }
-		        ,{
-             "id":2003
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Tag":"炼器修仙传"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/228154/","GET",false,"storehtml"]
-                ,[{}]
-            ]
-        }
-				        ,{
-             "id":2004
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Tag":"长生从吸收妖魔开始"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/229659/","GET",false,"storehtml"]
-                ,[{}]
-            ]
-        }
-		     
-				        ,{
-             "id":2005
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Tag":"我有一身被动技"
-             ,"Actions":[]
-            ,"NodeRight":3000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ 1,"https://www.biq04.cc/book/44879/","GET",false,"storehtml"]
-                ,[{}]
-            ]
-        }
-		     
-		
-		
-		
-		
-		
-		
-        ,{
-             "id":3000
-             ,"TP":"STORE_SINGLE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":4000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["storehtml","chapter_links_href"]
-                ,[
-                    "div[class='listmain']"
-                    ,"a"
+        }, 
+        {
+            "id": 2000, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Tag": "这游戏也太真实了", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/39854/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
                 ]
             ]
-        }
-        ,{
-             "id":4000
-             ,"TP":"FILTER_ATTR"
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":5000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["chapter_links_href","chapter_links","href"]
-                ,[
+        }, 
+        {
+            "id": 2001, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "星门_时光之主", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/117265/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
                 ]
             ]
-        }
-        ,{
-             "id":5000
-             ,"TP":"TRAVEL_LINKS" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":7000
-            ,"NodeLeft":7000
-            ,"TargetValue":[
-                ["chapter_links","dir.chapters",6000,300]
-                ,[
+        }, 
+        {
+            "id": 2002, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "夜的命名术", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/42934/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
                 ]
             ]
-
-        }
-        ,{
-             "id":6000
-             ,"TP":"HTTP_REQ" 
-             ,"ExecTP":1
-			 ,"Expiretm":"30000"
-             ,"Actions":[]
-            ,"NodeRight":8000
-            ,"NodeLeft":11000
-            ,"TargetValue":[
-                [ 1,"in_code_set","GET",false,"__store.aaaa.travel_chaps_{x}"]
-                ,[""]
-            ]
-        }
-        ,{
-             "id":11000
-             ,"TP":"HTTP_FAILED_STORE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":12000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.f.{}"]
-            ]
-        }
-        ,{
-             "id":12000
-             ,"TP":"TIMES" 
-             ,"ExecTP":1
-             ,"Actions":[13000]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[[3,true]]
-        }
-        ,{
-             "id":13000
-             ,"TP":"TRAVEL_LINKS" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.f.{}","dir.chapters",6000,10]
-                ,[
+        }, 
+        {
+            "id": 2003, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "乱世书", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/95144/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
                 ]
             ]
-
-        }
-        ,{
-             "id":8000
-             ,"TP":"STORE_SINGLE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":9000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.aaaa.travel_chaps_{x}","__store.aaaa.travel_chaps_{x}"]
-                ,[
+        }, 
+        {
+            "id": 2004, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "我本无意成仙", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/182900/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
+                ]
+            ]
+        }, 
+        {
+            "id": 2005, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "稳住别浪", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/44992/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
+                ]
+            ]
+        }, 
+        {
+            "id": 2006, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "这个人仙太过正经", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/44338/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
+                ]
+            ]
+        }, 
+        {
+            "id": 2007, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "我的属性修行人生", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/59544/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
+                ]
+            ]
+        }, 
+        {
+            "id": 2008, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Tag": "我有一个修仙世界", 
+            "Actions": [ ], 
+            "NodeRight": 3000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    1, 
+                    "https://www.bisaqu.cc/book/47347/", 
+                    "GET", 
+                    false, 
+                    "storehtml"
+                ], 
+                [
+                    { }
+                ]
+            ]
+        }, 
+        {
+            "id": 3000, 
+            "TP": "STORE_SINGLE", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 4000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "storehtml", 
+                    "chapter_links_href"
+                ], 
+                [
+                    "div[class='listmain']", 
+                    "a"
+                ]
+            ]
+        }, 
+        {
+            "id": 4000, 
+            "TP": "FILTER_ATTR", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 5000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "chapter_links_href", 
+                    "chapter_links", 
+                    "href"
+                ], 
+                [ ]
+            ]
+        }, 
+        {
+            "id": 5000, 
+            "TP": "TRAVEL_LINKS", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 7000, 
+            "NodeLeft": 7000, 
+            "TargetValue": [
+                [
+                    "chapter_links", 
+                    "dir.chapters", 
+                    6000, 
+                    10
+                ], 
+                [ ]
+            ]
+        }, 
+        {
+            "id": 6000, 
+            "TP": "HTTP_REQ", 
+            "ExecTP": 1, 
+            "Expiretm": "30000", 
+            "Actions": [ ], 
+            "NodeRight": 8000, 
+            "NodeLeft": 11000, 
+            "TargetValue": [
+                [
+                    1, 
+                    "in_code_set", 
+                    "GET", 
+                    false, 
+                    "__store.aaaa.travel_chaps__{x} 3"
+                ], 
+                [
+                    ""
+                ]
+            ]
+        }, 
+        {
+            "id": 11000, 
+            "TP": "HTTP_FAILED_STORE", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 12000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "__store.f.{}"
+                ]
+            ]
+        }, 
+        {
+            "id": 12000, 
+            "TP": "TIMES", 
+            "ExecTP": 1, 
+            "Actions": [
+                13000
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    3, 
+                    true
+                ]
+            ]
+        }, 
+        {
+            "id": 13000, 
+            "TP": "TRAVEL_LINKS", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "__store.f.{}", 
+                    "dir.chapters", 
+                    6000, 
+                    10
+                ], 
+                [ ]
+            ]
+        }, 
+        {
+            "id": 8000, 
+            "TP": "STORE_SINGLE", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 9000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "__store.aaaa.travel_chaps__{x} 3", 
+                    "__store.aaaa.travel_chaps__{x} 3"
+                ], 
+                [
                     "div[id='chaptercontent']"
                 ]
             ]
-        }
-        ,{
-             "id":9000
-             ,"TP":"FILTER_TEXT" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":10000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.aaaa.travel_chaps_{x}","__store.bbbb.travel_chaps_{x}"]
-                ,[""]
-            ]
-        }
-        ,{
-             "id":10000
-             ,"TP": "TEXT_TRANS"
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.bbbb.travel_chaps_{x}","__store.cccc.travel_chaps_{x}"]
-                ,[
-                    ["『点此报错』.*『加入书签』",""]
-                    ,["请.*http.*笔.*\\.cc",""]
-                    ,["。”",".”\r\n"]
-                    ,["。","。\r\n"]
+        }, 
+        {
+            "id": 9000, 
+            "TP": "FILTER_TEXT", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 10000, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "__store.aaaa.travel_chaps__{x} 3", 
+                    "__store.aaaa.travel_chaps__{x} 3"
+                ], 
+                [
+                    ""
                 ]
             ]
-        }
-        ,{
-             "id":7000
-             ,"TP":"WRITE_TXT_FILE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ "wdir","f.txt","__store.cccc",true]
-                ,[""]
-            ]
-        }
-        ,{
-             "id":90
-             ,"TP":"TIMES" 
-             ,"ExecTP":1
-             ,"Actions":[80]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[[3]]
-        }
-        ,{
-             "id":80
-             ,"TP":"BASE"
-             ,"ExecTP":1
-             ,"Actions":[81]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[]
-        }
-        ,{
-             "id":81
-             ,"TP":"READ_TXT_FILE"
-             ,"ExecTP":1
-			 ,"Tag":"100"
-             ,"Actions":[]
-            ,"NodeRight":82
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["wdir","f.txt","xxx"]
-            ]
-        }
-        ,{
-             "id":82
-             ,"TP":"TEXT_TRANS"
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":83
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["xxx","xxx"]
-                ,[
-                    ["『.*』",""]
-                    ,["请.*http.*cc",""]
-                    ,["笔.*cc",""]
-                    ,["。”",".”\r\n"]
-                    ,["。","。\r\n"]
+        }, 
+        {
+            "id": 10000, 
+            "TP": "TEXT_TRANS", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "__store.aaaa.travel_chaps__{x} 3", 
+                    "__store.aaaa.travel_chaps__{x} 3"
+                ], 
+                [
+                    [
+                        "『点此报错』.*?『加入书签』", 
+                        ""
+                    ], 
+                    [
+                        "请收藏本站.*?\\.cc", 
+                        ""
+                    ], 
+                    [
+                        "笔趣阁.*?\\.cc", 
+                        ""
+                    ], 
+                    [
+                        "。”", 
+                        ".”\r\n"
+                    ], 
+                    [
+                        "。", 
+                        "。\r\n"
+                    ]
                 ]
             ]
-        }
-        ,{
-             "id":83
-             ,"TP":"WRITE_TXT_FILE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [ "wdir","f.txt","xxx",false]
-                ,[""]
+        }, 
+        {
+            "id": 7000, 
+            "TP": "WRITE_TXT_FILE", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "wdir", 
+                    "f.txt", 
+                    "__store.aaaa", 
+                    true
+                ], 
+                [
+                    ""
+                ]
             ]
-        }
-        ,null
-    ]
-    ,"a":1
-    ,"b":2
+        }, 
+        {
+            "id": 90, 
+            "TP": "TIMES", 
+            "ExecTP": 1, 
+            "Actions": [
+                80
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    3
+                ]
+            ]
+        }, 
+        {
+            "id": 80, 
+            "TP": "BASE", 
+            "ExecTP": 1, 
+            "Actions": [
+                81
+            ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [ ]
+        }, 
+        {
+            "id": 81, 
+            "TP": "READ_TXT_FILE", 
+            "ExecTP": 1, 
+            "Tag": "100", 
+            "Actions": [ ], 
+            "NodeRight": 82, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "wdir", 
+                    "f.txt", 
+                    "xxx"
+                ]
+            ]
+        }, 
+        {
+            "id": 82, 
+            "TP": "TEXT_TRANS", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 83, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "xxx", 
+                    "xxx"
+                ], 
+                [
+                    [
+                        "『.*』", 
+                        ""
+                    ], 
+                    [
+                        "请.*http.*cc", 
+                        ""
+                    ], 
+                    [
+                        "笔.*cc", 
+                        ""
+                    ], 
+                    [
+                        "。”", 
+                        ".”\r\n"
+                    ], 
+                    [
+                        "。", 
+                        "。\r\n"
+                    ]
+                ]
+            ]
+        }, 
+        {
+            "id": 83, 
+            "TP": "WRITE_TXT_FILE", 
+            "ExecTP": 1, 
+            "Actions": [ ], 
+            "NodeRight": 0, 
+            "NodeLeft": 0, 
+            "TargetValue": [
+                [
+                    "wdir", 
+                    "f.txt", 
+                    "xxx", 
+                    false
+                ], 
+                [
+                    ""
+                ]
+            ]
+        }, 
+        null
+    ], 
+    "a": 1, 
+    "b": 2
 }

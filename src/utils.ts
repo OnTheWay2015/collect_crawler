@@ -54,6 +54,7 @@ export class urlST{
     public auto_name:string= "";
     public url:string= "";
     public tag:string= "";
+    public $:any; //cheerio.CheerioAPI
     //public mate:object={};
 }
 

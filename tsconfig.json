@@ -6,6 +6,8 @@
         "strict": true, 
         //"outFile": "./bin/index.js",
         //"declaration":true, //生成 .d.ts
+        "esModuleInterop": true, //支持混合模块类型导入, 声明里有默认导出实例,比如 export =xxx 
+        "allowSyntheticDefaultImports": true, //支持混合模块类型导入  
         "sourceMap": true
     },
     "types":["node"],

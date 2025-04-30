@@ -12,6 +12,7 @@ import { ActionTimes } from "./actiontimes";
 import { ActionTravelLinks } from './actiontravellinks';
 import { ActionWriteTextFile } from './actionwritetextfile';
 import { ActionStoreTextMatch } from './actionstoretextmatch';
+import { ActionStoreMove } from './actionstoremove';
 
 //export enum ACTION_TYPE{ //因为在配置里有对应的数值,所以该枚举类型的位置不要调换 
 //	BASE =1,
@@ -35,6 +36,7 @@ export enum ACTION_TYPE{
 	INTERVAL="INTERVAL",
 	HTTP_REQ="HTTP_REQ",
 	STORE_SINGLE ="STORE_SINGLE",
+	STORE_MOVE="STORE_MOVE",
 	STORE_TEXT_MATCH="STORE_TEXT_MATCH",
 	FILTER_ATTR="FILTER_ATTR", 
 	TRAVEL_LINKS="TRAVEL_LINKS",
@@ -43,6 +45,7 @@ export enum ACTION_TYPE{
 	FILTER_TEXT="FILTER_TEXT", 
 	TEXT_TRANS="TEXT_TRANS", 
 	HTTP_FAILED_STORE="HTTP_FAILED_STORE",
+	CONDTION_NODE="CONDTION_NODE",
 };
 
 
@@ -60,6 +63,7 @@ export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTI
         , [String(ACTION_TYPE.HTTP_REQ)]: ActionHttp
         , [String(ACTION_TYPE.HTTP_FAILED_STORE)]:ActionHttpFailedStore 
         , [String(ACTION_TYPE.STORE_SINGLE)]: ActionStoreSingle
+        , [String(ACTION_TYPE.STORE_MOVE)]: ActionStoreMove
         , [String(ACTION_TYPE.STORE_TEXT_MATCH)]:ActionStoreTextMatch 
         , [String(ACTION_TYPE.FILTER_ATTR)]: ActionFilterAttr
         , [String(ACTION_TYPE.FILTER_TEXT)]: ActionFilterText
@@ -102,7 +106,7 @@ export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTI
 	//}
 
 
-	BLUE.log("try create cls["+Conf.TP+"]");	
+	BLUE.log("try create cls["+Conf.TP+"] id["+Conf.id+"]");	
 	if (cls[Conf.TP])
 	{
 		return  new cls[Conf.TP](pdata,ab,Conf, holder,Level+1);

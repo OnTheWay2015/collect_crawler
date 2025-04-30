@@ -29,13 +29,13 @@ protected override Prepare():void
 
 protected override OnSubResult(res:ExecState )
 {
-
 	let self = this;
 	if (self.getState()!= ActionState.WAITING_TASK)
 	{
 		self.Done(res);
 		return;
 	}
+
 
 	if (res != ExecState.OK )
 	{
@@ -44,6 +44,7 @@ protected override OnSubResult(res:ExecState )
         return;
     }
 
+    //累计执行多次 actions
 	if(self.m_pAIActionConfig.ExecTP == ACTION_EXEC_TYPE.RANDOM)
 	{
 		self.m_RunTimes++;
@@ -61,18 +62,19 @@ protected override OnSubResult(res:ExecState )
         self.Errorlog(" m_pAIActionConfig.ExecTP err value["+self.m_pAIActionConfig.ExecTP+"]");
     }
 
-    if (self.m_tryok) {
+    if (self.m_tryok && res == ExecState.OK ) {
+        //m_tryok 执行有一次 ok 就中断
         self.Done(ExecState.OK);
+        self.GoState(ActionState.TRY_SUB_NODE);
         return;
     }
-    else
-    {
-        if (self.m_RunTimes < self.m_tlimit) {
-            self.GoState(ActionState.CHOISE_TASK);
-        }
-        else {
-            self.GoState(ActionState.TRY_SUB_NODE);
-        }
+    
+    if (self.m_RunTimes < self.m_tlimit) {
+        self.GoState(ActionState.CHOISE_TASK);
+    }
+    else {
+        //所有次数执行完成
+        self.GoState(ActionState.TRY_SUB_NODE);
     }
 
 }

@@ -27,6 +27,11 @@ class ConfManager {
  
 
 
+    public GetActionEntry():Number[]
+    {
+        let self = this;
+        return self.m_conf["entry"];
+    }
 
     public GetActionConfigById(id:number):AIACTION_CONFIG|null
     {

@@ -50,7 +50,6 @@ export class HttpHandle implements IReq{
         //self._main= main;
         self._headers = {
             "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
-            //"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36", //linux
             //"Accept":" text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "Accept":"*/*",
            //"Accept-Encoding": "gzip, deflate",
@@ -156,7 +155,9 @@ export class HttpHandle implements IReq{
             self.mResponse = response 
             //response.setEncoding('utf-8'); //防止中文乱码. 不可乱用.保持原生stream
             let headers = response.headers;
-            //BLUE.log( JSON.stringify(headers));
+            
+            //BLUE.error('response headers ====>' + JSON.stringify(headers,null,4));
+            
             if(headers["content-length"] && self._contentLength <= 0 )
             {
                 self._contentLength = parseInt(headers["content-length"]);
@@ -196,6 +197,11 @@ export class HttpHandle implements IReq{
                         return ;
                     }
 
+                }
+                if (response.statusCode == 403){
+                        //forbidden 
+                        onErr(REQ_ERR.E_8, "request forbidden!");
+                        return ;
                 }
                 if (response.statusCode == 301 ||
                     response.statusCode == 302) {
@@ -356,6 +362,7 @@ If-Range: Wed, 21 Oct 2015 07:28:00 GMT
             port: self._port,
             path: self._path,
             method: self._method,
+            rejectUnauthorized: false, // 关闭SSL验证
             headers: h
         };
 
@@ -372,7 +379,11 @@ If-Range: Wed, 21 Oct 2015 07:28:00 GMT
         else{
             req = HTTPS.request(op, callback);//https.js  new ClientRequest(...args)
         }
-        
+        let hhhh:any = req.getHeaders();
+        //BLUE.error('HTTP.request headers ====>\n' + JSON.stringify(hhhh,null,4));//pretty-print
+        //console.log('HTTP.request headers ====>\n');
+        //console.dir(JSON.stringify(hhhh,null,4));//pretty-print
+
         req.on('connect', (res, socket, head) => {
             socket.on('error', (e:any) => {
                 BLUE.error('HTTP.request  connect ====>' + e.message);

@@ -43,14 +43,15 @@ export class ActionFilterText extends ActionBase {
         let self = this;
         let processdata = self.GetDataByKey(self.m_getkey_single); 
         let cheerio_eles= processdata.v;
-        if (!cheerio_eles|| cheerio_eles.length<=1)//第一个应该是 cheerio $ 
+        if (!cheerio_eles|| cheerio_eles.length<=0)
         {
             return ExecState.FAILED;
         }
 
         let storeinfo:string= "";
-        let $ = cheerio_eles[0];
-        for (var i = 1; i < cheerio_eles.length; i++) {
+        
+        let $ = self.GetMarkInfo().$; 
+        for (var i = 0; i < cheerio_eles.length; i++) {
             let obj = $(cheerio_eles[i]); 
             storeinfo += obj.text();
         }
