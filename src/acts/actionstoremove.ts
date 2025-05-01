@@ -41,10 +41,12 @@ export class ActionStoreMove extends ActionBase {
         let content = processdata.v;
         if (self.m_append){
             let sdata = self.GetDataByKey(k); 
-            if (!sdata || !sdata.v) {
+            if (sdata && sdata.v) {
                 content = sdata.v + content;
+                self.SetDataByKey(k,null);//原来的删除
             }
         }
+        self.SetDataByKey(self.m_getkey_single,null);//原来的删除
         self.SetDataByKey(k, { v:content});
         return ExecState.OK;
     }

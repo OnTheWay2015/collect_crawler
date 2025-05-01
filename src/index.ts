@@ -235,11 +235,16 @@ process.argv.forEach((val, index) => {
 
    });
 
+   if (acts.length >0){
    setInterval(() => {
       acts.forEach((act) => {
          act.Update(n);
       });
    }, n);
+   }else{
+
+      console.log("acts length = 0");
+   }
 
 
    //let a = new noval01_APP();

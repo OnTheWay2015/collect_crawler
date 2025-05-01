@@ -1,5 +1,5 @@
 {
-	"desc":"  https://m.1qxs.com/xs",
+	"desc":"  https://m.wenxuem.com/wapbook/173816_60059442.html",
 		"entry":[ 	
 		2001, 
                 2002, 
@@ -30,16 +30,18 @@
             ,"NodeLeft":0
             ,"TargetValue":[[]]
         }
+		
+		
         ,{
-             "id":2000
+             "id":2001
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":1
              ,"Tag":"离婚后_我能听到未来的声音"
-             ,"Actions":[3000,9000]
-            ,"NodeRight":7000
-            ,"NodeLeft":7000
+             ,"Actions":[]
+            ,"NodeRight":9000
+            ,"NodeLeft":0
             ,"TargetValue":[
-                [ 1,"https://m.1qxs.com/xs/84660/1","GET",false,"storehtml"]
+                [ 1,"https://m.wenxuem.com/wapbook/173816_60059442.html","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
@@ -51,12 +53,14 @@
              ,"ExecTP":1
              ,"Actions":[]
             ,"NodeRight":5000
-            ,"NodeLeft":0
+            ,"NodeLeft":7000
             ,"TargetValue":[
-                ["storehtml","storenext"]
-                ,[
-                    "div[class='right']"
-					,"a"
+                ["storenext","storenext"]
+                ,[					
+                    "div[class='nr_page']"
+                    ,"td[class='next']"
+                    ,"a[id='pt_next']"
+					 
                 ]
             ]
         }  
@@ -65,12 +69,173 @@
              ,"TP":"STORE_TEXT_MATCH" 
              ,"ExecTP":1
              ,"Actions":[]
+            ,"NodeRight":5001
+            ,"NodeLeft":5020
+            ,"TargetValue":[
+                ["storenext","storenext" ,"下ー页",true]
+            ]
+        }
+		,{
+             "id":5001
+             ,"TP":"STORE_SINGLE" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":5002
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["storehtml","__store.content.travel_chaps_{x}"]
+                ,[
+                    "div[id='nr1']" 
+                ]
+            ]
+        }
+		
+		,{
+             "id":5002
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+             ,"ActionsAllTouchFalg":true
+             ,"Actions":[5050,5051]
+            ,"NodeRight":5003
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+		
+		,{
+             "id":5003
+             ,"TP":"STORE_MOVE" 
+             ,"ExecTP":1
+             ,"Actions":[]
             ,"NodeRight":9001
             ,"NodeLeft":0
             ,"TargetValue":[
-                ["storenext","storenext" ,"下一.*",true]
+                ["__store.content.travel_chaps_{x}","movetemp", true]
             ]
         } 
+		
+		
+		
+		
+		,{
+             "id":5020
+             ,"TP":"STORE_TEXT_MATCH" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":5021
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["storenext","storenext" ,"下ー章",true]
+            ]
+        }
+		,{
+             "id":5021
+             ,"TP":"STORE_SINGLE" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":5022
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["storehtml","__store.content.travel_chaps_{x}"]
+                ,[
+                     "div[id='nr1']" 
+                ]
+            ]
+        }
+		
+				,{
+             "id":5022
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+             ,"ActionsAllTouchFalg":true
+             ,"Actions":[5050,5051]
+            ,"NodeRight":5030
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        } 
+		
+		,{
+             "id":5030
+             ,"TP":"STORE_MOVE" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":5031
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["__store.content.travel_chaps_{x}","movetemp", true]
+            ]
+        }
+		,{
+             "id":5031
+             ,"TP":"STORE_MOVE" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":9001
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["movetemp","__store.save.travel_chaps_{x}", false]
+            ]
+        }
+		
+		
+		
+		
+		
+		,{
+             "id":5050
+             ,"TP":"FILTER_TEXT" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["__store.content.travel_chaps_{x}","__store.content.travel_chaps_{x}"]
+                ,[""]
+            ]
+        }
+		
+		
+		,{
+             "id":5051
+             ,"TP": "TEXT_TRANS"
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                ["__store.content.travel_chaps_{x}","__store.content.travel_chaps_{x}"]
+                ,[
+                    ["【.*?】*.?【.*?】",""]
+					,["第.*?章.*?\\)",""]
+					,["（本章.*?）",""]
+                    ,["。”",".”\r\n"]
+                    ,["。","。\r\n"]
+                ]
+            ]
+        } 
+        ,{
+             "id":7000
+             ,"TP":"WRITE_TXT_FILE" 
+             ,"ExecTP":1
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+                [
+                    "wdir", 
+                    "f.txt", 
+                    "__store.text.travel_chaps_{x}", 
+                    true
+                ] 
+                ,[""]
+            ]
+        } 
+		
+		
+		
+		
+
+		
 		,{
              "id":9001
              ,"TP":"FILTER_ATTR"
@@ -92,7 +257,7 @@
             ,"NodeRight":0
             ,"NodeLeft":0
             ,"TargetValue":[
-                ["storenext_link","",9003,300]
+                ["storenext_link","",9003,20]
                 ,[
                 ]
             ]
@@ -103,78 +268,15 @@
              ,"TP":"HTTP_REQ" 
              ,"ExecTP":2
              ,"Tag":""
-             ,"Actions":[3000,9000]
-            ,"NodeRight":0
+             ,"Actions":[]
+            ,"NodeRight":9000
             ,"NodeLeft":0
             ,"TargetValue":[
                 [ 1,"","GET",false,"storehtml"]
                 ,[{}]
             ]
         }
-		
-		
-        ,{
-             "id":3000
-             ,"TP":"STORE_SINGLE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":4000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["storehtml","__store.content.travel_chaps_{x}"]
-                ,[
-                    "div[class='content']" 
-                ]
-            ]
-        }     
-        ,{
-             "id":4000
-             ,"TP":"FILTER_TEXT" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":10000
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.content.travel_chaps_{x}","__store.text.travel_chaps_{x}"]
-                ,[""]
-            ]
-        }
-		
-		
-		,{
-             "id":10000
-             ,"TP": "TEXT_TRANS"
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                ["__store.text.travel_chaps_{x}","__store.text.travel_chaps_{x}"]
-                ,[
-                    ["【.*?】*.?【.*?】",""]
-					,["本章已完结",""]
-                    ,["。”",".”\r\n"]
-                    ,["。","。\r\n"]
-                ]
-            ]
-        }
-        ,{
-             "id":7000
-             ,"TP":"WRITE_TXT_FILE" 
-             ,"ExecTP":1
-             ,"Actions":[]
-            ,"NodeRight":0
-            ,"NodeLeft":0
-            ,"TargetValue":[
-                [
-                    "wdir", 
-                    "f.txt", 
-                    "__store.text.travel_chaps_{x}", 
-                    true
-                ] 
-                ,[""]
-            ]
-        } 
+        
         ,null
     ]
     ,"a":1

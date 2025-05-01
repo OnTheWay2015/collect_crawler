@@ -32,38 +32,50 @@ export class ActionStoreTextMatch extends ActionBase {
         self.m_storekey_single = ary01[1]; //
         self.m_filter_key= ary01[2]; //
         self.m_ismatch= ary01[3]; //
-
-        if ( !(self.m_pParent instanceof ActionStoreSingle))
-        {
-            self.Errorlog("need parent ActionStoreSingle");
-            self.Done(ExecState.FAILED);
-            return;
-
-        }
     }
 
     protected override Run(): ExecState {
         let self = this;
         let processdata = self.GetDataByKey(self.m_getkey_single); 
         let cheerio_eles= processdata.v;
-        if (!cheerio_eles|| cheerio_eles.length<=1)//第一个应该是 cheerio $ 
+        if (!cheerio_eles|| cheerio_eles.length<=0)
         {
             return ExecState.FAILED;
         }
         //let baseurl= self.m_Holder.GetProcessDataByKey(_actions.BASE_URL);
         let storeinfo:any[]= [];
-        let $ = cheerio_eles[0];
-        for (var i = 1; i < cheerio_eles.length; i++) {
+        let $ = self.GetMarkInfo().$;
+        for (var i = 0; i < cheerio_eles.length; i++) {
             let obj = $(cheerio_eles[i]); 
             let r = new RegExp(self.m_filter_key);
             let text = obj.text();
-            if ( (self.m_ismatch && r.test(text)) || 
-            ( !self.m_ismatch && !r.test(text)))
+           
+            /*
+            //注意 填写配置时,从网页上复制对应的字符,这样编码一致
+            console.log(encodeURIComponent(text)); // 显示编码差异:ml-citation{ref="1,5" data="citationList"}
+            console.log(encodeURIComponent(self.m_filter_key));
+
+            const normalized1 = text.normalize('NFC');
+            const normalized2 = self.m_filter_key.normalize('NFC');
+            if (normalized1 == normalized2 ){
+                let aaa = 0;
+                aaa++;
+            }
+            if (self.m_filter_key === text){
+                let aaa = 0;
+                aaa++;
+            }
+            */
+            let b = r.test(text);
+            if ( (self.m_ismatch && b) || 
+            ( !self.m_ismatch && !b))
             {
                 storeinfo.push(cheerio_eles[i]);
             }
         }
-        storeinfo.unshift($);
+        if (storeinfo.length<=0){
+            return ExecState.FAILED;
+        }
         let k = self.m_storekey_single;
         self.SetDataByKey(k, {v:storeinfo} );
         return ExecState.OK;

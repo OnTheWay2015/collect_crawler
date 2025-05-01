@@ -527,7 +527,7 @@ protected getExecRes():ExecState{
 
 protected log(str:string):void
 {
-	return;
+	//return;
 	let self = this;
 	let pRootConfig = self.GetRootConfig();
 	BLUE.log("==>TP["+self.m_pAIActionConfig.TP+"] RootActionid["+pRootConfig.id+"] id["+self.m_pAIActionConfig.id+"] Level:["+self.m_Level+"] ");
