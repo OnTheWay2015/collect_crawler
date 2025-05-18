@@ -1,98 +1,266 @@
 {
     "desc": "笔趣阁 https://www.biqu04.cc", 
-	"entry":[ 	2001, 
-                2002, 
-                2003, 
-                2004, 
-                2005, 
-                2006, 
-                2007, 
-                2008],
+	"entry":[ 	
+				100 
+                ,200 
+                ,300 
+                ,400  
+                ,9999],
     "actions": [
+	
         {
-            "id": 1001, 
-            "TP": "BASE", 
-            "ExecTP": 2, 
-            "ActionsAllTouchFalg": true, 
-            "Actions": [
-                81
-            ], 
-            "NodeRight": 0, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [ ]
-            ]
-        }, 
-        {
-            "id": 1000, 
-            "TP": "BASE", 
-            "ExecTP": 2, 
-            "ActionsAllTouchFalg": true, 
-            "Actions": [
-                2007
-            ], 
-            "NodeRight": 0, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [ ]
-            ]
-        }, 
-        {
-            "id": 1002, 
-            "TP": "BASE", 
-            "ExecTP": 2, 
-            "ActionsAllTouchFalg": true, 
-            "Actions": [
-                 
-                2001, 
-                2002, 
-                2003, 
-                2004, 
-                2005, 
-                2006, 
-                2007, 
-                2008
-            ], 
-            "NodeRight": 0, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [ ]
-            ]
-        }, 
-        {
+             "id":100
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[110]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":110
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/181136/"]
+				,["fname","长生从炼丹宗师开始.txt"]
+			]
+        } 
+		 
+        ,{
+             "id":200
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[210]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":210
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/157855/"]
+				,["fname","仙人消失之后.txt"]
+			]
+        }
+		  
+        ,{
+             "id":300
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[310]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":310
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/141159/"]
+				,["fname","星武纪元.txt"]
+			]
+        }
+		  
+        ,{
+             "id":400
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[410]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":410
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/44943/"]
+				,["fname","青葫剑仙.txt"]
+			]
+        }
+		  
+        ,{
+             "id":500
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[510]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":510
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/101271/"]
+				,["fname","旅行从摄影开始.txt"]
+			]
+        }
+		  
+		 
+        ,{
+             "id":600
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[610]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":610
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/156571/"]
+				,["fname","都重生了_谁还要当首富呀.txt"]
+			]
+        }
+		  
+        ,{
+             "id":700
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[710]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":710
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/168391/"]
+				,["fname","重回1980年去享福.txt"]
+			]
+        }
+		  
+        ,{
+             "id":800
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[810]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":810
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","https://www.sad4.cc/book/46323/"]
+				,["fname","前任无双.txt"]
+			]
+        }
+		  
+		 
+		  
+        ,{
+             "id":900
+             ,"TP":"BASE" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[910]
+            ,"NodeRight":2000
+            ,"NodeLeft":0
+            ,"TargetValue":[[]]
+        }
+		
+         ,{
+             "id":910
+             ,"TP":"STORE_SET" 
+             ,"ExecTP":2
+			  ,"Tag":""  
+             ,"Actions":[]
+            ,"NodeRight":0
+            ,"NodeLeft":0
+            ,"TargetValue":[
+				["url","xxx"]
+				,["fname","xxx.txt"]
+			]
+        }
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+        ,{
             "id": 2000, 
             "TP": "HTTP_REQ", 
             "ExecTP": 1, 
-            "Tag": "这游戏也太真实了", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/39854/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2001, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
             "Expiretm": "30000", 
-            "Tag": "星门_时光之主", 
+             
             "Actions": [ ], 
             "NodeRight": 3000, 
             "NodeLeft": 0, 
             "TargetValue": [
                 [
                     1, 
-                    "https://www.bisaqu.cc/book/117265/", 
+                    "@url", 
                     "GET", 
                     false, 
                     "storehtml"
@@ -102,160 +270,8 @@
                 ]
             ]
         }, 
-        {
-            "id": 2002, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "夜的命名术", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/42934/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2003, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "乱世书", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/95144/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2004, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "我本无意成仙", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/182900/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2005, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "稳住别浪", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/44992/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2006, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "这个人仙太过正经", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/44338/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2007, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "我的属性修行人生", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/59544/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
-        {
-            "id": 2008, 
-            "TP": "HTTP_REQ", 
-            "ExecTP": 1, 
-            "Expiretm": "30000", 
-            "Tag": "我有一个修仙世界", 
-            "Actions": [ ], 
-            "NodeRight": 3000, 
-            "NodeLeft": 0, 
-            "TargetValue": [
-                [
-                    1, 
-                    "https://www.bisaqu.cc/book/47347/", 
-                    "GET", 
-                    false, 
-                    "storehtml"
-                ], 
-                [
-                    { }
-                ]
-            ]
-        }, 
+		
+		
         {
             "id": 3000, 
             "TP": "STORE_SINGLE", 
@@ -302,7 +318,7 @@
                     "chapter_links", 
                     "dir.chapters", 
                     6000, 
-                    10
+                    100
                 ], 
                 [ ]
             ]
@@ -454,7 +470,7 @@
             "TargetValue": [
                 [
                     "wdir", 
-                    "f.txt", 
+                    "@fname", 
                     "__store.aaaa", 
                     true
                 ], 
