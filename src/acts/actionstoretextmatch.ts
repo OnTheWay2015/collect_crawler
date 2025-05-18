@@ -14,8 +14,8 @@ export class ActionStoreTextMatch extends ActionBase {
     private m_storekey_single: string = "";
     private m_filter_key:string="";
     private m_ismatch:boolean=true;
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -70,14 +70,14 @@ export class ActionStoreTextMatch extends ActionBase {
             if ( (self.m_ismatch && b) || 
             ( !self.m_ismatch && !b))
             {
-                storeinfo.push(cheerio_eles[i]);
+                storeinfo.push(cheerio_eles[i]); 
             }
         }
         if (storeinfo.length<=0){
             return ExecState.FAILED;
         }
         let k = self.m_storekey_single;
-        self.SetDataByKey(k, {v:storeinfo} );
+        self.SetDataByKey(k, {v:storeinfo} );//保存时 v 为数组
         return ExecState.OK;
     }
 

@@ -9,8 +9,8 @@ export class ActionStoreMove extends ActionBase {
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     private m_append: boolean=false; 
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
 
@@ -47,6 +47,8 @@ export class ActionStoreMove extends ActionBase {
             }
         }
         self.SetDataByKey(self.m_getkey_single,null);//原来的删除
+       
+        //todo 保存 v 为数组
         self.SetDataByKey(k, { v:content});
         return ExecState.OK;
     }

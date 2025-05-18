@@ -10,9 +10,9 @@ export class ActionReadTextFile extends ActionBase
     private m_storekey: string = "";
     private m_filename: string = "";
     private m_dir: string = "";
-    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(pdata:any,localinfo:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
     {
-        super(pdata,Parent,conf, holder,level);
+        super(pdata,localinfo,Parent,conf, holder,level);
     }
 
 

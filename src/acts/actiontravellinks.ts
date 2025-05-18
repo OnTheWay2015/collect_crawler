@@ -19,8 +19,8 @@ export class ActionTravelLinks extends ActionBase {
     private m_travelLimitCnt:number= 5;
     private m_travelCnt:number= 0;
     private m_subres:ExecState = ExecState.OK;
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -62,12 +62,14 @@ export class ActionTravelLinks extends ActionBase {
             return ExecState.FAILED;
         }
 
-        let ele:string = eles[0];
+        let ele:String = eles[0];
         let prefix = "";
         let dir= "";
         let ust:BLUE.urlST = self.GetMarkInfo();   
         let reg = new RegExp("^http"); //test full url
-        if (ust && !reg.test(ele))
+        try {
+
+        if (ust && !reg.test(ele.toString()))
         {// 拼接host,完成 url 
             if (ele.indexOf("/") == 0)//绝对路径
             {
@@ -95,16 +97,26 @@ export class ActionTravelLinks extends ActionBase {
             }
             return true;
         }
+        let travelidx = 0;
         eles.forEach((e: string) => {
             if (!testkey(e)){
                 self.Errorlog( "error link:" + e);
                 return;
             }            
-            self.m_travellinks.push({url:prefix + e } );
+            travelidx ++;
+            self.m_travellinks.push({url:prefix + e, idx:travelidx } );
         });
 
 
         return ExecState.WAITE;
+    } catch (error: unknown) { // TS 强制要求 error 类型为 unknown
+        if (error instanceof Error) {
+          console.log(error.message); // 输出：示例错误
+        }
+        return ExecState.FAILED;
+      } finally {
+        // 无论是否发生异常都会执行
+      }
         //return ExecState.OK;
     }
 
@@ -122,7 +134,7 @@ export class ActionTravelLinks extends ActionBase {
         let c = BLUE.deepClone(Conf);
         c.TargetValue[0][1] = info.url;
         //c.TargetValue[0][4] = info.storekey; //对应保存的 href links
-        let act = self.Create(c);
+        let act = self.Create(c,info);
         if (act) {
             //act.SetStoreKeyFill(info.store_key_fill);
             act.StartActionConfig();

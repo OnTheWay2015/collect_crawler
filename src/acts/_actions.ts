@@ -13,6 +13,10 @@ import { ActionTravelLinks } from './actiontravellinks';
 import { ActionWriteTextFile } from './actionwritetextfile';
 import { ActionStoreTextMatch } from './actionstoretextmatch';
 import { ActionStoreMove } from './actionstoremove';
+import { ActionStoreSelect } from './actionstoreselect';
+import { ActionStoreMoveToArray } from './actionstoremovetoarray';
+import { ActionFilterNodeTag } from './action_filter_nodetag';
+import { ActionStoreSet } from './actionstoreset';
 
 //export enum ACTION_TYPE{ //因为在配置里有对应的数值,所以该枚举类型的位置不要调换 
 //	BASE =1,
@@ -35,14 +39,19 @@ export enum ACTION_TYPE{
 	TIMES="TIMES",
 	INTERVAL="INTERVAL",
 	HTTP_REQ="HTTP_REQ",
+	STORE_SET="STORE_SET",
 	STORE_SINGLE ="STORE_SINGLE",
 	STORE_MOVE="STORE_MOVE",
-	STORE_TEXT_MATCH="STORE_TEXT_MATCH",
+	STORE_MOVE_TO_ARRAY="STORE_MOVE_TO_ARRAY",
+	STORE_SELECT="STORE_SELECT",
+    STORE_TEXT_MATCH="STORE_TEXT_MATCH",
+    STORE_TAG="STORE_TAG",
 	FILTER_ATTR="FILTER_ATTR", 
 	TRAVEL_LINKS="TRAVEL_LINKS",
 	WRITE_TXT_FILE="WRITE_TXT_FILE",
 	READ_TXT_FILE="READ_TXT_FILE",
 	FILTER_TEXT="FILTER_TEXT", 
+	FILTER_NODE_TAG="FILTER_NODE_TAG", 
 	TEXT_TRANS="TEXT_TRANS", 
 	HTTP_FAILED_STORE="HTTP_FAILED_STORE",
 };
@@ -50,7 +59,7 @@ export enum ACTION_TYPE{
 
 export const BASE_URL:string = "BASE_URL"
 //===================================================
-export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,Level:number):ActionBase|null
+export function MakeAction(pdata:any,localinfo:any, holder:any, ab:ActionBase|null,Conf:AIACTION_CONFIG,Level:number):ActionBase|null
 {
 	//SAFE_DELETE(self.m_self.pCurr);
 	//ActionBase* self.pCurr = nullptr;
@@ -61,11 +70,15 @@ export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTI
         , [String(ACTION_TYPE.INTERVAL)]: ActionInterval
         , [String(ACTION_TYPE.HTTP_REQ)]: ActionHttp
         , [String(ACTION_TYPE.HTTP_FAILED_STORE)]:ActionHttpFailedStore 
+        , [String(ACTION_TYPE.STORE_SET)]: ActionStoreSet
         , [String(ACTION_TYPE.STORE_SINGLE)]: ActionStoreSingle
         , [String(ACTION_TYPE.STORE_MOVE)]: ActionStoreMove
+        , [String(ACTION_TYPE.STORE_MOVE_TO_ARRAY)]: ActionStoreMoveToArray
+        , [String(ACTION_TYPE.STORE_SELECT)]: ActionStoreSelect
         , [String(ACTION_TYPE.STORE_TEXT_MATCH)]:ActionStoreTextMatch 
         , [String(ACTION_TYPE.FILTER_ATTR)]: ActionFilterAttr
         , [String(ACTION_TYPE.FILTER_TEXT)]: ActionFilterText
+        , [String(ACTION_TYPE.FILTER_NODE_TAG)]: ActionFilterNodeTag
         , [String(ACTION_TYPE.TEXT_TRANS)]: ActionTextTrans
         , [String(ACTION_TYPE.TRAVEL_LINKS)]: ActionTravelLinks
         , [String(ACTION_TYPE.WRITE_TXT_FILE)]: ActionWriteTextFile
@@ -108,7 +121,7 @@ export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTI
 	BLUE.log("try create cls["+Conf.TP+"] id["+Conf.id+"]");	
 	if (cls[Conf.TP])
 	{
-		return  new cls[Conf.TP](pdata,ab,Conf, holder,Level+1);
+		return  new cls[Conf.TP](pdata,localinfo,ab,Conf, holder,Level+1);
 	}
 	BLUE.error("*** create cls["+Conf.TP+"] failed");	
 	return null;	
@@ -143,7 +156,11 @@ export function MakeAction(pdata:any, holder:any, ab:ActionBase|null,Conf:AIACTI
             let sel = sels[i];
             if (i==0)
             {
-                res_ary = [$(sel)];
+                let firstsel = $(sel);
+                //if (!Array.isArray(firstsel )){
+                    res_ary = [...firstsel]
+                //}
+                //res_ary = [$(sel)];
                 continue;
             }
 

@@ -1,20 +1,18 @@
 
-import { IReq, REQ_ERR, REQ_TYPE } from "../collects/node";
-import { HttpHandle } from "../handles/request";
-import { PuppeteerHandle } from "../handles/request_by_puppeteer";
+
 import * as BLUE from "../utils"; 
 import  * as _actions  from "./_actions";
 import { ActionBase, ActionState, ExecState } from "./actionbase";
 import * as cheerio from 'cheerio';
-import { ActionStoreSingle } from "./actionstoresingle";
 
-export class ActionFilterText extends ActionBase {
+export class ActionStoreMoveToArray extends ActionBase {
     
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
         super(pdata,localinfo,Parent, conf, holder, level);
     }
+
 
     protected override Prepare(): void {
         let self = this;
@@ -29,38 +27,35 @@ export class ActionFilterText extends ActionBase {
         self.m_getkey_single = ary01[0]; //
         self.m_storekey_single = ary01[1]; //
 
-        //if ( !(self.m_pParent instanceof ActionStoreSingle))
-        //{
-        //    self.Errorlog("need parent ActionStoreSingle");
-        //    self.Done(ExecState.FAILED);
-        //    return;
-
-        //}
-        //todo check parent is  actionstoresingle
     }
 
     protected override Run(): ExecState {
         let self = this;
         let processdata = self.GetDataByKey(self.m_getkey_single); 
-        let cheerio_eles= processdata.v;
-        if (!cheerio_eles|| cheerio_eles.length<=0)
+        if (!processdata|| !processdata.v )
         {
             return ExecState.FAILED;
         }
-
-        let storeinfo:string= "";
-        
-        let $ = self.GetMarkInfo().$; 
-        for (var i = 0; i < cheerio_eles.length; i++) {
-            let obj = $(cheerio_eles[i]); 
-            storeinfo += obj.text();
-        }
         let k = self.m_storekey_single;
-        self.SetDataByKey(k, {v:storeinfo} );
+        let sdata = self.GetDataByKey(k);
+        let ary = null;
+        if (sdata) {
+            ary = sdata.v;
+        }else{
+            ary = []
+        }
+       
+        //利用 instanceof 检测原型链，但需注意跨全局环境（如 iframe）时可能失效
+        //if ( processdata.v instanceof Array  ){
+        if ( Array.isArray(processdata.v) ){
+            ary.push(...processdata.v);
+        }else{
+            ary.push(processdata.v);
+        }
+        self.SetDataByKey(self.m_getkey_single,null);//原来的删除
+        self.SetDataByKey(k, { v:ary});
         return ExecState.OK;
     }
-
-
 
 
 

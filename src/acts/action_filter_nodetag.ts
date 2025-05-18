@@ -8,10 +8,11 @@ import { ActionBase, ActionState, ExecState } from "./actionbase";
 import * as cheerio from 'cheerio';
 import { ActionStoreSingle } from "./actionstoresingle";
 
-export class ActionFilterText extends ActionBase {
+export class ActionFilterNodeTag extends ActionBase {
     
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
+    private m_filter_key:string="";
     constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
         super(pdata,localinfo,Parent, conf, holder, level);
     }
@@ -19,7 +20,7 @@ export class ActionFilterText extends ActionBase {
     protected override Prepare(): void {
         let self = this;
         if (self.m_pAIActionConfig.TargetValue.length < 1 ||
-            self.m_pAIActionConfig.TargetValue[0].length < 2) {
+            self.m_pAIActionConfig.TargetValue[0].length < 3) {
             self.Errorlog("no TargetValue");
             self.Done(ExecState.FAILED);
             return;
@@ -28,6 +29,7 @@ export class ActionFilterText extends ActionBase {
         let ary01 = self.m_pAIActionConfig.TargetValue[0];
         self.m_getkey_single = ary01[0]; //
         self.m_storekey_single = ary01[1]; //
+        self.m_filter_key= ary01[2]; //
 
         //if ( !(self.m_pParent instanceof ActionStoreSingle))
         //{
@@ -36,7 +38,6 @@ export class ActionFilterText extends ActionBase {
         //    return;
 
         //}
-        //todo check parent is  actionstoresingle
     }
 
     protected override Run(): ExecState {
@@ -47,13 +48,14 @@ export class ActionFilterText extends ActionBase {
         {
             return ExecState.FAILED;
         }
-
-        let storeinfo:string= "";
-        
-        let $ = self.GetMarkInfo().$; 
+        let storeinfo:any = [];
+        let $ = self.GetMarkInfo().$ 
         for (var i = 0; i < cheerio_eles.length; i++) {
             let obj = $(cheerio_eles[i]); 
-            storeinfo += obj.text();
+            let eles = obj.find(self.m_filter_key);  // 再次 cheerio 筛选
+            if (eles.length > 0 ){
+                storeinfo.push(... eles);
+            }
         }
         let k = self.m_storekey_single;
         self.SetDataByKey(k, {v:storeinfo} );

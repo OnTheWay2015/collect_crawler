@@ -53,7 +53,7 @@ export class urlST{
     public port:number= 0;
     public auto_name:string= "";
     public url:string= "";
-    public tag:string= "";
+    //public tag:string= "";
     public $:any; //cheerio.CheerioAPI
     //public mate:object={};
 }

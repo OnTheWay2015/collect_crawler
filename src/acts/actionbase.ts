@@ -39,7 +39,7 @@ export type AIACTION_CONFIG = {
 	Tag: string;
 	//ActionID: number = 0;//引用 AIACTION_CONFIG.id 
 	ExecTP:ACTION_EXEC_TYPE;
-	ActionsAllTouchFalg:boolean;
+	ActionsAllTouchFalg:boolean; //不管 Actions数组过程中是否失败，都把 Actions数组里的 actionid 执行完 
 	Actions: [number]; //引用 AIACTION_CONFIG.id 
 	NodeLeft:number; //当前执行后,返回 	ExecState.FAILED  时选择
 	NodeRight:number; //当前执行后,返回 	ExecState.OK 时选择	
@@ -58,14 +58,14 @@ export class ActionBase {
 	private m_ExecRes:ExecState = ExecState.OK;
 	private m_key_for_fill:string = ""
 	private m_markinfo!:BLUE.urlST
-	private m_store_tag:string = ""
+	private m_localInfo:any;
 	//private m_ActionsAllTouchFalg:boolean = false;
 	protected m_pParent!:ActionBase|null;
 	protected m_Holder!:ActionHolderBase
 	protected m_TaskposCurr:number=0;
 	protected m_Level:number=0;
 	protected m_pAIActionConfig!:AIACTION_CONFIG;
-    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
+    constructor(pdata:any,localinfo:any,Parent:ActionBase|null,conf:any, holder:ActionHolderBase,level:number)
     {
 		let self = this;
 		if (Parent!=null){
@@ -75,18 +75,21 @@ export class ActionBase {
 		self.m_Level = level;
 		self.m_Holder = holder;
 
-
 		if (!pdata)
 		{
 			self.Errorlog("pData is null");
 		}
 		self.m_dataProcess = pdata;
+		self.m_localInfo = localinfo ? localinfo : {};
 
+		if (!self.m_localInfo.idx) {
+			self.m_localInfo.idx = 0;
+		}
+		
 		if (conf.Expiretm)
 		{
 			self.SetTmExpire(conf.Expiretm);
 		}
-
     }
 
 	//public GetStoreTag():string
@@ -143,9 +146,9 @@ export class ActionBase {
                 //Log("State err[ %d] Level:[%d] ", m_State,m_Level);
                 break;
         }
-        if (self.m_pCurr) {
-            self.m_pCurr.Update(tm);
-        }
+        //if (self.m_pCurr) {
+        //    self.m_pCurr.Update(tm);
+        //}
     }
 
 
@@ -171,15 +174,16 @@ export class ActionBase {
 		{
 			let pust = self.m_pParent.GetMarkInfo();
 			Object.assign(ust,pust);
-			ust.tag = conf.Tag ? conf.Tag : "";
-			if (pust.tag != "")
-			{
-				ust.tag = conf.Tag ?pust.tag + "_" +conf.Tag : pust.tag; 
-			}
+			//ust.tag = conf.Tag ? conf.Tag : "";
+			//if (pust.tag != "")
+			//{
+			//	ust.tag = conf.Tag ?pust.tag + "_" +conf.Tag : pust.tag; 
+			//}
 		}
 		else {
-			ust.tag = conf.Tag ? conf.Tag : "";
+			//ust.tag = conf.Tag ? conf.Tag : "";
 		}
+
 		self.SetMarkInfo(ust);
 
 		self.Prepare(); //执行位置在方法最后
@@ -274,7 +278,7 @@ public DoChoseTask()
 		return ;
 	}
 
-	self.m_pCurr = self.Create(Conf);
+	self.m_pCurr = self.Create(Conf,null);
 
 	if (!self.m_pCurr)
 	{
@@ -316,7 +320,7 @@ public DoTrySubNode()
 	//	return ;
 	//}
 	
-	self.m_pCurr =self.Create(Conf);
+	self.m_pCurr =self.Create(Conf,null);
 
 	if (!self.m_pCurr)
 	{
@@ -343,10 +347,12 @@ public StartActionConfig()
 }
 
 
-protected Create(Conf:AIACTION_CONFIG):ActionBase|null 
+protected Create(Conf:AIACTION_CONFIG,localinfo:any):ActionBase|null 
 {
 	let self = this;
-	return _actions.MakeAction(self.m_dataProcess,self.m_Holder, self,Conf,self.m_Level);
+	let act = _actions.MakeAction(self.m_dataProcess,localinfo,self.m_Holder, self,Conf,self.m_Level);
+	self.m_Holder.AddAct(act!);
+	return act;
 }
 
 
@@ -398,18 +404,11 @@ protected Waiting(tm:number)
 protected DoEnd()
 {
 	let self = this;
-	//LogDebug("ActionBase::DoEnd Level:[%d] ",m_Level );
-	self.GoState( ActionState.NONE);
-	if (self.m_pParent == null)
-	{
-		//self.m_Holder->AIEnd(m_ExecRes,m_pAIActionConfig.ActionID);
-		self.m_Holder.OnAIEnd();	
-	}
-	else
-	{
+	self.GoState(ActionState.NONE);
+	if (self.m_pParent != null) {
 		self.m_pParent.OnSubResult(self.m_ExecRes);
 	}
-
+	self.m_Holder.OnActionEnd(self);	
 
 }
 
@@ -552,40 +551,101 @@ protected GetRootConfig():AIACTION_CONFIG
 	return p.m_pAIActionConfig;
 }
 
-	//数据处理超过父子节点时，用 __store 存到 holder 里
+public getActByTag(tag:string){
+	let act:any = this;
+	while(act){
+
+		if (act.m_pAIActionConfig.Tag == tag){
+			return act;
+		}
+		act = act.m_pParent;
+	} 
+
+	return null;
+}
+
     protected SetDataByKey(key:string, v:any):void
+	{
+		let self = this;
+		let lkey = "^__tag\\((.*?)\\)\\."
+		let r = new RegExp(lkey);
+		if (r.test(key)) {
+			let skey = key.replace(r,"");
+			let m = key.match(r);
+			if (!m || !m.at(1)){
+				self.Errorlog(`SetDataByKey no tag match [${lkey}]`);
+				return;
+			}
+			let tag:string= m.at(1)!;
+			let act = self.getActByTag( tag );
+			if (!act){
+				self.Errorlog(`SetDataByKey getActByTag[${tag}]`);
+				return;
+			}
+			act._SetDataByKey(skey,v);
+		}else{
+			self._SetDataByKey(key,v);
+		}
+	}
+	//数据处理超过父子节点时，用 __store 存到 holder 里
+    public _SetDataByKey(key:string, v:any):void
     {
 		let self = this;
-		let lkey = "__store."
+		let lkey = "^__store\."
 		let r = new RegExp(lkey);
 		let markinfo = self.GetMarkInfo();
 		key = this.GetStoreKey(key);
-		if (key.indexOf(lkey) < 0)
-		{
+		//if (key.indexOf(lkey) < 0)
+		if (!r.test(key)) {
 			//let p = markinfo.path;
 			//key += p;
         	_actions.SetDataByKey(self.m_dataProcess ,key,v);
 		}
 		else{
-			key = key.replace( r, markinfo.tag);
+			let tag = self.m_pAIActionConfig.Tag ? self.m_pAIActionConfig.Tag+"." : ""
+			key = key.replace(r,tag);
         	_actions.SetDataByKey(self.m_Holder.getData(),key,v);
 		}
     }
 
-    public GetDataByKey(key:string):any
+  	protected GetDataByKey(key:string):any
+	{
+		let self = this;
+		let lkey = "^__tag\\((.*?)\\)\\."
+		let r = new RegExp(lkey);
+		if (r.test(key)) {
+			let skey = key.replace(r,"");
+			let m = key.match(r);
+			if (!m || !m.at(1)){
+				self.Errorlog(`SetDataByKey no tag match [${lkey}]`);
+				return;
+			}
+			let tag:string= m.at(1)!;
+			let act = self.getActByTag( tag );
+			if (!act){
+				self.Errorlog(`GetDataByKey getActByTag[${tag}]`);
+				return null;
+			}
+			return act._GetDataByKey(skey);
+		}
+		return self._GetDataByKey(key);
+	}
+
+    public _GetDataByKey(key:string):any
     {
 		let self = this;
-		let lkey = "__store."
+		let lkey = "^__store\."
 		let r = new RegExp(lkey);
 		let markinfo = self.GetMarkInfo();
 
 		let data = null;
-		if (key.indexOf(lkey) < 0)
-		{
+		//if (key.indexOf(lkey) < 0)
+		if (!r.test(key)) {
 			data = self.m_dataProcess ;
 		}
 		else{
-			key = key.replace( r,markinfo.tag);
+			let tag = self.m_pAIActionConfig.Tag ? self.m_pAIActionConfig.Tag+"." : ""
+			key = key.replace(r,tag);
 			data = self.m_Holder.getData();
 		}
 		key = this.GetStoreKey(key);
@@ -605,6 +665,10 @@ protected GetRootConfig():AIACTION_CONFIG
 		return this.m_markinfo ;
 	}
 
+	public GetLocalInfo():any
+	{
+		return this.m_localInfo;
+	}
 	//public SetSubMarkInfo(sub:ActionBase)
 	//{
 	//	sub.SetMarkInfo(this.m_markinfo);	
@@ -616,6 +680,7 @@ protected GetRootConfig():AIACTION_CONFIG
 		let self = this;
 		let k = kfmt;
 		let r = /\{.*\}/;
+		let rr = /\[.*\]/;
 		let markinfo = self.GetMarkInfo();
 		let p = markinfo.path;
 		if (p.indexOf(".") >= 0) {
@@ -637,6 +702,11 @@ protected GetRootConfig():AIACTION_CONFIG
 		if (r.test(key)) {
 			key = key.replace(r, p)
 		}
+		
+		if (rr.test(key)) {
+			let linfo = self.GetLocalInfo();
+			key = key.replace(r, linfo.idx);
+		}
 		return key;
 	}
 
@@ -647,11 +717,24 @@ protected GetRootConfig():AIACTION_CONFIG
         let fn = self.GetStoreKey(k);
         fn =  fn.replace("/","_");
         fn =  fn.replace("?","");
-        fn = ust.tag +"_" + fn;
+        //fn = ust.tag +"_" + fn;
 		return fn;
 	}
-
-
+	protected GetSetKey(k:string) {
+		let self = this;
+		let lkey = "^@"
+		let r = new RegExp(lkey);
+        if (!r.test(k)) {
+			return k;
+		}
+		
+		let skey = k.replace(r, "");
+		let processdata = self.GetDataByKey(skey);
+		if (processdata && processdata.v) {
+			return processdata.v;
+		}
+		return k;
+	}
 };
 
 

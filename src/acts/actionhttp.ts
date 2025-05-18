@@ -16,8 +16,8 @@ export class ActionHttp extends ActionBase {
     private m_storekeyhtml: string = "";
 
     //private m_RetryCnt: number = 0;
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
 
@@ -34,6 +34,10 @@ export class ActionHttp extends ActionBase {
         let ary01 = self.m_pAIActionConfig.TargetValue[0];
         self.m_ReqType = ary01[0]; // normal or puppeteer
         self.m_Url = ary01[1];
+        self.m_Url = self.GetSetKey(self.m_Url);         
+
+       
+       
         self.m_Method = ary01[2]; //Get | post
         self.m_rangflag = ary01[3]; //断点继传
         self.m_storekeyhtml = ary01[4];//storekey
@@ -46,8 +50,8 @@ export class ActionHttp extends ActionBase {
         
         self.log( "start req==>" + self.m_Url);
         let ust:BLUE.urlST = BLUE.transURLSt(self.m_Url)!;
-        let ust_cur = self.GetMarkInfo();
-        ust.tag = ust_cur.tag;
+        //let ust_cur = self.GetMarkInfo();
+        //ust.tag = ust_cur.tag;
         self.SetMarkInfo(ust);
     }
 
@@ -110,7 +114,7 @@ export class ActionHttp extends ActionBase {
                     
                     let ust: BLUE.urlST = BLUE.transURLSt(localUrl)!;
                     let ust_cur = self.GetMarkInfo();
-                    ust.tag = ust_cur.tag;
+                    //ust.tag = ust_cur.tag;
                     self.SetMarkInfo(ust);
                     
                     self._Run(localUrl);

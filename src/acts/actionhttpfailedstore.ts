@@ -9,8 +9,8 @@ import { ActionBase, ActionState, ExecState } from "./actionbase";
 export class ActionHttpFailedStore extends ActionBase {
     
     private m_storekey_single: string = "";
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {

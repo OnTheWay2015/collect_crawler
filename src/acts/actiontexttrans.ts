@@ -13,8 +13,8 @@ export class ActionTextTrans extends ActionBase {
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     private m_trans_kvs!:any[];
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {

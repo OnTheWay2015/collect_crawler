@@ -12,8 +12,8 @@ export class ActionStoreSingle extends ActionBase {
     private m_storekey_single: string = "";
     private m_DomSelectTags!:string[];
     private m_store_array:boolean = true;
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
 
@@ -56,7 +56,7 @@ export class ActionStoreSingle extends ActionBase {
         //if (self.m_store_array)
         {
             let k = self.m_storekey_single;
-            self.SetDataByKey(k, { v: sels });
+            self.SetDataByKey(k, { v:[...sels ] });  //保存时 v 为数组
             //self.m_Holder.SetProcessDataByKey(self.m_storekey_single, sels);
         }
         //else{

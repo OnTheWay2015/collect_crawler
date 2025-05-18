@@ -11,9 +11,9 @@ export class ActionWriteTextFile extends ActionBase
     private m_filename: string = "";
     private m_dir: string = "";
     private m_travelflag: boolean= false;
-    constructor(pdata:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
+    constructor(pdata:any,localinfo:any,Parent:ActionBase|null,conf:any, holder:any,level:number)
     {
-        super(pdata,Parent,conf, holder,level);
+        super(pdata,localinfo,Parent,conf, holder,level);
     }
 
 
@@ -48,7 +48,7 @@ export class ActionWriteTextFile extends ActionBase
         //fn = ust.tag +"_" + fn;
         
         
-        let fn = self.FormMarkKey(self.m_filename);
+        let fn = self.GetSetKey(self.m_filename);
         let r = FS.existsSync(self.m_dir);//检查目录文件是否存在
         if (!r) BLUE.mkdirsSync(self.m_dir);//创建目录
         
@@ -82,8 +82,11 @@ export class ActionWriteTextFile extends ActionBase
             FS.writeFileSync(wfn, "");
             for (let i = 0; i < ary.length; i++) {
                 let data = ary[i].v;
-                let kk =  ary[i].k
-                data = "第" + kk + "章" + "\r\n" + data  
+               
+                //test
+                //let kk =  ary[i].k
+                //data = "第" + kk + "章" + "\r\n" + data  
+                
                 //FS.appendFileSync(wfile,data.toString())
                 FS.appendFileSync(wfn, data)
             }

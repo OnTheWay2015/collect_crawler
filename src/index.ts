@@ -211,7 +211,7 @@ process.argv.forEach((val, index) => {
    let n = 33;
 
    let entry = ConfMgr.GetActionEntry();
-   let acts:ActionBase[] = [];
+   let acts_h:ActionHolderBase[] = [];
 
    //let aid = parseInt(process.argv[3]);
    let count = 0;
@@ -221,29 +221,30 @@ process.argv.forEach((val, index) => {
          let holder = new ActionHolderBase(()=>{
             count++;
             BLUE.log(" end:" + count)     
-            if (count >= acts.length){
+            if (count >= acts_h.length){
                console.log("all end!!!!!!"); 
             }
          });
-         let act = MakeAction({}, holder, null, Conf, 0);
+         let act = MakeAction({},{}, holder, null, Conf, 0);
          if (act) {
             act.StartActionConfig();
-            acts.push(act);
+            holder.AddAct(act);
+            acts_h.push(holder);
          }
       }
 
 
    });
 
-   if (acts.length >0){
+   if (acts_h.length >0){
    setInterval(() => {
-      acts.forEach((act) => {
-         act.Update(n);
+      acts_h.forEach((h) => {
+         h.Update(n);
       });
    }, n);
    }else{
 
-      console.log("acts length = 0");
+      console.log("acts_h length = 0");
    }
 
 

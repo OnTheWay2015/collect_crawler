@@ -12,8 +12,8 @@ export class ActionFilterAttr extends ActionBase {
     private m_getkey_single: string = "";
     private m_storekey_single: string = "";
     private m_filter_key:string="";
-    constructor(pdata:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
-        super(pdata,Parent, conf, holder, level);
+    constructor(pdata:any,localinfo:any,Parent: ActionBase | null, conf: any, holder: any, level: number) {
+        super(pdata,localinfo,Parent, conf, holder, level);
     }
 
     protected override Prepare(): void {
@@ -54,7 +54,12 @@ export class ActionFilterAttr extends ActionBase {
         for (var i = 0; i < cheerio_eles.length; i++) {
             let obj = $(cheerio_eles[i]); 
             let v = obj.attr(self.m_filter_key);
-            storeinfo.push(v);
+            if (v){
+                storeinfo.push(v);
+            }else{
+                //test
+                self.Errorlog("attr["+self.m_filter_key+"] not select url:" + self.GetMarkInfo().url);
+            }
         }
         let k = self.m_storekey_single;
         self.SetDataByKey(k, {v:storeinfo} );
